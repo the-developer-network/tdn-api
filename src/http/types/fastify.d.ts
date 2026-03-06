@@ -8,6 +8,8 @@ declare module "fastify" {
             PORT: number;
             NODE_ENV: "test" | "development" | "production";
             DATABASE_URL: string;
+            ACCESS_TOKEN_SECRET_KEY: string;
+            ACCESS_TOKEN_EXPIRES_IN: number;
         };
         prisma: PrismaClient;
         authService: AuthService;

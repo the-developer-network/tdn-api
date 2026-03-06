@@ -12,6 +12,8 @@ const envSchema = {
             enum: ["development", "test", "production"],
         },
         DATABASE_URL: { type: "string" },
+        ACCESS_TOKEN_SECRET_KEY: { type: "string" },
+        ACCESS_TOKEN_EXPIRES_IN: { type: "number", default: 900 },
     },
 };
 

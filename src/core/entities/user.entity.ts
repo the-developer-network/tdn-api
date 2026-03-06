@@ -26,4 +26,8 @@ export class User {
     get createdAt(): Date {
         return this.props.createdAt;
     }
+
+    get passwordHash(): string | null {
+        return this.props.passwordHash;
+    }
 }

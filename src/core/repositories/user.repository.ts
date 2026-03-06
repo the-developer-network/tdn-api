@@ -6,4 +6,5 @@ export interface IUserRepository {
         username: string;
         passwordHash: string | null;
     }): Promise<User>;
+    findByIdentifier(identifier: string): Promise<User | null>;
 }

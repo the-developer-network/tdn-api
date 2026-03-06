@@ -29,3 +29,24 @@ export type RegisterResponseData = Static<typeof RegisterResponseDataSchema>;
 export const RegisterResponseSchema = createResponseSchema(
     RegisterResponseDataSchema,
 );
+
+export const LoginBodySchema = Type.Object({
+    identifier: Type.String(),
+    password: Type.String(),
+});
+
+export type LoginBody = Static<typeof LoginBodySchema>;
+
+export const LoginResponseSchema = Type.Object({
+    accessToken: Type.String(),
+    expiresAt: Type.Number(),
+    user: Type.Object({
+        id: Type.String({ format: "uuid " }),
+        username: Type.String(),
+    }),
+});
+
+export type LoginResponse = Static<typeof LoginResponseSchema>;
+
+export const LoginResponseDataSchema =
+    createResponseSchema(LoginResponseSchema);

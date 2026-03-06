@@ -2,21 +2,22 @@ import Fastify from "fastify";
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 
 // Plugins
-import envPlugin from "src/http/plugins/env.plugin";
+import envPlugin from "@plugins/env.plugin";
+import jwtPlugin from "@plugins/jwt.plugin";
 
 // Hooks
-import responseWrapperHook from "src/http/hooks/response-wrapper.hook";
+import responseWrapperHook from "@hooks/response-wrapper.hook";
 
 // Custom Plugins
-import errorHandlerPlugin from "src/http/plugins/custom/error-handler.plugin";
-import prismaPlugin from "src/http/plugins/custom/prisma.plugin";
+import errorHandlerPlugin from "@plugins/custom/error-handler.plugin";
+import prismaPlugin from "@plugins/custom/prisma.plugin";
 
 //Decorators
-import userServiceDecorator from "src/http/decorators/auth-service.decorator";
+import userServiceDecorator from "@decorators/auth-service.decorator";
 
 // Routes
-import healthRoutes from "src/http/routes/health.route";
-import authRoutes from "src/http/routes/auth.route";
+import healthRoutes from "@routes/health.route";
+import authRoutes from "@routes/auth.route";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -39,8 +40,10 @@ const server = Fastify({
  * Registers core Fastify ecosystem plugins.
  * These are typically third-party or foundational environment plugins.
  */
-function registerPlugins(): void {
+async function registerPlugins(): Promise<void> {
     server.register(envPlugin);
+    await server.after();
+    server.register(jwtPlugin);
 }
 
 /**
@@ -84,8 +87,7 @@ function registerDecorators(): void {
  */
 async function startServer(): Promise<void> {
     try {
-        registerPlugins();
-        await server.after();
+        await registerPlugins();
         registerCustomPlugins();
         registerDecorators();
         registerHooks();
