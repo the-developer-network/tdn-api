@@ -5,7 +5,7 @@ import type {
     RegisterResponseData,
     RegisterBody,
     LoginBody,
-    LoginResponse,
+    LoginResponseData,
 } from "@typings/schemas/auth.schema";
 
 export class AuthService {
@@ -24,7 +24,7 @@ export class AuthService {
         };
     }
 
-    async login(body: LoginBody): Promise<LoginResponse> {
+    async login(body: LoginBody): Promise<LoginResponseData> {
         const result = await this.loginUseCase.execute(body);
 
         return result;
