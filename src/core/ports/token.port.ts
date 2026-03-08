@@ -15,5 +15,4 @@ export interface TokenPort {
     verify(token: string): UserPayload;
 
     hashRefreshSecret(secret: string): string;
-    compareRefreshSecret(secret: string, hashedSecret: string): boolean;
 }
