@@ -44,4 +44,26 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
             },
         });
     }
+
+    async deleteInvalidBefore(date: Date): Promise<number> {
+        const result = await this.prisma.refreshToken.deleteMany({
+            where: {
+                OR: [
+                    {
+                        isRevoked: true,
+                        updatedAt: {
+                            lt: date,
+                        },
+                    },
+                    {
+                        expiresAt: {
+                            lt: date,
+                        },
+                    },
+                ],
+            },
+        });
+
+        return result.count;
+    }
 }

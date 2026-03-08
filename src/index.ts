@@ -12,6 +12,7 @@ import responseWrapperHook from "@hooks/response-wrapper.hook";
 // Custom Plugins
 import errorHandlerPlugin from "@plugins/custom/error-handler.plugin";
 import prismaPlugin from "@plugins/custom/prisma.plugin";
+import refreshTokenCleanupPlugin from "@plugins/custom/refresh-token-cleanup.plugin";
 
 //Decorators
 import userServiceDecorator from "@decorators/auth-service.decorator";
@@ -55,6 +56,7 @@ async function registerPlugins(): Promise<void> {
 function registerCustomPlugins(): void {
     server.register(errorHandlerPlugin);
     server.register(prismaPlugin);
+    server.register(refreshTokenCleanupPlugin);
 }
 
 /**

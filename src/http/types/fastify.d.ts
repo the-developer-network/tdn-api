@@ -12,6 +12,8 @@ declare module "fastify" {
             ACCESS_TOKEN_EXPIRES_IN: number;
             REFRESH_TOKEN_EXPIRES_IN: number;
             COOKIE_SECRET: string;
+            REFRESH_TOKEN_CLEANUP_CRON: string;
+            REFRESH_TOKEN_CLEANUP_GRACE_PERIOD_HOURS: number;
         };
         prisma: PrismaClient;
         authService: AuthService;

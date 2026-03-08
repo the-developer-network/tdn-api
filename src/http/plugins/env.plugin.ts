@@ -22,6 +22,8 @@ const envSchema = {
         ACCESS_TOKEN_EXPIRES_IN: { type: "number", default: 900 },
         REFRESH_TOKEN_EXPIRES_IN: { type: "number", default: 90000 },
         COOKIE_SECRET: { type: "string" },
+        REFRESH_TOKEN_CLEANUP_CRON: { type: "string" },
+        REFRESH_TOKEN_CLEANUP_GRACE_PERIOD_HOURS: { type: "number" },
     },
 };
 

@@ -10,4 +10,5 @@ export interface IRefreshTokenRepository {
     }): Promise<RefreshToken>;
     findByToken(token: string): Promise<RefreshToken | null>;
     update(refreshToken: RefreshToken): Promise<void>;
+    deleteInvalidBefore(date: Date): Promise<number>;
 }
