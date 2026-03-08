@@ -5,7 +5,7 @@ export class RefreshTokenPrismaMapper {
     static toDomain(raw: PrismaRefreshToken): RefreshToken {
         return new RefreshToken({
             id: raw.id,
-            token: raw.token,
+            tokenHash: raw.token,
             userId: raw.userId,
             deviceIp: raw.deviceIp,
             userAgent: raw.userAgent,

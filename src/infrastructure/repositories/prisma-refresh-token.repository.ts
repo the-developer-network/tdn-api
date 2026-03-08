@@ -7,7 +7,7 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
     constructor(private readonly prisma: PrismaTransactionalClient) {}
 
     async create(data: {
-        token: string;
+        tokenHash: string;
         userId: string;
         deviceIp: string;
         userAgent: string;
@@ -15,7 +15,7 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
     }): Promise<RefreshToken> {
         const rawToken = await this.prisma.refreshToken.create({
             data: {
-                token: data.token,
+                token: data.tokenHash,
                 userId: data.userId,
                 deviceIp: data.deviceIp,
                 userAgent: data.userAgent,
@@ -26,9 +26,9 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
         return RefreshTokenPrismaMapper.toDomain(rawToken);
     }
 
-    async findByToken(token: string): Promise<RefreshToken | null> {
+    async findByTokenHash(tokenHash: string): Promise<RefreshToken | null> {
         const rawToken = await this.prisma.refreshToken.findUnique({
-            where: { token },
+            where: { token: tokenHash },
         });
 
         if (!rawToken) return null;

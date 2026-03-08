@@ -13,4 +13,7 @@ export interface TokenResult {
 export interface TokenPort {
     generate(payload: UserPayload): TokenResult;
     verify(token: string): UserPayload;
+
+    hashRefreshSecret(secret: string): string;
+    compareRefreshSecret(secret: string, hashedSecret: string): boolean;
 }

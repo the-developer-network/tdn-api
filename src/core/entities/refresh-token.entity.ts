@@ -1,6 +1,6 @@
 export interface RefreshTokenProps {
     id: string;
-    token: string;
+    tokenHash: string;
     userId: string;
     deviceIp: string;
     userAgent: string;
@@ -16,8 +16,8 @@ export class RefreshToken {
     get id(): string {
         return this.props.id;
     }
-    get token(): string {
-        return this.props.token;
+    get tokenHash(): string {
+        return this.props.tokenHash;
     }
     get userId(): string {
         return this.props.userId;

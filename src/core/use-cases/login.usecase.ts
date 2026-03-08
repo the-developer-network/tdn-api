@@ -61,8 +61,11 @@ export class LoginUseCase {
         const { accessToken, expiresAt, refreshToken, refreshTokenExpiresAt } =
             this.tokenService.generate(payload);
 
+        const refreshTokenHash =
+            this.tokenService.hashRefreshSecret(refreshToken);
+
         await this.refreshTokenRepository.create({
-            token: refreshToken,
+            tokenHash: refreshTokenHash,
             userId: user.id,
             deviceIp: input.deviceIp,
             userAgent: input.userAgent,

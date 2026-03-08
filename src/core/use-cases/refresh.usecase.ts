@@ -24,9 +24,13 @@ export class RefreshUseCase {
 
     async execute(input: RefreshInput): Promise<RefreshOutput> {
         return await this.transactionPort.runInTransaction(async (ctx) => {
-            const currentToken = await ctx.refreshTokenRepository.findByToken(
+            const incomingTokenHash = this.tokenService.hashRefreshSecret(
                 input.token,
             );
+            const currentToken =
+                await ctx.refreshTokenRepository.findByTokenHash(
+                    incomingTokenHash,
+                );
 
             if (!currentToken) {
                 throw new UnauthorizedError("Session not found");
@@ -66,8 +70,11 @@ export class RefreshUseCase {
                 refreshTokenExpiresAt,
             } = this.tokenService.generate(payload);
 
+            const refreshTokenHash =
+                this.tokenService.hashRefreshSecret(refreshToken);
+
             await ctx.refreshTokenRepository.create({
-                token: refreshToken,
+                tokenHash: refreshTokenHash,
                 userId: user.id,
                 deviceIp: input.deviceIp,
                 userAgent: input.userAgent,
