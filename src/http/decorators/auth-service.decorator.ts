@@ -3,13 +3,14 @@ import { AuthService } from "../services/auth.service";
 import { type FastifyInstance } from "fastify";
 import { PrismaUserRepository } from "@infrastructure/repositories/prisma-user.repository";
 import { PasswordService } from "@infrastructure/services/password.service";
-import { CreateUserUseCase } from "@core/use-cases/create-user.usecase";
-import { RegisterUseCase } from "@core/use-cases/register.usecase";
-import { LoginUseCase } from "@core/use-cases/login.usecase";
+import { CreateUserUseCase } from "@core/use-cases/user/create-user.usecase";
+import { RegisterUseCase } from "@core/use-cases/auth/register.usecase";
+import { LoginUseCase } from "@core/use-cases/auth/login.usecase";
 import { JwtService } from "@infrastructure/services/jwt.service";
 import { PrismaRefreshTokenRepository } from "@infrastructure/repositories/prisma-refresh-token.repository";
-import { RefreshUseCase } from "@core/use-cases/refresh.usecase";
+import { RefreshUseCase } from "@core/use-cases/auth/refresh.usecase";
 import { PrismaTransactionPort } from "@infrastructure/database/prisma-transaction-port";
+import { LogoutUseCase } from "@core/use-cases/auth/logout.usecase";
 function authServiceDecorator(fastify: FastifyInstance): void {
     const userRepo = new PrismaUserRepository(fastify.prisma);
     const passwordService = new PasswordService();
@@ -36,9 +37,16 @@ function authServiceDecorator(fastify: FastifyInstance): void {
 
     const refreshUseCase = new RefreshUseCase(transactionPort, jwtService);
 
+    const logoutUseCase = new LogoutUseCase(transactionPort, jwtService);
+
     fastify.decorate(
         "authService",
-        new AuthService(registerUseCase, loginUseCase, refreshUseCase),
+        new AuthService(
+            registerUseCase,
+            loginUseCase,
+            refreshUseCase,
+            logoutUseCase,
+        ),
     );
 }
 

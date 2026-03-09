@@ -1,4 +1,4 @@
-import type { CleanupRefreshTokensUseCase } from "@core/use-cases/cleanup-refresh-tokens.usecase.ts";
+import type { CleanupRefreshTokensUseCase } from "@core/use-cases/auth/cleanup-refresh-tokens.usecase.ts";
 
 export interface RefreshTokenCleanupJobInput {
     gracePeriodHours: number;

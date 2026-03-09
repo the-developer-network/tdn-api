@@ -1,4 +1,4 @@
-import { CleanupRefreshTokensUseCase } from "@core/use-cases/cleanup-refresh-tokens.usecase.ts";
+import { CleanupRefreshTokensUseCase } from "@core/use-cases/auth/cleanup-refresh-tokens.usecase.ts";
 import { RefreshTokenCleanupJob } from "@infrastructure/jobs/refresh-token-cleanup.job";
 import { RefreshTokenCleanupScheduler } from "@infrastructure/jobs/refresh-token-cleanup.scheduler";
 import { PrismaRefreshTokenRepository } from "@infrastructure/repositories/prisma-refresh-token.repository";
@@ -28,10 +28,35 @@ function refreshTokenCleanupPlugin(fastify: FastifyInstance): void {
         fastify.log,
     );
 
-    refreshTokenCleanupScheduler.start();
+    fastify.addHook("onReady", () => {
+        refreshTokenCleanupScheduler.start();
+
+        fastify.log.info(
+            {
+                context: "SystemScheduler",
+                jobName: "RefreshTokenCleanup",
+                status: "Started",
+                config: {
+                    cronExpression: fastify.config.REFRESH_TOKEN_CLEANUP_CRON,
+                    gracePeriodHours:
+                        fastify.config.REFRESH_TOKEN_CLEANUP_GRACE_PERIOD_HOURS,
+                },
+            },
+            "Refresh token cleanup scheduler initialized and started successfully.",
+        );
+    });
 
     fastify.addHook("onClose", async () => {
         await refreshTokenCleanupScheduler.stop();
+
+        fastify.log.info(
+            {
+                context: "SystemScheduler",
+                jobName: "RefreshTokenCleanup",
+                status: "Stopped",
+            },
+            "Refresh token cleanup scheduler stopped safely.",
+        );
     });
 }
 

@@ -1,4 +1,4 @@
-import type { PrismaRefreshTokenRepository } from "@infrastructure/repositories/prisma-refresh-token.repository";
+import type { IRefreshTokenRepository } from "@core/repositories/refresh-token.repository";
 
 export interface CleanupRefreshTokensUseCaseInput {
     gracePeriodHours: number;
@@ -6,7 +6,7 @@ export interface CleanupRefreshTokensUseCaseInput {
 
 export class CleanupRefreshTokensUseCase {
     constructor(
-        private readonly refreshTokenRepository: PrismaRefreshTokenRepository,
+        private readonly refreshTokenRepository: IRefreshTokenRepository,
     ) {}
 
     async execute(input: CleanupRefreshTokensUseCaseInput): Promise<number> {

@@ -8,6 +8,7 @@ import {
     type RegisterResponse,
     type LoginResponse,
 } from "@typings/schemas/auth.schema";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 const authRoutes: FastifyPluginCallbackTypebox = (fastify, _opts, done) => {
     fastify.post(
@@ -120,6 +121,32 @@ const authRoutes: FastifyPluginCallbackTypebox = (fastify, _opts, done) => {
         },
     );
 
+    fastify.post(
+        "/logout",
+        async (request: FastifyRequest, reply: FastifyReply) => {
+            const rawCookie = request.cookies.refreshToken;
+
+            if (rawCookie) {
+                const unsignedCookie = request.unsignCookie(rawCookie);
+
+                if (unsignedCookie.valid && unsignedCookie.value) {
+                    await fastify.authService.logout({
+                        token: unsignedCookie.value,
+                    });
+                }
+            }
+
+            reply.clearCookie("refreshToken", {
+                path: "/",
+                httpOnly: true,
+                secure: fastify.config.NODE_ENV === "production",
+                sameSite: "strict",
+                signed: true,
+            });
+
+            reply.status(204).send();
+        },
+    );
     done();
 };
 
