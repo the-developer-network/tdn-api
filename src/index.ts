@@ -4,8 +4,10 @@ import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 // Plugins
 import envPlugin from "@plugins/env.plugin";
 import jwtPlugin from "@plugins/jwt.plugin";
-import cookiePlguin from "@plugins/cookie.plguin";
+import cookiePlguin from "@plugins/cookie.plugin";
 import rateLimitPlugin from "@plugins/rate-limit.plugin";
+import corsPlugin from "@plugins/cors.plugin";
+import helmetPlugin from "@plugins/helmet.plugin";
 
 // Custom Plugins
 import errorHandlerPlugin from "@plugins/custom/error-handler.plugin";
@@ -47,6 +49,8 @@ async function registerPlugins(): Promise<void> {
     server.register(cookiePlguin);
     server.register(jwtPlugin);
     server.register(rateLimitPlugin);
+    server.register(corsPlugin);
+    server.register(helmetPlugin);
 }
 
 /**

@@ -10,8 +10,15 @@
         "lint": "eslint \"src/**/*.ts\"",
         "lint:fix": "eslint \"src/**/*.ts\" --fix",
         "format": "prettier --write \"src/**/*.ts\"",
+        "format:check": "prettier --check \"src/**/*.ts\"",
         "prepare": "husky",
-        "test": "vitest"
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "test:unit": "vitest run tests/unit",
+        "test:unit:watch": "vitest tests/unit",
+        "test:integration": "vitest run tests/integration",
+        "test:e2e": "vitest run tests/e2e",
+        "test:coverage": "vitest run --coverage"
     },
     "keywords": [
         "tdn-api",
@@ -33,7 +40,9 @@
     "packageManager": "pnpm@10.30.1",
     "dependencies": {
         "@fastify/cookie": "^11.0.2",
+        "@fastify/cors": "^11.2.0",
         "@fastify/env": "^5.0.3",
+        "@fastify/helmet": "^13.0.2",
         "@fastify/jwt": "^10.0.0",
         "@fastify/rate-limit": "^10.3.0",
         "@fastify/type-provider-typebox": "^6.1.0",
@@ -50,6 +59,7 @@
         "@eslint/js": "^10.0.1",
         "@types/node": "^25.3.3",
         "@types/nodemailer": "^7.0.11",
+        "@vitest/coverage-v8": "4.0.18",
         "cross-env": "^10.1.0",
         "dotenv": "^17.3.1",
         "eslint": "^10.0.2",

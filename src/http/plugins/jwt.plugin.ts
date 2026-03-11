@@ -11,7 +11,12 @@ function jwtPlugin(fastify: FastifyInstance): void {
         },
     });
 
-    const jwtService = new JwtService(fastify);
+    const jwtService = new JwtService(
+        fastify,
+        fastify.config.ACCESS_TOKEN_EXPIRES_IN,
+        fastify.config.REFRESH_TOKEN_EXPIRES_IN,
+    );
+
     fastify.decorate("jwtService", jwtService);
 }
 

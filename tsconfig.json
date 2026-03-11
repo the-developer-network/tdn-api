@@ -3,7 +3,7 @@
         "target": "es2022",
         "module": "commonjs",
         "outDir": "./dist",
-        "rootDir": "./src",
+        "rootDir": "./",
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
@@ -17,12 +17,13 @@
             "@hooks/*": ["src/http/hooks/*"],
             "@decorators/*": ["src/http/decorators/*"],
             "@routes/*": ["src/http/routes/*"],
+            "@services/*": ["src/http/services/*"],
             "@typings/*": ["src/http/types/*"],
             "@generated/*": ["src/generated/*"],
             "@infrastructure/*": ["src/infrastructure/*"],
             "@core/*": ["src/core/*"]
         }
     },
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "tests/**/*"],
     "exclude": ["node_modules", "dist"]
 }

@@ -35,6 +35,14 @@ export class RefreshToken {
         return this.props.isRevoked;
     }
 
+    get createdAt(): Date {
+        return this.props.createdAt;
+    }
+
+    get updatedAt(): Date {
+        return this.props.updatedAt;
+    }
+
     public isExpired(): boolean {
         return new Date() > this.props.expiresAt;
     }

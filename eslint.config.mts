@@ -12,6 +12,8 @@ export default defineConfig([
             "coverage/**",
             "prisma/**",
             "prisma.config.ts",
+            "vitest.config.ts",
+            "tests/**/*",
         ],
     },
 
