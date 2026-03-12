@@ -47,21 +47,19 @@ export class AuthService {
     ) {}
 
     async register(input: RegisterInput): Promise<User> {
-        const user: User = await this.registerUseCase.execute(input);
-        return user;
+        return this.registerUseCase.execute(input);
     }
 
     async login(input: LoginInput): Promise<LoginOutput> {
-        const result = await this.loginUseCase.execute(input);
-        return result;
+        return this.loginUseCase.execute(input);
     }
 
     async refresh(input: RefreshInput): Promise<RefreshOutput> {
-        return await this.refreshUseCase.execute(input);
+        return this.refreshUseCase.execute(input);
     }
 
     async logout(input: LogoutInput): Promise<void> {
-        return await this.logoutUseCase.execute(input);
+        return this.logoutUseCase.execute(input);
     }
 
     async sendVerificationEmail(

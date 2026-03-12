@@ -1,6 +1,6 @@
 import { UnauthorizedError } from "@core/errors/unauthorized.error";
 import type { FastifyPluginCallbackTypebox } from "@fastify/type-provider-typebox";
-import { RateLimitPolicies } from "../constants/rate-limit.constants";
+import { RateLimitPolicies } from "../plugins/rate-limit.plugin";
 import {
     RegisterBodySchema,
     RegisterResponseSchema,
