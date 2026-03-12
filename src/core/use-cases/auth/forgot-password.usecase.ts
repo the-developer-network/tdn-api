@@ -1,6 +1,5 @@
 import type { IUserRepository } from "@core/repositories/user.repository";
 import type { IVerificationTokenRepository } from "@core/repositories/verification-token.repository";
-import type { AuthTokenPort } from "@core/ports/auth-token.port";
 import type { EmailPort } from "@core/ports/email.port";
 import { TokenType } from "@core/entities/verification-token.entity";
 import type { OtpPort } from "@core/ports/otp.port";
@@ -13,7 +12,6 @@ export class ForgotPasswordUseCase {
     constructor(
         private readonly userRepository: IUserRepository,
         private readonly verificationTokenRepository: IVerificationTokenRepository,
-        private readonly tokenPort: AuthTokenPort,
         private readonly emailPort: EmailPort,
         private readonly otpPort: OtpPort,
     ) {}

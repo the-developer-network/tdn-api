@@ -82,7 +82,6 @@ function authServiceDecorator(fastify: FastifyInstance): void {
     const forgotPasswordUseCase = new ForgotPasswordUseCase(
         userRepo,
         verificationTokenRepo,
-        jwtService,
         emailService,
         otpService,
     );

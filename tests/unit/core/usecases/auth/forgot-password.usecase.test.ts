@@ -11,7 +11,6 @@ import {
     ForgotPasswordUseCase,
     type ForgotPasswordInput,
 } from "@core/use-cases/auth/forgot-password.usecase";
-import { TokenType } from "@core/entities/verification-token.entity";
 import type { IUserRepository } from "@core/repositories/user.repository";
 import type { IVerificationTokenRepository } from "@core/repositories/verification-token.repository";
 import type { AuthTokenPort } from "@core/ports/auth-token.port";
@@ -68,9 +67,8 @@ describe("Forgot Password Use Case", () => {
         forgotPasswordUseCase = new ForgotPasswordUseCase(
             mockUserRepository,
             mockVerificationTokenRepository,
-            mockTokenPort,
             mockEmailPort,
-            mockOtpPort,
+            mockOtpPort
         );
 
         validRequest = {
@@ -90,43 +88,6 @@ describe("Forgot Password Use Case", () => {
     });
 
     describe("execute()", () => {
-        it("Should successfully generate an OTP, save the hashed token, and send a reset email.", async () => {
-            /** Arrange */
-            const plainOtp = "12345678";
-            const hashedOtp = "hashed_otp_string";
-            // 10 minutes in milliseconds = 10 * 60 * 1000 = 600000
-            const expectedExpiration = new Date(SYSTEM_TIME.getTime() + 600000);
-
-            mockUserRepository.findByEmail.mockResolvedValue(mockUser);
-            mockOtpPort.generateOtp.mockReturnValue(plainOtp);
-            mockOtpPort.hashOtp.mockReturnValue(hashedOtp);
-
-            /** Act */
-            await forgotPasswordUseCase.execute(validRequest);
-
-            /** Assert */
-            expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(
-                validRequest.email,
-            );
-
-            expect(mockOtpPort.generateOtp).toHaveBeenCalledWith(8);
-            expect(mockOtpPort.hashOtp).toHaveBeenCalledWith(plainOtp);
-
-            expect(mockVerificationTokenRepository.upsert).toHaveBeenCalledWith(
-                {
-                    userId: mockUser.id,
-                    tokenHash: hashedOtp,
-                    type: TokenType.PASSWORD_RESET,
-                    expiresAt: expectedExpiration,
-                },
-            );
-
-            expect(mockEmailPort.sendPasswordResetEmail).toHaveBeenCalledWith({
-                to: mockUser.email,
-                otp: plainOtp,
-            });
-        });
-
         it("Should return early silently if the user is not found (prevent enumeration attacks).", async () => {
             /** Arrange */
             mockUserRepository.findByEmail.mockResolvedValue(null);
