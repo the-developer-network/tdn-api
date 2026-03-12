@@ -10,4 +10,6 @@ export interface IUserRepository {
     findById(id: string): Promise<User | null>;
     update(user: User): Promise<void>;
     findByEmail(email: string): Promise<User | null>;
+    softDeleteById(id: string, deletedAt: Date): Promise<void>;
+    restoreById(id: string): Promise<void>;
 }

@@ -45,6 +45,7 @@ function errorHandlerPlugin(
                     status: error.statusCode,
                     detail: error.message,
                     instance: request.url,
+                    ...error,
                 };
                 return void reply.status(error.statusCode).send(errorResponse);
             }

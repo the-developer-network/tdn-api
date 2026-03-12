@@ -1,4 +1,7 @@
-import { InvalidCredentialsError } from "@core/errors/invalid-credentials.error";
+import {
+    InvalidCredentialsError,
+    AccountPendingDeletionError,
+} from "@core/errors/";
 import type { PasswordPort } from "@core/ports/password.port";
 import type { AuthTokenPort, UserPayload } from "@core/ports/auth-token.port";
 import type { IRefreshTokenRepository } from "@core/repositories/refresh-token.repository";
@@ -23,7 +26,7 @@ export class LoginUseCase {
     constructor(
         private readonly userRepository: IUserRepository,
         private readonly passwordService: PasswordPort,
-        private readonly tokenService: AuthTokenPort,
+        private readonly authTokenService: AuthTokenPort,
         private readonly refreshTokenRepository: IRefreshTokenRepository,
     ) {}
 
@@ -32,25 +35,25 @@ export class LoginUseCase {
             input.identifier,
         );
 
-        if (!user) {
-            throw new InvalidCredentialsError();
-        }
-
-        if (user.isDeleted()) {
-            throw new InvalidCredentialsError();
-        }
-
-        if (!user.hasPassword()) {
+        if (!user || !user.hasPassword()) {
             throw new InvalidCredentialsError();
         }
 
         const isPasswordValid = await this.passwordService.verify(
             input.password,
-            user.passwordHash as string,
+            user.passwordHash!,
         );
 
         if (!isPasswordValid) {
             throw new InvalidCredentialsError();
+        }
+
+        if (user.isDeleted()) {
+            const recoveryToken = this.authTokenService.generateRecoveryToken(
+                user.id,
+            );
+
+            throw new AccountPendingDeletionError(recoveryToken);
         }
 
         const payload: UserPayload = {
@@ -59,10 +62,10 @@ export class LoginUseCase {
         };
 
         const { accessToken, expiresAt, refreshToken, refreshTokenExpiresAt } =
-            this.tokenService.generate(payload);
+            this.authTokenService.generate(payload);
 
         const refreshTokenHash =
-            this.tokenService.hashRefreshSecret(refreshToken);
+            this.authTokenService.hashRefreshSecret(refreshToken);
 
         await this.refreshTokenRepository.create({
             tokenHash: refreshTokenHash,

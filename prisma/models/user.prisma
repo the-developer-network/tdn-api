@@ -1,0 +1,18 @@
+model User {
+  id String @id @default(uuid())
+
+  email    String @unique
+  username String @unique
+
+  password String? //Hashed password
+  isEmailVerified Boolean @default(false)
+
+  refreshTokens RefreshToken[]
+  verificationTokens VerificationToken[]
+
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("users")
+}

@@ -1,6 +1,6 @@
 import { UnauthorizedError } from "@core/errors/unauthorized.error";
 import type { FastifyPluginCallbackTypebox } from "@fastify/type-provider-typebox";
-import { RateLimitPolicies } from "../plugins/rate-limit.plugin";
+import { RateLimitPolicies } from "@plugins/rate-limit.plugin";
 import {
     RegisterBodySchema,
     RegisterResponseSchema,
@@ -22,12 +22,16 @@ import {
     ResetPasswordResponseSchema,
     type ResetPasswordBody,
     type ResetPasswordResponse,
+    type RecoverAccountBody,
+    RecoverAccountSchema,
 } from "@typings/schemas/auth.schema";
 import type { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 
 export function authRoutes(
     fastify: FastifyInstance,
 ): ReturnType<FastifyPluginCallbackTypebox> {
+    const authService = fastify.diContainer.cradle.authService;
+
     fastify.post<{ Body: RegisterBody; Reply: { 201: RegisterResponse } }>(
         "/register",
         {
@@ -38,7 +42,7 @@ export function authRoutes(
             },
         },
         async (request, reply) => {
-            const user = await fastify.authService.register({
+            const user = await authService.register({
                 email: request.body.email,
                 username: request.body.username,
                 password: request.body.password,
@@ -65,7 +69,7 @@ export function authRoutes(
             },
         },
         async (request, reply) => {
-            const response = await fastify.authService.login({
+            const response = await authService.login({
                 identifier: request.body.identifier,
                 password: request.body.password,
                 deviceIp: request.ip,
@@ -113,7 +117,7 @@ export function authRoutes(
                 throw new UnauthorizedError("Invalid session signature");
             }
 
-            const response = await fastify.authService.refresh({
+            const response = await authService.refresh({
                 token: unsignedCookie.value,
                 deviceIp: request.ip,
                 userAgent: request.headers["user-agent"] ?? "Unknown Device",
@@ -151,7 +155,7 @@ export function authRoutes(
                 const unsignedCookie = request.unsignCookie(rawCookie);
 
                 if (unsignedCookie.valid && unsignedCookie.value) {
-                    await fastify.authService.logout({
+                    await authService.logout({
                         token: unsignedCookie.value,
                     });
                 }
@@ -179,7 +183,7 @@ export function authRoutes(
             },
         },
         async (request, reply) => {
-            await fastify.authService.sendVerificationEmail({
+            await authService.sendVerificationEmail({
                 userId: request.user.id,
             });
 
@@ -204,7 +208,7 @@ export function authRoutes(
             },
         },
         async (request, reply) => {
-            await fastify.authService.verifyEmail({
+            await authService.verifyEmail({
                 userId: request.user.id,
                 otp: request.body.otp,
             });
@@ -223,7 +227,7 @@ export function authRoutes(
             schema: { body: ForgotPasswordBodySchema },
         },
         async (request, reply) => {
-            await fastify.authService.forgotPassword({
+            await authService.forgotPassword({
                 email: request.body.email,
             });
 
@@ -244,7 +248,7 @@ export function authRoutes(
             },
         },
         async (request, reply) => {
-            await fastify.authService.resetPassword({
+            await authService.resetPassword({
                 email: request.body.email,
                 otp: request.body.otp,
                 newPassword: request.body.newPassword,
@@ -252,6 +256,41 @@ export function authRoutes(
 
             return reply.status(200).send({
                 data: { reset: true },
+                meta: { timestamp: new Date().toISOString() },
+            });
+        },
+    );
+
+    fastify.post<{ Body: RecoverAccountBody; Reply: LoginResponse }>(
+        "/recover-account",
+        {
+            schema: {
+                body: RecoverAccountSchema,
+            },
+        },
+        async (request, reply) => {
+            const { recoveryToken } = request.body;
+            const response = await authService.recoveryAccount({
+                recoveryToken,
+            });
+
+            reply.setCookie("refreshToken", response.refreshToken, {
+                path: "/auth/refresh",
+                httpOnly: true,
+                secure: fastify.config.NODE_ENV === "production",
+                sameSite: "strict",
+                maxAge: fastify.config.REFRESH_TOKEN_EXPIRES_IN,
+            });
+
+            return reply.status(200).send({
+                data: {
+                    accessToken: response.accessToken,
+                    expiresAt: response.expiresAt,
+                    user: {
+                        id: response.user.id,
+                        username: response.user.username,
+                    },
+                },
                 meta: { timestamp: new Date().toISOString() },
             });
         },

@@ -10,14 +10,14 @@ export interface RegisterInput {
 
 export class RegisterUseCase {
     constructor(
-        private readonly createUser: CreateUserUseCase,
-        private readonly password: PasswordPort,
+        private readonly createUserUseCase: CreateUserUseCase,
+        private readonly passwordService: PasswordPort,
     ) {}
 
     async execute(input: RegisterInput): Promise<User> {
-        const passwordHash = await this.password.hash(input.password);
+        const passwordHash = await this.passwordService.hash(input.password);
 
-        return this.createUser.execute({
+        return this.createUserUseCase.execute({
             username: input.username,
             email: input.email,
             passwordHash,

@@ -14,7 +14,7 @@ export class VerifyEmailUseCase {
     constructor(
         private readonly userRepository: IUserRepository,
         private readonly verificationTokenRepository: IVerificationTokenRepository,
-        private readonly otpPort: OtpPort,
+        private readonly otpService: OtpPort,
     ) {}
 
     async execute(input: VerifyEmailInput): Promise<void> {
@@ -44,7 +44,7 @@ export class VerifyEmailUseCase {
             );
         }
 
-        const hashedInputOtp = this.otpPort.hashOtp(input.otp);
+        const hashedInputOtp = this.otpService.hashOtp(input.otp);
         if (hashedInputOtp !== verificationToken.tokenHash) {
             throw new BadRequestError("Invalid verification code.");
         }

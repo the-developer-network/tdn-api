@@ -7,8 +7,8 @@ export interface LogoutInput {
 
 export class LogoutUseCase {
     constructor(
-        private readonly transactionPort: TransactionPort,
-        private readonly tokenService: AuthTokenPort,
+        private readonly transactionService: TransactionPort,
+        private readonly authTokenService: AuthTokenPort,
     ) {}
 
     async execute(input: LogoutInput): Promise<void> {
@@ -16,8 +16,10 @@ export class LogoutUseCase {
             return;
         }
 
-        await this.transactionPort.runInTransaction(async (ctx) => {
-            const tokenHash = this.tokenService.hashRefreshSecret(input.token);
+        await this.transactionService.runInTransaction(async (ctx) => {
+            const tokenHash = this.authTokenService.hashRefreshSecret(
+                input.token,
+            );
 
             const currentToken =
                 await ctx.refreshTokenRepository.findByTokenHash(tokenHash);

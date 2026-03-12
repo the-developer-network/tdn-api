@@ -6,7 +6,7 @@ import type {
 import { PrismaUserRepository } from "../repositories/prisma-user.repository";
 import { PrismaRefreshTokenRepository } from "../repositories/prisma-refresh-token.repository";
 
-export class PrismaTransactionPort implements TransactionPort {
+export class TransactionService implements TransactionPort {
     constructor(private readonly prisma: PrismaClient) {}
 
     async runInTransaction<T>(

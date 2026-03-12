@@ -18,13 +18,13 @@ export interface RefreshOutput {
 
 export class RefreshUseCase {
     constructor(
-        private readonly transactionPort: TransactionPort,
-        private readonly tokenService: AuthTokenPort,
+        private readonly transactionService: TransactionPort,
+        private readonly authTokenService: AuthTokenPort,
     ) {}
 
     async execute(input: RefreshInput): Promise<RefreshOutput> {
-        return await this.transactionPort.runInTransaction(async (ctx) => {
-            const incomingTokenHash = this.tokenService.hashRefreshSecret(
+        return await this.transactionService.runInTransaction(async (ctx) => {
+            const incomingTokenHash = this.authTokenService.hashRefreshSecret(
                 input.token,
             );
             const currentToken =
@@ -68,10 +68,10 @@ export class RefreshUseCase {
                 expiresAt,
                 refreshToken,
                 refreshTokenExpiresAt,
-            } = this.tokenService.generate(payload);
+            } = this.authTokenService.generate(payload);
 
             const refreshTokenHash =
-                this.tokenService.hashRefreshSecret(refreshToken);
+                this.authTokenService.hashRefreshSecret(refreshToken);
 
             await ctx.refreshTokenRepository.create({
                 tokenHash: refreshTokenHash,

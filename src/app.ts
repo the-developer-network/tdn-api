@@ -9,10 +9,11 @@ import helmetPlugin from "@plugins/helmet.plugin";
 import errorHandlerPlugin from "@plugins/custom/error-handler.plugin";
 import prismaPlugin from "@plugins/custom/prisma.plugin";
 import refreshTokenCleanupPlugin from "@plugins/custom/refresh-token-cleanup.plugin";
-import userServiceDecorator from "@decorators/auth-service.decorator";
-import authenticateDecorator from "@decorators/authenticate.decorator";
 import healthRoutes from "@routes/health.route";
-import authRoutes from "@routes/auth.route";
+import authRoutes from "@routes/auth/auth.route";
+import dependencyInjectionPlugin from "@plugins/dependency-injection.plugin";
+import userRoute from "@routes/user.route";
+import authenticationDecorator from "@decorators/authenticate.decorator";
 
 /**
  * Main Application class responsible for orchestrating the Fastify server lifecycle.
@@ -54,7 +55,6 @@ export class App {
     private async registerPlugins(): Promise<void> {
         await this.server.register(envPlugin);
         await this.server.after(); // Essential to load config before subsequent plugins
-
         this.server.register(cookiePlguin);
         this.server.register(jwtPlugin);
         this.server.register(rateLimitPlugin);
@@ -71,6 +71,7 @@ export class App {
         this.server.register(errorHandlerPlugin);
         this.server.register(prismaPlugin);
         this.server.register(refreshTokenCleanupPlugin);
+        this.server.register(dependencyInjectionPlugin);
     }
 
     /**
@@ -79,8 +80,7 @@ export class App {
      * @private
      */
     private registerDecorators(): void {
-        this.server.register(userServiceDecorator);
-        this.server.register(authenticateDecorator);
+        this.server.register(authenticationDecorator);
     }
 
     /**
@@ -91,6 +91,7 @@ export class App {
     private registerRoutes(): void {
         this.server.register(healthRoutes, { prefix: "/api/v1" });
         this.server.register(authRoutes, { prefix: "/api/v1/auth" });
+        this.server.register(userRoute, { prefix: "/api/v1/users" });
     }
 
     /**

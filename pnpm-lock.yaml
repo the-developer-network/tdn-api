@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@fastify/awilix':
+        specifier: ^8.2.0
+        version: 8.2.0(awilix@13.0.3)(fastify@5.8.1)
       '@fastify/cookie':
         specifier: ^11.0.2
         version: 11.0.2
@@ -41,6 +44,9 @@ importers:
       argon2:
         specifier: ^0.44.0
         version: 0.44.0
+      awilix:
+        specifier: ^13.0.3
+        version: 13.0.3
       fastify:
         specifier: ^5.8.1
         version: 5.8.1
@@ -373,6 +379,12 @@ packages:
 
   '@fastify/ajv-compiler@4.0.5':
     resolution: {integrity: sha512-KoWKW+MhvfTRWL4qrhUwAAZoaChluo0m0vbiJlGMt2GXvL4LVPQEjt8kSpHI3IBq5Rez8fg+XeH3cneztq+C7A==}
+
+  '@fastify/awilix@8.2.0':
+    resolution: {integrity: sha512-U5yygVXY8WJajDXE3w3FdU839NXaYJusxjTrcJGB82oUOeYvDpawB749aSCEJ+XFGE8QpB42Qtr4FI4z0wfXBw==}
+    peerDependencies:
+      awilix: '>=9.0.0'
+      fastify: ^5.0.0
 
   '@fastify/cookie@11.0.2':
     resolution: {integrity: sha512-GWdwdGlgJxyvNv+QcKiGNevSspMQXncjMZ1J8IvuDQk0jvkzgWWZFNC2En3s+nHndZBGV8IbLwOI/sxCZw/mzA==}
@@ -886,6 +898,16 @@ packages:
 
   avvio@9.2.0:
     resolution: {integrity: sha512-2t/sy01ArdHHE0vRH5Hsay+RtCZt3dLPji7W7/MMOCEgze5b7SNDC4j5H6FnVgPkI1MTNFGzHdHrVXDDl7QSSQ==}
+
+  awilix-manager@6.3.0:
+    resolution: {integrity: sha512-O91A1XhDxyDpTlm5SKcTZ40ogSM71XyAreHMRpSUB4igXsEUmrvIO0hp3Wt13FRwu28mIZTty6o1n7D+RyKZnw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      awilix: '>=9.0.0'
+
+  awilix@13.0.3:
+    resolution: {integrity: sha512-WpgYKwf8XEPAxabPxBYGvxz1QZhyxoopQLLqpwwVqSQAvTO46yhld3M9nfMuV8t2FjsTO7DQblALD9w+C8iVKQ==}
+    engines: {node: '>=20.0.0'}
 
   aws-ssl-profiles@1.1.2:
     resolution: {integrity: sha512-NZKeq9AfyQvEeNlN0zSYAaWrmBffJh3IELMZfRpJVWgrpEbtEpnjvzqBPf+mxoI287JohRDoa+/nsfqqiZmF6g==}
@@ -2378,6 +2400,13 @@ snapshots:
       ajv-formats: 3.0.1(ajv@8.18.0)
       fast-uri: 3.1.0
 
+  '@fastify/awilix@8.2.0(awilix@13.0.3)(fastify@5.8.1)':
+    dependencies:
+      awilix: 13.0.3
+      awilix-manager: 6.3.0(awilix@13.0.3)
+      fastify: 5.8.1
+      fastify-plugin: 5.1.0
+
   '@fastify/cookie@11.0.2':
     dependencies:
       cookie: 1.1.1
@@ -2910,6 +2939,14 @@ snapshots:
     dependencies:
       '@fastify/error': 4.2.0
       fastq: 1.20.1
+
+  awilix-manager@6.3.0(awilix@13.0.3):
+    dependencies:
+      awilix: 13.0.3
+
+  awilix@13.0.3:
+    dependencies:
+      fast-glob: 3.3.3
 
   aws-ssl-profiles@1.1.2: {}
 

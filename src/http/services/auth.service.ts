@@ -12,6 +12,12 @@ import type {
     LogoutInput,
     LogoutUseCase,
 } from "@core/use-cases/auth/logout.usecase";
+
+import type {
+    RecoverAccountInput,
+    RecoverAccountUseCase,
+} from "@core/use-cases/auth/recover-account.usecase";
+
 import type {
     RefreshInput,
     RefreshOutput,
@@ -44,6 +50,7 @@ export class AuthService {
         private readonly verifyEmailUseCase: VerifyEmailUseCase,
         private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
         private readonly resetPasswordUseCase: ResetPasswordUseCase,
+        private readonly recoverAccountUseCase: RecoverAccountUseCase,
     ) {}
 
     async register(input: RegisterInput): Promise<User> {
@@ -78,5 +85,9 @@ export class AuthService {
 
     async resetPassword(input: ResetPasswordInput): Promise<void> {
         return this.resetPasswordUseCase.execute(input);
+    }
+
+    async recoveryAccount(input: RecoverAccountInput): Promise<LoginOutput> {
+        return this.recoverAccountUseCase.execute(input);
     }
 }

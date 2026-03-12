@@ -4,3 +4,4 @@ export * from "./unauthorized.error";
 export * from "./invalid-credentials.error";
 export * from "./too-many-requests.error";
 export * from "./bad-request.error";
+export * from "./account-pending-deletion.error";

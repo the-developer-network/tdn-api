@@ -72,4 +72,24 @@ export class PrismaUserRepository implements IUserRepository {
 
         return UserPrismaMapper.toDomainUser(rawUser);
     }
+
+    async softDeleteById(id: string, deletedAt: Date): Promise<void> {
+        await this.prisma.user.update({
+            where: {
+                id,
+            },
+            data: {
+                deletedAt,
+            },
+        });
+    }
+
+    async restoreById(id: string): Promise<void> {
+        await this.prisma.user.update({
+            where: { id },
+            data: {
+                deletedAt: null,
+            },
+        });
+    }
 }

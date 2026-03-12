@@ -10,8 +10,15 @@ export interface TokenResult {
     refreshTokenExpiresAt: Date;
 }
 
+export interface RecoveryPayload {
+    sub: string;
+    purpose: string;
+}
+
 export interface AuthTokenPort {
     generate(payload: UserPayload): TokenResult;
     verify(token: string): UserPayload;
     hashRefreshSecret(secret: string): string;
+    generateRecoveryToken(userId: string): string;
+    verifyRecoveryToken(token: string): RecoveryPayload;
 }

@@ -1,5 +1,5 @@
 import { describe, beforeEach, afterEach, it, expect, vi } from "vitest";
-import { PrismaTransactionPort } from "@infrastructure/database/prisma-transaction-port";
+import { TransactionService } from "@infrastructure/database/transaction.service";
 import { PrismaUserRepository } from "@infrastructure/repositories/prisma-user.repository";
 import { PrismaRefreshTokenRepository } from "@infrastructure/repositories/prisma-refresh-token.repository";
 import type { PrismaClient } from "@generated/prisma/client";
@@ -11,7 +11,7 @@ describe("Prisma Transaction Port", () => {
     /**
      * Arrange (Global)
      */
-    let transactionPort: PrismaTransactionPort;
+    let transactionPort: TransactionService;
     let mockPrismaClient: any;
     let mockTx: any;
 
@@ -24,7 +24,7 @@ describe("Prisma Transaction Port", () => {
             }),
         };
 
-        transactionPort = new PrismaTransactionPort(
+        transactionPort = new TransactionService(
             mockPrismaClient as unknown as PrismaClient,
         );
     });

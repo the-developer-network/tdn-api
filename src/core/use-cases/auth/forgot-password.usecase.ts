@@ -12,8 +12,8 @@ export class ForgotPasswordUseCase {
     constructor(
         private readonly userRepository: IUserRepository,
         private readonly verificationTokenRepository: IVerificationTokenRepository,
-        private readonly emailPort: EmailPort,
-        private readonly otpPort: OtpPort,
+        private readonly emailService: EmailPort,
+        private readonly otpService: OtpPort,
     ) {}
 
     async execute(input: ForgotPasswordInput): Promise<void> {
@@ -23,8 +23,8 @@ export class ForgotPasswordUseCase {
             return;
         }
 
-        const otp = this.otpPort.generateOtp(8);
-        const tokenHash = this.otpPort.hashOtp(otp);
+        const otp = this.otpService.generateOtp(8);
+        const tokenHash = this.otpService.hashOtp(otp);
         /**
          * It can then be done from the .env file.
          */
@@ -37,7 +37,7 @@ export class ForgotPasswordUseCase {
             expiresAt,
         });
 
-        await this.emailPort.sendPasswordResetEmail({
+        await this.emailService.sendPasswordResetEmail({
             to: user.email,
             otp,
         });

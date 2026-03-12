@@ -1,6 +1,6 @@
 import fastifyPlugin from "fastify-plugin";
 import fastifyJwt from "@fastify/jwt";
-import { JwtService } from "@infrastructure/services/jwt.service";
+import { AuthTokenService } from "@infrastructure/services/auth-token.service";
 import type { FastifyInstance } from "fastify";
 
 function jwtPlugin(fastify: FastifyInstance): void {
@@ -11,13 +11,13 @@ function jwtPlugin(fastify: FastifyInstance): void {
         },
     });
 
-    const jwtService = new JwtService(
-        fastify,
+    const authTokenService = new AuthTokenService(
+        fastify.jwt,
         fastify.config.ACCESS_TOKEN_EXPIRES_IN,
         fastify.config.REFRESH_TOKEN_EXPIRES_IN,
     );
 
-    fastify.decorate("jwtService", jwtService);
+    fastify.decorate("jwtService", authTokenService);
 }
 
 export default fastifyPlugin(jwtPlugin, {

@@ -84,3 +84,9 @@ export const ResetPasswordResponseSchema = ResponseSchema(
 );
 
 export type ResetPasswordResponse = Static<typeof ResetPasswordResponseSchema>;
+
+export const RecoverAccountSchema = Type.Object({
+    recoveryToken: Type.String(),
+});
+
+export type RecoverAccountBody = Static<typeof RecoverAccountSchema>;
