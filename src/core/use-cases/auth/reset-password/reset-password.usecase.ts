@@ -1,15 +1,10 @@
 import { BadRequestError } from "@core/errors/bad-request.error";
-import type { IUserRepository } from "@core/repositories/user.repository";
-import type { IVerificationTokenRepository } from "@core/repositories/verification-token.repository";
+import type { IUserRepository } from "@core/ports/repositories/user.repository";
+import type { IVerificationTokenRepository } from "@core/ports/repositories/verification-token.repository";
 import type { PasswordService } from "@infrastructure/services/password.service";
 import { TokenType } from "@core/entities/verification-token.entity";
-import type { OtpPort } from "@core/ports/otp.port";
-
-export interface ResetPasswordInput {
-    email: string;
-    otp: string;
-    newPassword: string;
-}
+import type { OtpPort } from "@core/ports/services/otp.port";
+import type { ResetPasswordInput } from "./reset-password.input";
 
 export class ResetPasswordUseCase {
     private readonly GENERIC_ERROR = "Invalid or expired reset credentials.";

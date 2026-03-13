@@ -1,15 +1,10 @@
 import { BadRequestError } from "@core/errors/bad-request.error";
 import { UnauthorizedError } from "@core/errors/unauthorized.error";
-import type { IUserRepository } from "@core/repositories/user.repository";
-import type { IVerificationTokenRepository } from "@core/repositories/verification-token.repository";
+import type { IUserRepository } from "@core/ports/repositories/user.repository";
+import type { IVerificationTokenRepository } from "@core/ports/repositories/verification-token.repository";
 import { TokenType } from "@core/entities/verification-token.entity";
-import { type OtpPort } from "@core/ports/otp.port";
-
-export interface VerifyEmailInput {
-    userId: string;
-    otp: string;
-}
-
+import { type OtpPort } from "@core/ports/services/otp.port";
+import type { VerifyEmailInput } from "./verify-email.input";
 export class VerifyEmailUseCase {
     constructor(
         private readonly userRepository: IUserRepository,

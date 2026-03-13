@@ -1,20 +1,11 @@
 import { UnauthorizedError } from "@core/errors/unauthorized.error";
-import type { AuthTokenPort, UserPayload } from "@core/ports/auth-token.port";
-import type { TransactionPort } from "@core/ports/transaction.port";
-
-export interface RefreshInput {
-    token: string;
-    deviceIp: string;
-    userAgent: string;
-}
-
-export interface RefreshOutput {
-    accessToken: string;
-    expiresAt: number;
-    refreshToken: string;
-    refreshTokenExpiresAt: Date;
-    user: UserPayload;
-}
+import type {
+    AuthTokenPort,
+    UserPayload,
+} from "@core/ports/services/auth-token.port";
+import type { TransactionPort } from "@core/ports/services/transaction.port";
+import type { RefreshInput } from "./refresh.input";
+import type { RefreshOutput } from "./refresh.output";
 
 export class RefreshUseCase {
     constructor(

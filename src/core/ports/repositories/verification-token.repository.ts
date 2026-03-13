@@ -1,7 +1,7 @@
 import type {
     VerificationToken,
     TokenType,
-} from "../entities/verification-token.entity";
+} from "../../entities/verification-token.entity";
 
 export interface IVerificationTokenRepository {
     upsert(data: {

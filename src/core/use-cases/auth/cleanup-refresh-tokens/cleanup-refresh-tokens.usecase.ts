@@ -1,8 +1,5 @@
-import type { IRefreshTokenRepository } from "@core/repositories/refresh-token.repository";
-
-export interface CleanupRefreshTokensUseCaseInput {
-    gracePeriodHours: number;
-}
+import type { IRefreshTokenRepository } from "@core/ports/repositories/refresh-token.repository";
+import type { CleanupRefreshTokensUseCaseInput } from "./cleanup-refresh-tokens-usecase.input";
 
 export class CleanupRefreshTokensUseCase {
     constructor(

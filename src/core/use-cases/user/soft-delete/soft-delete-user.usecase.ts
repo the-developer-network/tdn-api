@@ -1,26 +1,16 @@
 import { BadRequestError } from "@core/errors";
 import NotFoundError from "@core/errors/not-found.error";
-import type { EmailPort } from "@core/ports/email.port";
-import type { PasswordPort } from "@core/ports/password.port";
-import type { IUserRepository } from "@core/repositories/user.repository";
-
-/**
- *
- */
-export interface SoftDeleteUserUseCaseInput {
-    id: string;
-    password: string;
-}
-
-export interface SoftDeleteUserUseCaseOptions {
-    day: number;
-}
+import type { EmailPort } from "@core/ports/services/email.port";
+import type { PasswordPort } from "@core/ports/services/password.port";
+import type { IUserRepository } from "@core/ports/repositories/user.repository";
+import type { SoftDeleteUserUseCaseInput } from "./soft-delete-user-usecase.input";
+import type { SoftDeleteUserUseCaseOptions } from "./soft-delete-user-usecase.options";
 
 export default class SoftDeleteUserUseCase {
     constructor(
         private readonly userRepo: IUserRepository,
         private readonly passwordService: PasswordPort,
-        private readonly emailPort: EmailPort,
+        private readonly emailService: EmailPort,
         private readonly options: SoftDeleteUserUseCaseOptions,
     ) {}
     /**
@@ -45,7 +35,7 @@ export default class SoftDeleteUserUseCase {
 
         await this.userRepo.softDeleteById(input.id, deletedAt);
 
-        await this.emailPort.sendDeleteUserEmail({
+        await this.emailService.sendDeleteUserEmail({
             to: user.email,
         });
     }

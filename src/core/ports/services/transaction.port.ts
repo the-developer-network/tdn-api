@@ -1,5 +1,5 @@
-import type { IRefreshTokenRepository } from "@core/repositories/refresh-token.repository";
-import type { IUserRepository } from "@core/repositories/user.repository";
+import type { IRefreshTokenRepository } from "@core/ports/repositories/refresh-token.repository";
+import type { IUserRepository } from "@core/ports/repositories/user.repository";
 
 export interface TransactionContext {
     readonly userRepository: IUserRepository;

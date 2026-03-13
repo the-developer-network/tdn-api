@@ -2,25 +2,15 @@ import {
     InvalidCredentialsError,
     AccountPendingDeletionError,
 } from "@core/errors/";
-import type { PasswordPort } from "@core/ports/password.port";
-import type { AuthTokenPort, UserPayload } from "@core/ports/auth-token.port";
-import type { IRefreshTokenRepository } from "@core/repositories/refresh-token.repository";
-import type { IUserRepository } from "@core/repositories/user.repository";
-
-export interface LoginInput {
-    identifier: string;
-    password: string;
-    userAgent: string;
-    deviceIp: string;
-}
-
-export interface LoginOutput {
-    accessToken: string;
-    expiresAt: number;
-    refreshToken: string;
-    refreshTokenExpiresAt: Date;
-    user: UserPayload;
-}
+import type { PasswordPort } from "@core/ports/services/password.port";
+import type {
+    AuthTokenPort,
+    UserPayload,
+} from "@core/ports/services/auth-token.port";
+import type { IRefreshTokenRepository } from "@core/ports/repositories/refresh-token.repository";
+import type { IUserRepository } from "@core/ports/repositories/user.repository";
+import type { LoginInput } from "./login.input";
+import type { LoginOutput } from "./login.output";
 
 export class LoginUseCase {
     constructor(

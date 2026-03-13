@@ -1,9 +1,6 @@
-import type { AuthTokenPort } from "@core/ports/auth-token.port";
-import type { TransactionPort } from "@core/ports/transaction.port";
-
-export interface LogoutInput {
-    token: string;
-}
+import type { AuthTokenPort } from "@core/ports/services/auth-token.port";
+import type { TransactionPort } from "@core/ports/services/transaction.port";
+import type { LogoutInput } from "./logout.input";
 
 export class LogoutUseCase {
     constructor(

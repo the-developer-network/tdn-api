@@ -1,13 +1,10 @@
 import { UnauthorizedError } from "@core/errors/unauthorized.error";
-import type { EmailPort } from "@core/ports/email.port";
-import type { IUserRepository } from "@core/repositories/user.repository";
+import type { EmailPort } from "@core/ports/services/email.port";
+import type { IUserRepository } from "@core/ports/repositories/user.repository";
 import { TokenType } from "@core/entities/verification-token.entity";
-import type { IVerificationTokenRepository } from "@core/repositories/verification-token.repository";
-import type { OtpPort } from "@core/ports/otp.port";
-
-export interface SendVerificationEmailInput {
-    userId: string;
-}
+import type { IVerificationTokenRepository } from "@core/ports/repositories/verification-token.repository";
+import type { OtpPort } from "@core/ports/services/otp.port";
+import type { SendVerificationEmailInput } from "./send-verification-email.input";
 
 export class SendVerificationEmailUseCase {
     constructor(

@@ -1,14 +1,11 @@
-import type { IUserRepository } from "@core/repositories/user.repository";
+import type { IUserRepository } from "@core/ports/repositories/user.repository";
 import type {
     AuthTokenPort,
     RecoveryPayload,
-} from "@core/ports/auth-token.port";
+} from "@core/ports/services/auth-token.port";
 import { UnauthorizedError, BadRequestError } from "@core/errors";
-import { type LoginOutput } from "./login.usecase";
-
-export interface RecoverAccountInput {
-    recoveryToken: string;
-}
+import { type LoginOutput } from "../login/login.output";
+import type { RecoverAccountInput } from "./recover-account.input";
 
 export class RecoverAccountUseCase {
     constructor(

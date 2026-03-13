@@ -1,5 +1,5 @@
-import type { User } from "../../entities/user.entity";
-import type { IUserRepository } from "../../repositories/user.repository";
+import type { User } from "@core/entities/user.entity";
+import type { IUserRepository } from "@core/ports/repositories/user.repository";
 
 export class CreateUserUseCase {
     constructor(private readonly userRepository: IUserRepository) {}
