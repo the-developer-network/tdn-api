@@ -1,10 +1,10 @@
-import type UserService from "@services/user.service";
-import type AuthService from "@services/auth.service";
+import type AuthController from "@services/auth.controller";
+import type UserController from "@services/user.controller";
 
 declare module "@fastify/awilix" {
     interface Cradle {
-        userService: UserService;
-        authService: AuthService;
+        userController: UserController;
+        authController: AuthController;
     }
 }
 

@@ -1,4 +1,4 @@
-import { CleanupRefreshTokensUseCase } from "@core/use-cases/auth/cleanup-refresh-tokens.usecase";
+import { CleanupRefreshTokensUseCase } from "@core/use-cases/auth/cleanup-refresh-tokens/cleanup-refresh-tokens.usecase";
 import { RefreshTokenCleanupJob } from "@infrastructure/jobs/refresh-token-cleanup.job";
 import { RefreshTokenCleanupScheduler } from "@infrastructure/jobs/refresh-token-cleanup.scheduler";
 import { PrismaRefreshTokenRepository } from "@infrastructure/repositories/prisma-refresh-token.repository";

@@ -14,21 +14,21 @@ import { AuthTokenService } from "@infrastructure/services/auth-token.service";
 import { OtpService } from "@infrastructure/services/otp.service";
 
 // --- Use Cases Imports ---
-import SoftDeleteUserUseCase from "@core/use-cases/user/soft-delete-user.usecase";
-import { CreateUserUseCase } from "@core/use-cases/user/create-user.usecase";
-import { RegisterUseCase } from "@core/use-cases/auth/register.usecase";
-import { LoginUseCase } from "@core/use-cases/auth/login.usecase";
-import { RefreshUseCase } from "@core/use-cases/auth/refresh.usecase";
-import { LogoutUseCase } from "@core/use-cases/auth/logout.usecase";
-import { SendVerificationEmailUseCase } from "@core/use-cases/auth/send-verification-email.usecase";
-import { VerifyEmailUseCase } from "@core/use-cases/auth/verify-email.usecase";
-import { ForgotPasswordUseCase } from "@core/use-cases/auth/forgot-password.usecase";
-import { ResetPasswordUseCase } from "@core/use-cases/auth/reset-password.usecase";
-import { RecoverAccountUseCase } from "@core/use-cases/auth/recover-account.usecase";
+import SoftDeleteUserUseCase from "@core/use-cases/user/soft-delete/soft-delete-user.usecase";
+import { CreateUserUseCase } from "@core/use-cases/user/create-user/create-user.usecase";
+import { RegisterUseCase } from "@core/use-cases/auth/register/register.usecase";
+import { LoginUseCase } from "@core/use-cases/auth/login/login.usecase";
+import { RefreshUseCase } from "@core/use-cases/auth/refresh/refresh.usecase";
+import { LogoutUseCase } from "@core/use-cases/auth/logout/logout.usecase";
+import { SendVerificationEmailUseCase } from "@core/use-cases/auth/send-verification-email/send-verification-email.usecase";
+import { VerifyEmailUseCase } from "@core/use-cases/auth/verify-email/verify-email.usecase";
+import { ForgotPasswordUseCase } from "@core/use-cases/auth/forgot-password/forgot-password.usecase";
+import { ResetPasswordUseCase } from "@core/use-cases/auth/reset-password/reset-password.usecase";
+import { RecoverAccountUseCase } from "@core/use-cases/auth/recover-account/recover-account.usecase";
 
 // --- Ana Servisler (Facades) Imports ---
-import UserService from "@services/user.service";
-import { AuthService } from "@services/auth.service";
+import UserController from "@services/user.controller";
+import AuthController from "@services/auth.controller";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {
@@ -43,6 +43,7 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         logger: asValue(fastify.log),
         config: asValue(fastify.config),
         jwt: asValue(fastify.jwt),
+        fastify: asValue(fastify),
 
         userRepository: asClass(PrismaUserRepository).singleton(),
         refreshTokenRepository: asClass(
@@ -104,8 +105,8 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         resetPasswordUseCase: asClass(ResetPasswordUseCase).singleton(),
         recoverAccountUseCase: asClass(RecoverAccountUseCase).singleton(),
 
-        userService: asClass(UserService).singleton(),
-        authService: asClass(AuthService).singleton(),
+        userController: asClass(UserController).singleton(),
+        authController: asClass(AuthController).singleton(),
     });
 }
 
