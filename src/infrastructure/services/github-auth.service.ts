@@ -1,6 +1,7 @@
+import OAuthProviderError from "@core/errors/oauth-provider.error.ts";
 import type {
     GithubAuthPort,
-    OAuthGithubProfile,
+    GithubProfile,
 } from "@core/ports/services/github-auth.port";
 import axios from "axios";
 
@@ -15,6 +16,7 @@ export class GithubAuthService implements GithubAuthPort {
 
     getAuthorizationUrl(): string {
         const rootUrl = "https://github.com/login/oauth/authorize";
+
         const options = {
             client_id: this.config.clientId,
             redirect_uri: this.config.callbackUrl,
@@ -25,7 +27,7 @@ export class GithubAuthService implements GithubAuthPort {
         return `${rootUrl}?${qs.toString()}`;
     }
 
-    async getUserProfileByCode(code: string): Promise<OAuthGithubProfile> {
+    async getUserProfileByCode(code: string): Promise<GithubProfile> {
         const tokenResponse = await axios.post(
             "https://github.com/login/oauth/access_token",
             {
@@ -40,7 +42,7 @@ export class GithubAuthService implements GithubAuthPort {
         const accessToken = tokenResponse.data.access_token;
 
         if (!accessToken) {
-            throw new Error("");
+            throw new OAuthProviderError("Github profile fetch failed.");
         }
 
         const userResponse = await axios.get("https://api.github.com/user", {

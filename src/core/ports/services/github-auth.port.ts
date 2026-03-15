@@ -1,4 +1,4 @@
-export interface OAuthGithubProfile {
+export interface GithubProfile {
     providerAccountId: string;
     username: string;
     email: string;
@@ -6,5 +6,5 @@ export interface OAuthGithubProfile {
 
 export interface GithubAuthPort {
     getAuthorizationUrl(): string;
-    getUserProfileByCode(code: string): Promise<OAuthGithubProfile>;
+    getUserProfileByCode(code: string): Promise<GithubProfile>;
 }

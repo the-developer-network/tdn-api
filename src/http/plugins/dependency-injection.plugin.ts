@@ -32,6 +32,8 @@ import { RecoverAccountUseCase } from "@core/use-cases/auth/recover-account/reco
 import UserController from "@services/user.controller";
 import AuthController from "@services/auth.controller";
 import OAuthController from "@services/oauth.controller";
+import { GoogleAuthService } from "@infrastructure/services/google-auth.service";
+import { GoogleLoginUseCase } from "@core/use-cases/oauth/oauth-google/google.login.usecase";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {
@@ -91,6 +93,14 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
             });
         }).singleton(),
 
+        googleAuthService: asFunction((config) => {
+            return new GoogleAuthService({
+                clientId: config.GOOGLE_CLIENT_ID,
+                clientSecret: config.GOOGLE_CLIENT_SECRET,
+                callbackUrl: config.GOOGLE_CALLBACK_URL,
+            });
+        }).singleton(),
+
         softDeleteUserUseCase: asFunction(
             (userRepository, passwordService, emailService) => {
                 return new SoftDeleteUserUseCase(
@@ -116,6 +126,7 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         forgotPasswordUseCase: asClass(ForgotPasswordUseCase).singleton(),
         resetPasswordUseCase: asClass(ResetPasswordUseCase).singleton(),
         recoverAccountUseCase: asClass(RecoverAccountUseCase).singleton(),
+        googleLoginUseCase: asClass(GoogleLoginUseCase).singleton(),
 
         userController: asClass(UserController).singleton(),
         authController: asClass(AuthController).singleton(),

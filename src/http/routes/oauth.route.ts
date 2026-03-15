@@ -6,18 +6,26 @@ export function oauthRoutes(fastify: FastifyInstance): void {
 
     fastify.get(
         "/github",
-        {
-            config: { rateLimit: RateLimitPolicies.STANDARD },
-        },
+        { config: { rateLimit: RateLimitPolicies.STANDARD } },
         oauthController.github.bind(oauthController),
     );
 
     fastify.get<{ Querystring: { code?: string; error?: string } }>(
         "/github/callback",
-        {
-            config: { rateLimit: RateLimitPolicies.STRICT },
-        },
+        { config: { rateLimit: RateLimitPolicies.STRICT } },
         oauthController.githubCallback.bind(oauthController),
+    );
+
+    fastify.get(
+        "/google",
+        { config: { rateLimit: RateLimitPolicies.STANDARD } },
+        oauthController.google.bind(oauthController),
+    );
+
+    fastify.get<{ Querystring: { code?: string; error?: string } }>(
+        "/google/callback",
+        { config: { rateLimit: RateLimitPolicies.STRICT } },
+        oauthController.googleCallback.bind(oauthController),
     );
 }
 

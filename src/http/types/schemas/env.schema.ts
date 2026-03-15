@@ -28,9 +28,19 @@ export const EnvSchema = Type.Object({
     // --- Others ---
     CORS_ORIGIN: Type.String({ default: "http://localhost:3000" }),
 
+    // Github Configration
     GITHUB_CLIENT_ID: Type.String(),
     GITHUB_CLIENT_SECRET: Type.String(),
-    GITHUB_CALLBACK_URL: Type.String(),
+    GITHUB_CALLBACK_URL: Type.String({
+        default: "http://localhost:8080/api/v1/oauth/google/callback",
+    }),
+
+    //Google Configration
+    GOOGLE_CLIENT_ID: Type.String(),
+    GOOGLE_CLIENT_SECRET: Type.String(),
+    GOOGLE_CALLBACK_URL: Type.String({
+        default: "http://localhost:8080/api/v1/oauth/google/callback",
+    }),
 });
 
 export type EnvConfig = Static<typeof EnvSchema>;
