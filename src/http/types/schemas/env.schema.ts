@@ -14,8 +14,9 @@ export const EnvSchema = Type.Object({
     // --- Authentication & Tokens ---
     ACCESS_TOKEN_EXPIRES_IN: Type.Number({ default: 900 }),
     REFRESH_TOKEN_EXPIRES_IN: Type.Number({ default: 90000 }),
-    REFRESH_TOKEN_CLEANUP_CRON: Type.String({ default: "0 */6 * * *" }),
-    REFRESH_TOKEN_CLEANUP_GRACE_PERIOD_HOURS: Type.Number({ default: 24 }),
+
+    REFRESH_TOKEN_PURGE_CRON: Type.String({ default: "0 */6 * * *" }),
+    REFRESH_TOKEN_PURGE_GRACE_PERIOD_DAYS: Type.Number({ default: 24 }),
 
     // --- SMTP & Email Configuration ---
     SMTP_HOST: Type.String({ default: "sdasa" }),
@@ -41,6 +42,10 @@ export const EnvSchema = Type.Object({
     GOOGLE_CALLBACK_URL: Type.String({
         default: "http://localhost:8080/api/v1/oauth/google/callback",
     }),
+
+    // User Purge Cleanup Configration
+    USER_PURGE_GRACE_PERIOD_DAYS: Type.Number({ default: 30 }),
+    USER_PURGE_CRON: Type.String({ default: "0 3 * * *" }),
 });
 
 export type EnvConfig = Static<typeof EnvSchema>;

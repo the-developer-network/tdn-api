@@ -5,8 +5,15 @@ import { UserAlreadyExistsError } from "@core/errors";
 import { PrismaClientKnownRequestError } from "@generated/prisma/internal/prismaNamespace";
 import type { PrismaTransactionalClient } from "@infrastructure/database/prisma-client.type";
 
+export interface PrismaUserRepositoryOptions {
+    gracePeriodDays: number;
+}
+
 export class PrismaUserRepository implements IUserRepository {
-    constructor(private readonly prisma: PrismaTransactionalClient) {}
+    constructor(
+        private readonly prisma: PrismaTransactionalClient,
+        private readonly options: PrismaUserRepositoryOptions,
+    ) {}
 
     async create(data: {
         email: string;
@@ -105,13 +112,13 @@ export class PrismaUserRepository implements IUserRepository {
         return UserPrismaMapper.toDomainUser(rawUser);
     }
 
-    async softDeleteById(id: string, deletedAt: Date): Promise<void> {
+    async softDeleteById(id: string): Promise<void> {
         await this.prisma.user.update({
             where: {
                 id,
             },
             data: {
-                deletedAt,
+                deletedAt: new Date(),
             },
         });
     }
@@ -131,5 +138,21 @@ export class PrismaUserRepository implements IUserRepository {
         if (!user) return null;
 
         return UserPrismaMapper.toDomainUser(user);
+    }
+
+    async deleteExpiredUser(): Promise<number> {
+        const cutoffDate = new Date();
+
+        cutoffDate.setDate(cutoffDate.getDate() - this.options.gracePeriodDays);
+
+        const result = await this.prisma.user.deleteMany({
+            where: {
+                deletedAt: {
+                    not: null,
+                    lte: cutoffDate,
+                },
+            },
+        });
+        return result.count;
     }
 }

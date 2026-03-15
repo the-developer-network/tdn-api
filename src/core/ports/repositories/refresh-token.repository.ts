@@ -10,6 +10,6 @@ export interface IRefreshTokenRepository {
     }): Promise<RefreshToken>;
     findByTokenHash(tokenHash: string): Promise<RefreshToken | null>;
     update(refreshToken: RefreshToken): Promise<void>;
-    deleteInvalidBefore(date: Date): Promise<number>;
+    deleteExpiredTokens(): Promise<number>;
     revokeAllByUserId(userId: string): Promise<void>;
 }

@@ -8,14 +8,14 @@ import corsPlugin from "@plugins/cors.plugin";
 import helmetPlugin from "@plugins/helmet.plugin";
 import errorHandlerPlugin from "@plugins/custom/error-handler.plugin";
 import prismaPlugin from "@plugins/custom/prisma.plugin";
-import refreshTokenCleanupPlugin from "@plugins/custom/refresh-token-cleanup.plugin";
 import healthRoutes from "@routes/health.route";
 import authRoutes from "@routes/auth.routes";
 import dependencyInjectionPlugin from "@plugins/dependency-injection.plugin";
 import userRoutes from "@routes/user.routes";
 import authenticationDecorator from "@decorators/authenticate.decorator";
 import oauthRoutes from "@routes/oauth.route";
-
+import userPurgePlugin from "@plugins/custom/user-purge.plugin";
+import refreshTokenPurgePlugin from "@plugins/custom/refresh-token-purge.plugin";
 /**
  * Main Application class responsible for orchestrating the Fastify server lifecycle.
  * It handles plugin registration, decorator injection, and route mounting.
@@ -55,7 +55,7 @@ export class App {
      */
     private async registerPlugins(): Promise<void> {
         await this.server.register(envPlugin);
-        await this.server.after(); // Essential to load config before subsequent plugins
+        await this.server.after();
         this.server.register(cookiePlugin);
         this.server.register(jwtPlugin);
         this.server.register(rateLimitPlugin);
@@ -65,14 +65,18 @@ export class App {
 
     /**
      * Registers internal custom-built plugins.
-     * Handles global error logic, database connectivity, and cleanup jobs.
+     * Handles global error logic, database connectivity, and parge jobs.
      * @private
      */
-    private registerCustomPlugins(): void {
+    private async registerCustomPlugins(): Promise<void> {
         this.server.register(errorHandlerPlugin);
         this.server.register(prismaPlugin);
-        this.server.register(refreshTokenCleanupPlugin);
         this.server.register(dependencyInjectionPlugin);
+
+        await this.server.after();
+
+        this.server.register(refreshTokenPurgePlugin);
+        this.server.register(userPurgePlugin);
     }
 
     /**
@@ -105,7 +109,7 @@ export class App {
      */
     public async init(): Promise<FastifyInstance> {
         await this.registerPlugins();
-        this.registerCustomPlugins();
+        await this.registerCustomPlugins();
         this.registerDecorators();
         this.registerRoutes();
 

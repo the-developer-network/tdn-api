@@ -3,8 +3,15 @@ import type { RefreshToken } from "@core/entities/refresh-token.entity";
 import { RefreshTokenPrismaMapper } from "@infrastructure/mappers/refresh-token.prisma.mapper";
 import type { PrismaTransactionalClient } from "@infrastructure/database/prisma-client.type";
 
+export interface PrismaRefreshTokenRepositoryOptions {
+    gracePeriodDays: number;
+}
+
 export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
-    constructor(private readonly prisma: PrismaTransactionalClient) {}
+    constructor(
+        private readonly prisma: PrismaTransactionalClient,
+        private readonly options: PrismaRefreshTokenRepositoryOptions,
+    ) {}
 
     async create(data: {
         tokenHash: string;
@@ -41,30 +48,25 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
             where: { id: refreshToken.id },
             data: {
                 isRevoked: refreshToken.isRevoked,
-                updatedAt: new Date(),
             },
         });
     }
 
-    async deleteInvalidBefore(date: Date): Promise<number> {
+    async deleteExpiredTokens(): Promise<number> {
+        const now = new Date();
+        const threshold = new Date();
+
+        const days = this.options.gracePeriodDays;
+        threshold.setDate(threshold.getDate() - days);
+
         const result = await this.prisma.refreshToken.deleteMany({
             where: {
                 OR: [
-                    {
-                        isRevoked: true,
-                        updatedAt: {
-                            lt: date,
-                        },
-                    },
-                    {
-                        expiresAt: {
-                            lt: date,
-                        },
-                    },
+                    { expiresAt: { lte: now } },
+                    { createdAt: { lte: threshold } },
                 ],
             },
         });
-
         return result.count;
     }
 
@@ -76,7 +78,6 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
             },
             data: {
                 isRevoked: true,
-                updatedAt: new Date(),
             },
         });
     }

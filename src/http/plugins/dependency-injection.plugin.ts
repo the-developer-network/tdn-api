@@ -1,9 +1,9 @@
-import type { FastifyInstance } from "fastify";
 import { diContainer, fastifyAwilixPlugin } from "@fastify/awilix";
 import { asClass, asFunction, asValue, InjectionMode } from "awilix";
+import type { FastifyInstance } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 
-// --- Altyapı (Infrastructure) Imports ---
+// --- Infrastructure ---
 import { PrismaUserRepository } from "@infrastructure/repositories/prisma-user.repository";
 import { PrismaRefreshTokenRepository } from "@infrastructure/repositories/prisma-refresh-token.repository";
 import { PrismaVerificationTokenRepository } from "@infrastructure/repositories/prisma-verification-token.repository";
@@ -13,8 +13,9 @@ import { EmailService } from "@infrastructure/services/email.service";
 import { AuthTokenService } from "@infrastructure/services/auth-token.service";
 import { CryptoService } from "@infrastructure/services/crypto.service";
 import { GithubAuthService } from "@infrastructure/services/github-auth.service";
+import { GoogleAuthService } from "@infrastructure/services/google-auth.service";
 
-// --- Use Cases Imports ---
+// --- Use Cases ---
 import SoftDeleteUserUseCase from "@core/use-cases/user/soft-delete/soft-delete-user.usecase";
 import { CreateUserUseCase } from "@core/use-cases/user/create-user/create-user.usecase";
 import { RegisterUseCase } from "@core/use-cases/auth/register/register.usecase";
@@ -27,13 +28,20 @@ import { VerifyEmailUseCase } from "@core/use-cases/auth/verify-email/verify-ema
 import { ForgotPasswordUseCase } from "@core/use-cases/auth/forgot-password/forgot-password.usecase";
 import { ResetPasswordUseCase } from "@core/use-cases/auth/reset-password/reset-password.usecase";
 import { RecoverAccountUseCase } from "@core/use-cases/auth/recover-account/recover-account.usecase";
+import { GoogleLoginUseCase } from "@core/use-cases/oauth/oauth-google/google.login.usecase";
+import { PurgeExpiredUsersUseCase } from "@core/use-cases/user/purge-expired-users/purge-expired-users.use-case";
+import { PurgeExpiredTokensUseCase } from "@core/use-cases/auth/cleanup-refresh-tokens/purge-expires-tokens.use.case";
 
-// --- Ana Servisler (Facades) Imports ---
+// --- Jobs & Schedulers ---
+import UserPurgeJob from "@infrastructure/jobs/user-purge.job";
+import { RefreshTokenPurgeJob } from "@infrastructure/jobs/refresh-token-purge.job";
+import { UserPurgeScheduler } from "@infrastructure/jobs/user-purge.scheduler";
+import { RefreshTokenPurgeScheduler } from "@infrastructure/jobs/refresh-token-purge.scheduler";
+
+// --- Controllers ---
 import UserController from "@services/user.controller";
 import AuthController from "@services/auth.controller";
 import OAuthController from "@services/oauth.controller";
-import { GoogleAuthService } from "@infrastructure/services/google-auth.service";
-import { GoogleLoginUseCase } from "@core/use-cases/oauth/oauth-google/google.login.usecase";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {
@@ -44,22 +52,32 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     diContainer.options.injectionMode = InjectionMode.CLASSIC;
 
     diContainer.register({
+        // --- Core ---
         prisma: asValue(fastify.prisma),
         logger: asValue(fastify.log),
         config: asValue(fastify.config),
         jwt: asValue(fastify.jwt),
         fastify: asValue(fastify),
 
-        userRepository: asClass(PrismaUserRepository).singleton(),
-        refreshTokenRepository: asClass(
-            PrismaRefreshTokenRepository,
-        ).singleton(),
+        // --- Repositories ---
+        userRepository: asFunction((prisma, config) => {
+            return new PrismaUserRepository(prisma, {
+                gracePeriodDays: config.USER_PURGE_GRACE_PERIOD_DAYS,
+            });
+        }).singleton(),
+
+        refreshTokenRepository: asFunction((prisma, config) => {
+            return new PrismaRefreshTokenRepository(prisma, {
+                gracePeriodDays: config.REFRESH_TOKEN_PURGE_GRACE_PERIOD_DAYS,
+            });
+        }).singleton(),
+
         verificationTokenRepository: asClass(
             PrismaVerificationTokenRepository,
         ).singleton(),
 
+        // --- Services ---
         transactionService: asClass(TransactionService).singleton(),
-
         passwordService: asClass(PasswordService).singleton(),
         cryptoService: asClass(CryptoService).singleton(),
 
@@ -101,22 +119,13 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
             });
         }).singleton(),
 
-        softDeleteUserUseCase: asFunction(
-            (userRepository, passwordService, emailService) => {
-                return new SoftDeleteUserUseCase(
-                    userRepository,
-                    passwordService,
-                    emailService,
-                    { day: 30 },
-                );
-            },
-        ).singleton(),
+        // --- Use Cases ---
+        softDeleteUserUseCase: asClass(SoftDeleteUserUseCase).singleton(),
         createUserUseCase: asClass(CreateUserUseCase).singleton(),
-
-        // AUTH
         registerUseCase: asClass(RegisterUseCase).singleton(),
         loginUseCase: asClass(LoginUseCase).singleton(),
         githubLoginUseCase: asClass(GithubLoginUseCase).singleton(),
+        googleLoginUseCase: asClass(GoogleLoginUseCase).singleton(),
         refreshUseCase: asClass(RefreshUseCase).singleton(),
         logoutUseCase: asClass(LogoutUseCase).singleton(),
         sendVerificationEmailUseCase: asClass(
@@ -126,8 +135,35 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         forgotPasswordUseCase: asClass(ForgotPasswordUseCase).singleton(),
         resetPasswordUseCase: asClass(ResetPasswordUseCase).singleton(),
         recoverAccountUseCase: asClass(RecoverAccountUseCase).singleton(),
-        googleLoginUseCase: asClass(GoogleLoginUseCase).singleton(),
+        purgeExpiredUsersUseCase: asClass(PurgeExpiredUsersUseCase).singleton(),
+        purgeExpiredTokensUseCase: asClass(
+            PurgeExpiredTokensUseCase,
+        ).singleton(),
 
+        // --- Jobs ---
+        userPurgeJob: asClass(UserPurgeJob).singleton(),
+        refreshTokenPurgeJob: asClass(RefreshTokenPurgeJob).singleton(),
+
+        // --- Schedulers ---
+        userPurgeScheduler: asFunction((userPurgeJob, config, logger) => {
+            return new UserPurgeScheduler(
+                userPurgeJob,
+                { cronExpression: config.USER_PURGE_CRON },
+                logger,
+            );
+        }).singleton(),
+
+        refreshTokenPurgeScheduler: asFunction(
+            (refreshTokenPurgeJob, config, logger) => {
+                return new RefreshTokenPurgeScheduler(
+                    refreshTokenPurgeJob,
+                    { cronExpression: config.REFRESH_TOKEN_PURGE_CRON },
+                    logger,
+                );
+            },
+        ).singleton(),
+
+        // --- Controllers ---
         userController: asClass(UserController).singleton(),
         authController: asClass(AuthController).singleton(),
         oauthController: asClass(OAuthController).singleton(),
@@ -136,5 +172,5 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
 
 export default fastifyPlugin(dependencyInjectionPlugin, {
     name: "di-plugin",
-    dependencies: ["prisma-plugin"],
+    dependencies: ["prisma-plugin", "env-plugin"],
 });
