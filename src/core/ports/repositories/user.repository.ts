@@ -86,4 +86,21 @@ export interface IUserRepository {
      * @returns The count of successfully purged records.
      */
     deleteExpiredUser(): Promise<number>;
+    /**
+     * Retrieves only the hashed password of a specific user by their ID.
+     * This method is optimized to fetch only the sensitive credential field.
+     *
+     * @param id - The unique identifier of the user.
+     * @returns The hashed password string, or null if the user does not exist.
+     */
+    findPasswordById(id: string): Promise<string | null>;
+    /**
+     * Directly updates the hashed password for a specific user in the persistence layer.
+     * This operation is optimized for credential rotation (change/reset) to ensure
+     * security-sensitive fields are updated without affecting other profile data.
+     *
+     * @param id - The unique identifier (UUID) of the user.
+     * @param hashedNewPassword - The newly generated and securely hashed password string.
+     */
+    updatePassword(id: string, hashedNewPassword: string): Promise<void>;
 }

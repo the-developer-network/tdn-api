@@ -1,14 +1,22 @@
-import type { SoftDeleteUserUseCaseInput } from "@core/use-cases/user/soft-delete/soft-delete-user-usecase.input";
-import { SoftDeleteUserSchema } from "@typings/schemas/user/solft-delete.schema";
+import {
+    type ChangePasswordBody,
+    ChangePasswordSchema,
+} from "@typings/schemas/user/change-password.schema";
+import {
+    type SoftDeleteUserBody,
+    SoftDeleteUserSchema,
+} from "@typings/schemas/user/solft-delete.schema";
 import type { FastifyInstance } from "fastify";
 
 function userRoutes(fastify: FastifyInstance): void {
     const userController = fastify.diContainer.cradle.userController;
 
-    fastify.delete<{ Body: SoftDeleteUserUseCaseInput }>(
+    fastify.delete<{ Body: SoftDeleteUserBody }>(
         "/me",
         {
-            schema: SoftDeleteUserSchema,
+            schema: {
+                body: SoftDeleteUserSchema,
+            },
             onRequest: [fastify.authenticate],
         },
         userController.softDelete.bind(userController),
@@ -18,6 +26,17 @@ function userRoutes(fastify: FastifyInstance): void {
         "/me",
         { onRequest: [fastify.authenticate] },
         userController.getMe.bind(userController),
+    );
+
+    fastify.patch<{ Body: ChangePasswordBody }>(
+        "/me/password",
+        {
+            schema: {
+                body: ChangePasswordSchema,
+            },
+            onRequest: [fastify.authenticate],
+        },
+        userController.changePasswordMe.bind(userController),
     );
 }
 

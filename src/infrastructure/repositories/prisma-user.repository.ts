@@ -156,4 +156,22 @@ export class PrismaUserRepository implements IUserRepository {
         });
         return result.count;
     }
+
+    async findPasswordById(id: string): Promise<string | null> {
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+            select: { password: true },
+        });
+
+        return user?.password ?? null;
+    }
+
+    async updatePassword(id: string, hashedNewPassword: string): Promise<void> {
+        await this.prisma.user.update({
+            where: { id },
+            data: {
+                password: hashedNewPassword,
+            },
+        });
+    }
 }
