@@ -1,11 +1,18 @@
 import type { Prisma, User as PrismaUser } from "@generated/prisma/client";
 import { User } from "@core/entities/user.entity";
+import type { UserProps } from "@core/entities/user.entity";
 
+/**
+ * Mapper class responsible for transforming User data across different layers.
+ * Handles conversions between Prisma database records, Domain entities, and safe Response objects.
+ */
 export default class UserPrismaMapper {
     /**
-     * Prisma record → Domain entity
+     * Maps a Prisma database record to a core Domain entity.
+     *
+     * @param dbUser - The user record retrieved from the Prisma database.
+     * @returns The instantiated User domain entity.
      */
-
     static toDomainUser(dbUser: PrismaUser): User {
         return new User({
             id: dbUser.id,
@@ -18,10 +25,13 @@ export default class UserPrismaMapper {
             updatedAt: dbUser.updatedAt,
         });
     }
-    /**
-     * Prisma record → Domain entity
-     */
 
+    /**
+     * Maps domain creation input to a Prisma-compatible creation object.
+     *
+     * @param input - The core user data required for creation.
+     * @returns The Prisma-formatted input object for creating a new user record.
+     */
     static toPrismaCreateUser(input: {
         email: string;
         username: string;
@@ -31,6 +41,26 @@ export default class UserPrismaMapper {
             email: input.email,
             username: input.username,
             password: input.passwordHash,
+        };
+    }
+
+    /**
+     * Maps a Domain entity to a safe public response object.
+     * Strips out sensitive information such as password hashes and soft-delete timestamps.
+     *
+     * @param user - The User domain entity.
+     * @returns A sanitized user object safe for external API responses.
+     */
+    static toResponse(
+        user: User,
+    ): Omit<UserProps, "passwordHash" | "deletedAt"> {
+        return {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            isEmailVerified: user.isEmailVerified,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
         };
     }
 }

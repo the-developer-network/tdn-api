@@ -13,6 +13,12 @@ function userRoutes(fastify: FastifyInstance): void {
         },
         userController.softDelete.bind(userController),
     );
+
+    fastify.get(
+        "/me",
+        { onRequest: [fastify.authenticate] },
+        userController.getMe.bind(userController),
+    );
 }
 
 export default userRoutes;

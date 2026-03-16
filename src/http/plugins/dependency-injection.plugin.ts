@@ -42,6 +42,8 @@ import { RefreshTokenPurgeScheduler } from "@infrastructure/jobs/refresh-token-p
 import UserController from "@services/user.controller";
 import AuthController from "@services/auth.controller";
 import OAuthController from "@services/oauth.controller";
+import { GetMeUserUseCase } from "@core/use-cases/user/get-me/get-me-user-.usecase";
+import { PrismaOAuthAccountRepository } from "@infrastructure/repositories/prisma-oauth-account.repository";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {
@@ -75,7 +77,9 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         verificationTokenRepository: asClass(
             PrismaVerificationTokenRepository,
         ).singleton(),
-
+        oauthAccountRepository: asClass(
+            PrismaOAuthAccountRepository,
+        ).singleton(),
         // --- Services ---
         transactionService: asClass(TransactionService).singleton(),
         passwordService: asClass(PasswordService).singleton(),
@@ -139,6 +143,7 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         purgeExpiredTokensUseCase: asClass(
             PurgeExpiredTokensUseCase,
         ).singleton(),
+        getMeUserUseCase: asClass(GetMeUserUseCase).singleton(),
 
         // --- Jobs ---
         userPurgeJob: asClass(UserPurgeJob).singleton(),
