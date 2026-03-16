@@ -5,9 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  hono: '>=4.12.7'
-  '@hono/node-server': '>=1.13.0'
-  lodash: '>=4.17.23'
+  hono: 4.12.7
+  '@hono/node-server': 1.19.10
+  lodash: 4.17.23
 
 importers:
 
@@ -441,11 +441,11 @@ packages:
     peerDependencies:
       typebox: ^1.0.13
 
-  '@hono/node-server@1.19.9':
-    resolution: {integrity: sha512-vHL6w3ecZsky+8P5MD+eFfaGTyCeOHUIFYMGpQGbrBTSmNNoxv0if69rEZ5giu36weC5saFuznL411gRX7bJDw==}
+  '@hono/node-server@1.19.10':
+    resolution: {integrity: sha512-hZ7nOssGqRgyV3FVVQdfi+U4q02uB23bpnYpdvNXkYTRRyWx84b7yf1ans+dnJ/7h41sGL3CeQTfO+ZGxuO+Iw==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
-      hono: '>=4.12.7'
+      hono: 4.12.7
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -1400,8 +1400,8 @@ packages:
   help-me@5.0.0:
     resolution: {integrity: sha512-7xgomUX6ADmcYzFik0HzAxh/73YlKR9bmFzf51CZwR+b6YtzU2m0u49hQCqV6SvlqIqsaxovfwdvbnsw3b/zpg==}
 
-  hono@4.12.8:
-    resolution: {integrity: sha512-VJCEvtrezO1IAR+kqEYnxUOoStaQPGrCmX3j4wDTNOcD1uRPFpGlwQUIW8niPuvHXaTUxeOUl5MMDGrl+tmO9A==}
+  hono@4.12.7:
+    resolution: {integrity: sha512-jq9l1DM0zVIvsm3lv9Nw9nlJnMNPOcAtsbsgiUhWcFzPE99Gvo6yRTlszSLLYacMeQ6quHD6hMfId8crVHvexw==}
     engines: {node: '>=16.9.0'}
 
   html-escaper@2.0.2:
@@ -2605,9 +2605,9 @@ snapshots:
     dependencies:
       typebox: 1.1.6
 
-  '@hono/node-server@1.19.9(hono@4.12.8)':
+  '@hono/node-server@1.19.10(hono@4.12.7)':
     dependencies:
-      hono: 4.12.8
+      hono: 4.12.7
 
   '@humanfs/core@0.19.1': {}
 
@@ -2705,13 +2705,13 @@ snapshots:
       '@electric-sql/pglite': 0.3.15
       '@electric-sql/pglite-socket': 0.0.20(@electric-sql/pglite@0.3.15)
       '@electric-sql/pglite-tools': 0.2.20(@electric-sql/pglite@0.3.15)
-      '@hono/node-server': 1.19.9(hono@4.12.8)
+      '@hono/node-server': 1.19.10(hono@4.12.7)
       '@mrleebo/prisma-ast': 0.13.1
       '@prisma/get-platform': 7.2.0
       '@prisma/query-plan-executor': 7.2.0
       foreground-child: 3.3.1
       get-port-please: 3.2.0
-      hono: 4.12.8
+      hono: 4.12.7
       http-status-codes: 2.3.0
       pathe: 2.0.3
       proper-lockfile: 4.1.2
@@ -3638,7 +3638,7 @@ snapshots:
 
   help-me@5.0.0: {}
 
-  hono@4.12.8: {}
+  hono@4.12.7: {}
 
   html-escaper@2.0.2: {}
 
