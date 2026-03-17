@@ -39,4 +39,12 @@ export interface IProfileRepository {
      * @returns A promise resolving to the Profile entity, or null if the profile does not exist.
      */
     findByUserId(userId: string): Promise<Profile | null>;
+    /**
+     *
+     */
+    updateBanner(userId: string, bannerUrl: string): Promise<void>;
+    /**
+     *
+     */
+    findBannerByUserId(userId: string): Promise<string | null>;
 }

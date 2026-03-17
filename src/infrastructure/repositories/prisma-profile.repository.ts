@@ -53,4 +53,21 @@ export class PrismaProfileRepository implements IProfileRepository {
 
         return profile?.avatarUrl ?? null;
     }
+
+    async updateBanner(userId: string, bannerUrl: string): Promise<void> {
+        await this.prisma.profile.update({
+            where: { userId },
+            data: {
+                bannerUrl,
+            },
+        });
+    }
+    async findBannerByUserId(userId: string): Promise<string | null> {
+        const profile = await this.prisma.profile.findUnique({
+            where: { userId },
+            select: { bannerUrl: true },
+        });
+
+        return profile?.bannerUrl ?? null;
+    }
 }

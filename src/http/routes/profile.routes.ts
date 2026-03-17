@@ -19,6 +19,17 @@ function profileRoutes(fastify: FastifyInstance): void {
         profileController.uploadAvatarMe.bind(profileController),
     );
 
+    fastify.patch(
+        "/me/banner",
+        {
+            onRequest: [fastify.authenticate],
+            config: {
+                rateLimit: RateLimitPolicies.STRICT,
+            },
+        },
+        profileController.uploadBannerMe.bind(profileController),
+    );
+
     fastify.patch<{ Body: UpdateProfileBody }>(
         "/me",
         {
