@@ -47,6 +47,10 @@ import { PrismaOAuthAccountRepository } from "@infrastructure/repositories/prism
 import { ChangePasswordUseCase } from "@core/use-cases/user/change-password/change-password-use.case";
 import { ChangeUsernameUseCase } from "@core/use-cases/user/change-username/change-username.usecase";
 import { ChangeEmailUseCase } from "@core/use-cases/user/change-email/change-email.usecase";
+import { ProfileController } from "@services/profile.controller";
+import { UpdateAvatarUseCase } from "@core/use-cases/profile/update-avatar.usecase";
+import { PrismaProfileRepository } from "@infrastructure/repositories/prisma-profile.repository";
+import { S3StorageService } from "@infrastructure/services/s3-storage.service";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {
@@ -83,11 +87,12 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         oauthAccountRepository: asClass(
             PrismaOAuthAccountRepository,
         ).singleton(),
+        profileRepository: asClass(PrismaProfileRepository).singleton(),
         // --- Services ---
         transactionService: asClass(TransactionService).singleton(),
         passwordService: asClass(PasswordService).singleton(),
         cryptoService: asClass(CryptoService).singleton(),
-
+        storageService: asClass(S3StorageService).singleton(),
         emailService: asFunction((config, logger) => {
             return new EmailService(
                 {
@@ -150,6 +155,7 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         changePasswordUseCase: asClass(ChangePasswordUseCase).singleton(),
         changeUsernameUseCase: asClass(ChangeUsernameUseCase).singleton(),
         changeEmailUseCase: asClass(ChangeEmailUseCase).singleton(),
+        updateAvatarUseCase: asClass(UpdateAvatarUseCase).singleton(),
         // --- Jobs ---
         userPurgeJob: asClass(UserPurgeJob).singleton(),
         refreshTokenPurgeJob: asClass(RefreshTokenPurgeJob).singleton(),
@@ -177,6 +183,7 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         userController: asClass(UserController).singleton(),
         authController: asClass(AuthController).singleton(),
         oauthController: asClass(OAuthController).singleton(),
+        profileController: asClass(ProfileController).singleton(),
     });
 }
 

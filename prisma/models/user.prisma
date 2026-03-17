@@ -12,6 +12,8 @@ model User {
 
   oauthAccounts OAuthAccount[]
 
+  profile Profile?
+  
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

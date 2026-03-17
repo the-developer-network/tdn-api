@@ -46,6 +46,19 @@ export const EnvSchema = Type.Object({
     // User Purge Cleanup Configration
     USER_PURGE_GRACE_PERIOD_DAYS: Type.Number({ default: 30 }),
     USER_PURGE_CRON: Type.String({ default: "0 3 * * *" }),
+
+    // R2 Configration
+    R2_BUCKET_NAME: Type.String({ default: "tdn" }),
+    R2_ACCESS_KEY_ID: Type.String({ default: "r2_access_key_id " }),
+    R2_SECRET_ACCESS_KEY: Type.String({ default: "r2_secret_Access_key" }),
+
+    R2_ENDPOINT: Type.String({
+        default:
+            "https://d84c58bc43f6c50f8799a4b8485f5b35.r2.cloudflarestorage.com",
+    }),
+    R2_PUBLIC_URL: Type.String({
+        default: "https://pub-2e6c13927ac24d548fd5b783e3cdaeb5.r2.dev",
+    }),
 });
 
 export type EnvConfig = Static<typeof EnvSchema>;

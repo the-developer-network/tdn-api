@@ -2,10 +2,9 @@ import type { User } from "@core/entities/user.entity";
 import type { IUserRepository } from "@core/ports/repositories/user.repository";
 import UserPrismaMapper from "../mappers/user-prisma.mapper";
 import { UserAlreadyExistsError } from "@core/errors";
-import { PrismaClientKnownRequestError } from "@generated/prisma/internal/prismaNamespace";
-import type { PrismaTransactionalClient } from "@infrastructure/database/prisma-client.type";
-import { Prisma } from "@generated/prisma/client";
 import { ConflictError } from "@core/errors/conflict.error";
+import { Prisma } from "@generated/prisma/client";
+import type { PrismaTransactionalClient } from "@infrastructure/database/prisma-client.type";
 
 export interface PrismaUserRepositoryOptions {
     gracePeriodDays: number;
@@ -24,12 +23,20 @@ export class PrismaUserRepository implements IUserRepository {
     }): Promise<User> {
         try {
             const user = await this.prisma.user.create({
-                data: UserPrismaMapper.toPrismaCreateUser(data),
+                data: {
+                    ...UserPrismaMapper.toPrismaCreateUser(data),
+
+                    profile: {
+                        create: {
+                            fullName: data.username,
+                        },
+                    },
+                },
             });
 
             return UserPrismaMapper.toDomainUser(user);
         } catch (error: unknown) {
-            if (error instanceof PrismaClientKnownRequestError) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === "P2002") throw new UserAlreadyExistsError();
             }
 
@@ -57,12 +64,17 @@ export class PrismaUserRepository implements IUserRepository {
                             providerAccountId: data.providerAccountId,
                         },
                     },
+                    profile: {
+                        create: {
+                            fullName: data.username,
+                        },
+                    },
                 },
             });
 
             return UserPrismaMapper.toDomainUser(user);
         } catch (error: unknown) {
-            if (error instanceof PrismaClientKnownRequestError) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === "P2002") throw new UserAlreadyExistsError();
             }
 
@@ -145,7 +157,6 @@ export class PrismaUserRepository implements IUserRepository {
 
     async deleteExpiredUser(): Promise<number> {
         const cutoffDate = new Date();
-
         cutoffDate.setDate(cutoffDate.getDate() - this.options.gracePeriodDays);
 
         const result = await this.prisma.user.deleteMany({
@@ -181,9 +192,7 @@ export class PrismaUserRepository implements IUserRepository {
         try {
             await this.prisma.user.update({
                 where: { id },
-                data: {
-                    username,
-                },
+                data: { username },
             });
         } catch (error: unknown) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -193,7 +202,6 @@ export class PrismaUserRepository implements IUserRepository {
                     );
                 }
             }
-
             throw error;
         }
     }
@@ -207,7 +215,7 @@ export class PrismaUserRepository implements IUserRepository {
                     isEmailVerified: false,
                 },
             });
-        } catch (error) {
+        } catch (error: unknown) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === "P2002") {
                     throw new ConflictError(
@@ -215,7 +223,6 @@ export class PrismaUserRepository implements IUserRepository {
                     );
                 }
             }
-
             throw error;
         }
     }
