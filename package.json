@@ -27,7 +27,7 @@
         "api"
     ],
     "author": "İrfan Sönmezışıklı",
-    "license": "MIT",
+    "license": "SEE LICENSE IN LICENSE",
     "prisma": {
         "schema": "prisma"
     },
