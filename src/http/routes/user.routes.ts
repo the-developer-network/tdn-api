@@ -1,4 +1,8 @@
 import {
+    type ChangeEmailBody,
+    ChangeEmailSchema,
+} from "@typings/schemas/user/change-email.schema";
+import {
     type ChangePasswordBody,
     ChangePasswordSchema,
 } from "@typings/schemas/user/change-password.schema";
@@ -52,6 +56,16 @@ function userRoutes(fastify: FastifyInstance): void {
             onRequest: [fastify.authenticate],
         },
         userController.changeUsernameMe.bind(userController),
+    );
+    fastify.patch<{ Body: ChangeEmailBody }>(
+        "/me/email",
+        {
+            schema: {
+                body: ChangeEmailSchema,
+            },
+            onRequest: [fastify.authenticate],
+        },
+        userController.changeEmailMe.bind(userController),
     );
 }
 

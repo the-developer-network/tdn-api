@@ -113,4 +113,13 @@ export interface IUserRepository {
      * @throws {ConflictError} If the provided username is already in use by another account.
      */
     updateUsername(id: string, username: string): Promise<void>;
+    /**
+     * Updates the email address of a specific user and marks the new email as unverified.
+     * This operation relies on the database to enforce uniqueness constraints.
+     *
+     * @param id - The unique identifier (UUID) of the user.
+     * @param newEmail - The new, desired email address string.
+     * @throws {ConflictError} If the provided email is already in use by another account.
+     */
+    updateEmail(id: string, newEmail: string): Promise<void>;
 }

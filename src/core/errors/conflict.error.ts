@@ -1,5 +1,7 @@
-export class ConflictError extends Error {
+import { CustomError } from "./custom.error";
+
+export class ConflictError extends CustomError {
     constructor(message: string) {
-        super(message);
+        super(message, 409);
     }
 }

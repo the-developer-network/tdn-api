@@ -45,6 +45,8 @@ import OAuthController from "@services/oauth.controller";
 import { GetMeUserUseCase } from "@core/use-cases/user/get-me/get-me-user-.usecase";
 import { PrismaOAuthAccountRepository } from "@infrastructure/repositories/prisma-oauth-account.repository";
 import { ChangePasswordUseCase } from "@core/use-cases/user/change-password/change-password-use.case";
+import { ChangeUsernameUseCase } from "@core/use-cases/user/change-username/change-username.usecase";
+import { ChangeEmailUseCase } from "@core/use-cases/user/change-email/change-email.usecase";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {
@@ -146,6 +148,8 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         ).singleton(),
         getMeUserUseCase: asClass(GetMeUserUseCase).singleton(),
         changePasswordUseCase: asClass(ChangePasswordUseCase).singleton(),
+        changeUsernameUseCase: asClass(ChangeUsernameUseCase).singleton(),
+        changeEmailUseCase: asClass(ChangeEmailUseCase).singleton(),
         // --- Jobs ---
         userPurgeJob: asClass(UserPurgeJob).singleton(),
         refreshTokenPurgeJob: asClass(RefreshTokenPurgeJob).singleton(),
