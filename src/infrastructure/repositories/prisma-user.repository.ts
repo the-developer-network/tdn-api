@@ -197,4 +197,26 @@ export class PrismaUserRepository implements IUserRepository {
             throw error;
         }
     }
+
+    async updateEmail(id: string, newEmail: string): Promise<void> {
+        try {
+            await this.prisma.user.update({
+                where: { id },
+                data: {
+                    email: newEmail,
+                    isEmailVerified: false,
+                },
+            });
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === "P2002") {
+                    throw new ConflictError(
+                        "This email address is already in use by another account.",
+                    );
+                }
+            }
+
+            throw error;
+        }
+    }
 }
