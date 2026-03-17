@@ -40,11 +40,18 @@ export interface IProfileRepository {
      */
     findByUserId(userId: string): Promise<Profile | null>;
     /**
-     *
+     * Updates the banner image URL for a specific user's profile.
+     * * @param userId - The unique identifier of the user.
+     * @param bannerUrl - The new storage URL of the banner image.
+     * @returns A promise that resolves when the update is complete.
      */
     updateBanner(userId: string, bannerUrl: string): Promise<void>;
+
     /**
-     *
+     * Retrieves only the banner URL for a specific user.
+     * Useful for cleanup operations before uploading a new banner.
+     * * @param userId - The unique identifier of the user.
+     * @returns A promise resolving to the banner URL string, or null if no banner is set.
      */
     findBannerByUserId(userId: string): Promise<string | null>;
 }
