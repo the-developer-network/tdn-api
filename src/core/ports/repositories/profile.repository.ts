@@ -13,7 +13,7 @@ export interface IProfileRepository {
      * @param avatarUrl - The new storage path/URL for the avatar, or null to revert to default.
      * @returns A promise that resolves once the update is successfully committed.
      */
-    updateAvatar(userId: string, avatarUrl: string | null): Promise<void>;
+    updateAvatar(userId: string, avatarUrl: string): Promise<void>;
 
     /**
      * Retrieves only the avatar URL for a specific user.
