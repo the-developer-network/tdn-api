@@ -12,7 +12,7 @@ export default class UserController {
         private readonly changePasswordUseCase: ChangePasswordUseCase,
     ) {}
 
-    async softDelete(
+    async softDeleteMe(
         request: FastifyRequest<{ Body: SoftDeleteUserBody }>,
         reply: FastifyReply,
     ): Promise<void> {

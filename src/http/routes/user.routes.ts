@@ -19,7 +19,7 @@ function userRoutes(fastify: FastifyInstance): void {
             },
             onRequest: [fastify.authenticate],
         },
-        userController.softDelete.bind(userController),
+        userController.softDeleteMe.bind(userController),
     );
 
     fastify.get(
