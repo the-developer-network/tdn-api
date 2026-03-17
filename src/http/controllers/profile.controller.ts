@@ -10,7 +10,13 @@ export class ProfileController {
         private readonly updateAvatarUseCase: UpdateAvatarUseCase,
         private readonly updateProfileUseCase: UpdateProfileUseCase,
         private readonly updateBannerUseCase: UpdateBannerUseCase,
+        private readonly publicUrl: string,
     ) {}
+
+    private getFullImageUrl(path: string): string {
+        const baseUrl = this.publicUrl;
+        return `${baseUrl}/${path}`;
+    }
 
     async updateProfileMe(
         request: FastifyRequest<{ Body: Omit<UpdateProfileInput, "userId"> }>,
@@ -47,7 +53,7 @@ export class ProfileController {
 
         reply.status(200).send({
             data: {
-                avatarUrl,
+                avatarUrl: this.getFullImageUrl(avatarUrl),
             },
             meta: {
                 timestamp: new Date().toISOString(),
@@ -75,7 +81,7 @@ export class ProfileController {
 
         reply.status(200).send({
             data: {
-                bannerUrl,
+                bannerUrl: this.getFullImageUrl(bannerUrl),
             },
             meta: {
                 timestamp: new Date().toISOString(),

@@ -187,7 +187,21 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         userController: asClass(UserController).singleton(),
         authController: asClass(AuthController).singleton(),
         oauthController: asClass(OAuthController).singleton(),
-        profileController: asClass(ProfileController).singleton(),
+        profileController: asFunction(
+            (
+                updateAvatarUseCase,
+                updateProfileUseCase,
+                updateBannerUseCase,
+                config,
+            ) => {
+                return new ProfileController(
+                    updateAvatarUseCase,
+                    updateProfileUseCase,
+                    updateBannerUseCase,
+                    config.R2_PUBLIC_URL,
+                );
+            },
+        ),
     });
 }
 

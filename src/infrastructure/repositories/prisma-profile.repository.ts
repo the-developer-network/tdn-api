@@ -33,14 +33,11 @@ export class PrismaProfileRepository implements IProfileRepository {
         });
     }
 
-    async updateAvatar(
-        userId: string,
-        avatarUrl: string | null,
-    ): Promise<void> {
+    async updateAvatar(userId: string, avatarUrl: string): Promise<void> {
         await this.prisma.profile.update({
             where: { userId },
             data: {
-                avatarUrl: avatarUrl ?? undefined,
+                avatarUrl: avatarUrl,
             },
         });
     }
