@@ -64,6 +64,7 @@ import { GetFollowingUseCase } from "@core/use-cases/follow-user/get-following/g
 import { WebSocketManager } from "@infrastructure/websocket/websocket-manager";
 import { FastifyRealtimeService } from "@infrastructure/services/fastify-realtime.service";
 import { PrismaNotificationRepository } from "@infrastructure/repositories/prisma-notification.repository";
+import { RedisService } from "@infrastructure/redis/redis.service";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {
@@ -233,6 +234,7 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
             },
         ),
         followUserController: asClass(FollowUserController).singleton(),
+        redisService: asClass(RedisService).singleton(),
         wsManager: asClass(WebSocketManager).singleton(),
         realtimeService: asClass(FastifyRealtimeService).singleton(),
     });

@@ -59,6 +59,8 @@ export const EnvSchema = Type.Object({
     R2_PUBLIC_URL: Type.String({
         default: "https://pub-2e6c13927ac24d548fd5b783e3cdaeb5.r2.dev",
     }),
+
+    REDIS_URL: Type.String(),
 });
 
 export type EnvConfig = Static<typeof EnvSchema>;
