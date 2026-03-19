@@ -17,6 +17,9 @@ model User {
   followers Follow[] @relation("UserFollowers")
   following Follow[] @relation("UserFollowing")
 
+  receivedNotifications Notification[] @relation("ReceivedNotifications")
+  issuedNotifications   Notification[] @relation("IssuedNotifications")
+
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

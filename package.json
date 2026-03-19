@@ -49,6 +49,7 @@
         "@fastify/multipart": "^9.4.0",
         "@fastify/rate-limit": "^10.3.0",
         "@fastify/type-provider-typebox": "^6.1.0",
+        "@fastify/websocket": "^11.2.0",
         "@prisma/adapter-pg": "^7.5.0",
         "@prisma/client": "^7.5.0",
         "@sinclair/typebox": "^0.34.48",

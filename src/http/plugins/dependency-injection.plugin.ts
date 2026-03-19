@@ -61,6 +61,9 @@ import { UnfollowUserUseCase } from "@core/use-cases/follow-user/unfollow-user/u
 import { FollowUserController } from "@services/follow-user.controller";
 import { GetFollowersUseCase } from "@core/use-cases/follow-user/get-followers/get-followers.usecase";
 import { GetFollowingUseCase } from "@core/use-cases/follow-user/get-following/get-following.usecase";
+import { WebSocketManager } from "@infrastructure/websocket/websocket-manager";
+import { FastifyRealtimeService } from "@infrastructure/services/fastify-realtime.service";
+import { PrismaNotificationRepository } from "@infrastructure/repositories/prisma-notification.repository";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {
@@ -99,6 +102,9 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         ).singleton(),
         profileRepository: asClass(PrismaProfileRepository).singleton(),
         followUserRepository: asClass(PrismaFollowUserRepository).singleton(),
+        notificationRepository: asClass(
+            PrismaNotificationRepository,
+        ).singleton(),
         // --- Services ---
         transactionService: asClass(TransactionService).singleton(),
         passwordService: asClass(PasswordService).singleton(),
@@ -227,6 +233,8 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
             },
         ),
         followUserController: asClass(FollowUserController).singleton(),
+        wsManager: asClass(WebSocketManager).singleton(),
+        realtimeService: asClass(FastifyRealtimeService).singleton(),
     });
 }
 

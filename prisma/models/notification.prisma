@@ -1,0 +1,25 @@
+enum NotificationType {
+  FOLLOW
+  NEW_POST
+}
+
+model Notification {
+  id String @id @default(uuid())
+
+  recipientId String
+  issuerId    String
+
+  type        NotificationType
+  referenceId String?
+
+  isRead Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  recipient User @relation("ReceivedNotifications", fields: [recipientId], references: [id], onDelete: Cascade)
+  issuer    User @relation("IssuedNotifications", fields: [issuerId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId])
+  @@index([createdAt])
+  @@map("notifications")
+}
