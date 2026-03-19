@@ -4,9 +4,13 @@ import type {
     Profile as PrismaProfile,
 } from "@generated/prisma/client";
 
-type PrismaProfileWithUser = PrismaProfile & {
+type PrismaProfileWithUserAndCounts = PrismaProfile & {
     user?: {
         username: string;
+        _count?: {
+            followers: number;
+            following: number;
+        };
     };
 };
 
@@ -20,7 +24,7 @@ export default class ProfilePrismaMapper {
      * * @param dbProfile - The profile record retrieved from the Prisma database.
      * @returns The instantiated Profile domain entity.
      */
-    static toDomain(dbProfile: PrismaProfileWithUser): Profile {
+    static toDomain(dbProfile: PrismaProfileWithUserAndCounts): Profile {
         return new Profile({
             id: dbProfile.id,
             userId: dbProfile.userId,
@@ -34,6 +38,8 @@ export default class ProfilePrismaMapper {
             socials: dbProfile.socials as Record<string, string>,
             createdAt: dbProfile.createdAt,
             updatedAt: dbProfile.updatedAt,
+            followersCount: dbProfile.user?._count?.followers || 0,
+            followingCount: dbProfile.user?._count?.following || 0,
         });
     }
 
@@ -69,6 +75,8 @@ export default class ProfilePrismaMapper {
         socials: Record<string, string>;
         createdAt: Date;
         updatedAt: Date;
+        followersCount: number;
+        followingCount: number;
     } {
         return {
             username: profile.username,
@@ -80,6 +88,8 @@ export default class ProfilePrismaMapper {
             socials: profile.socials,
             createdAt: profile.createdAt,
             updatedAt: profile.updatedAt,
+            followersCount: profile.followersCount,
+            followingCount: profile.followingCount,
         };
     }
 }

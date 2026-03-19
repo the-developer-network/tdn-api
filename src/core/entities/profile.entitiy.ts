@@ -14,6 +14,8 @@ export interface ProfileProps {
      * User
      */
     username: string;
+    followersCount: number;
+    followingCount: number;
 }
 
 export class Profile {
@@ -62,6 +64,15 @@ export class Profile {
     get username(): string {
         return this.props.username;
     }
+
+    get followersCount(): number {
+        return this.props.followersCount;
+    }
+
+    get followingCount(): number {
+        return this.props.followingCount;
+    }
+
     public update(
         data: Partial<
             Pick<ProfileProps, "fullName" | "bio" | "location" | "socials">

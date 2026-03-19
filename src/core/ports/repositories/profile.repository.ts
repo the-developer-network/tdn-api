@@ -67,4 +67,11 @@ export interface IProfileRepository {
      * @returns A promise resolving to an array of Profile entities.
      */
     search(query: string, limit?: number): Promise<Profile[]>;
+    /**
+     * Checks if a user is following another user.
+     * @param followerId - The ID of the user who might be following.
+     * @param followingId - The ID of the user being followed.
+     * @returns A boolean indicating if the follow relationship exists.
+     */
+    checkIsFollowing(followerId: string, followingId: string): Promise<boolean>;
 }

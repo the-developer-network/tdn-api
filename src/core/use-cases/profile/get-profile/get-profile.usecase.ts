@@ -5,6 +5,7 @@ import type { Profile } from "@core/entities/profile.entitiy";
 export interface GetProfileResult {
     profile: Profile;
     isMe: boolean;
+    isFollowing: boolean;
 }
 
 export class GetProfileUseCase {
@@ -20,9 +21,18 @@ export class GetProfileUseCase {
 
         const isMe = currentUserId ? profile.userId === currentUserId : false;
 
+        let isFollowing = false;
+        if (currentUserId && !isMe) {
+            isFollowing = await this.profileRepository.checkIsFollowing(
+                currentUserId,
+                profile.userId,
+            );
+        }
+
         return {
             profile,
             isMe,
+            isFollowing,
         };
     }
 }

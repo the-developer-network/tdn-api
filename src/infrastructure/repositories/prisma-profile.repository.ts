@@ -77,7 +77,16 @@ export class PrismaProfileRepository implements IProfileRepository {
                 },
             },
             include: {
-                user: true,
+                user: {
+                    include: {
+                        _count: {
+                            select: {
+                                followers: true,
+                                following: true,
+                            },
+                        },
+                    },
+                },
             },
         });
 
@@ -115,5 +124,21 @@ export class PrismaProfileRepository implements IProfileRepository {
         return dbProfiles.map((dbProfile) =>
             ProfilePrismaMapper.toDomain(dbProfile),
         );
+    }
+
+    async checkIsFollowing(
+        followerId: string,
+        followingId: string,
+    ): Promise<boolean> {
+        const follow = await this.prisma.follow.findUnique({
+            where: {
+                followerId_followingId: {
+                    followerId,
+                    followingId,
+                },
+            },
+        });
+
+        return follow !== null;
     }
 }

@@ -1,20 +1,20 @@
 model Profile {
-    id String @id @default(uuid())
+  id String @id @default(uuid())
 
-    userId String @unique
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    fullName String
-    bio String?
-    location String?
+  fullName String
+  bio      String?
+  location String?
 
-    avatarUrl String @default("avatars/default_profile.png")
-    bannerUrl String @default("banners/default_banner.jpg")
+  avatarUrl String @default("avatars/default_profile.png")
+  bannerUrl String @default("banners/default_banner.jpg")
 
-    socials Json? 
+  socials Json?
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@map("profiles")
+  @@map("profiles")
 }

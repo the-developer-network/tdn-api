@@ -4,16 +4,19 @@ model User {
   email    String @unique
   username String @unique
 
-  password String? //Hashed password
+  password        String? //Hashed password
   isEmailVerified Boolean @default(false)
 
-  refreshTokens RefreshToken[]
+  refreshTokens      RefreshToken[]
   verificationTokens VerificationToken[]
 
   oauthAccounts OAuthAccount[]
 
   profile Profile?
-  
+
+  followers Follow[] @relation("UserFollowers")
+  following Follow[] @relation("UserFollowing")
+
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
