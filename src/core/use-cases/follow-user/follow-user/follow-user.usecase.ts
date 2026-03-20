@@ -2,14 +2,14 @@ import { BadRequestError } from "@core/errors";
 import type { IFollowRepository } from "@core/ports/repositories/follow.repository";
 import {
     NotificationType,
-    type INotificationRepository,
+    type NotificationRepository,
 } from "@core/ports/repositories/notification.repository";
 import type { RealtimePort } from "@core/ports/services/realtime.port";
 
 export class FollowUserUseCase {
     constructor(
         private readonly followUserRepository: IFollowRepository,
-        private readonly notificationRepository: INotificationRepository,
+        private readonly notificationRepository: NotificationRepository,
         private readonly realtimeService: RealtimePort,
     ) {}
 
