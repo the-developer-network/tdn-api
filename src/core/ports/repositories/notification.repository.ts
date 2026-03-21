@@ -33,4 +33,5 @@ export interface INotificationRepository {
     ): Promise<GetNotificationOutput[]>;
     countByUserId(userId: string): Promise<number>;
     markAllAsRead(userId: string): Promise<void>;
+    deleteExpiredNotifications(cutOffDate: Date): Promise<number>;
 }

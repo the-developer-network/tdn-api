@@ -22,6 +22,7 @@ import followRoutes from "@routes/follow.routes";
 import websocketPlugin from "./http/plugins/websocket.plugin";
 import realtimeRoutes from "@routes/realtime.routes";
 import notificationRoutes from "@routes/notification.routes";
+import notificationPurgePlugin from "@plugins/custom/notification-purge.plugin";
 /**
  * Main Application class responsible for orchestrating the Fastify server lifecycle.
  * It handles plugin registration, decorator injection, and route mounting.
@@ -85,6 +86,7 @@ export class App {
 
         this.server.register(refreshTokenPurgePlugin);
         this.server.register(userPurgePlugin);
+        this.server.register(notificationPurgePlugin);
     }
 
     /**

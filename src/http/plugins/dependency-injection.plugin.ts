@@ -33,10 +33,10 @@ import { PurgeExpiredUsersUseCase } from "@core/use-cases/user/purge-expired-use
 import { PurgeExpiredTokensUseCase } from "@core/use-cases/auth/cleanup-refresh-tokens/purge-expires-tokens.use.case";
 
 // --- Jobs & Schedulers ---
-import UserPurgeJob from "@infrastructure/jobs/user-purge.job";
-import { RefreshTokenPurgeJob } from "@infrastructure/jobs/refresh-token-purge.job";
-import { UserPurgeScheduler } from "@infrastructure/jobs/user-purge.scheduler";
-import { RefreshTokenPurgeScheduler } from "@infrastructure/jobs/refresh-token-purge.scheduler";
+import UserPurgeJob from "@infrastructure/jobs/user/user-purge.job";
+import { RefreshTokenPurgeJob } from "@infrastructure/jobs/refresh-token/refresh-token-purge.job";
+import { UserPurgeScheduler } from "@infrastructure/jobs/user/user-purge.scheduler";
+import { RefreshTokenPurgeScheduler } from "@infrastructure/jobs/refresh-token/refresh-token-purge.scheduler";
 
 // --- Controllers ---
 import UserController from "@services/user.controller";
@@ -65,9 +65,12 @@ import { WebSocketManager } from "@infrastructure/websocket/websocket-manager";
 import { FastifyRealtimeService } from "@infrastructure/services/fastify-realtime.service";
 import { PrismaNotificationRepository } from "@infrastructure/repositories/prisma-notification.repository";
 import { RedisService } from "@infrastructure/redis/redis.service";
-import { GetUserNotificatonUseCase } from "@core/use-cases/notification/get-user-notification.usecase";
+import { GetUserNotificatonUseCase } from "@core/use-cases/notification/get-user/get-user-notification.usecase";
 import NotificationController from "@services/notification.controller";
-import { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/mark-all-notifications-as-read.usecase";
+import { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/mark-all/mark-all-notifications-as-read.usecase";
+import NotificationPurgeJob from "@infrastructure/jobs/notification/notification-purge.job";
+import { NotificationPurgeScheduler } from "@infrastructure/jobs/notification/notification-purge.scheduler";
+import { PurgeExpiredNotificationsUseCase } from "@core/use-cases/notification/purge-expired/purge-expired-notifications.usecase";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {
@@ -188,12 +191,17 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         getUserNotificationsUseCase: asClass(
             GetUserNotificatonUseCase,
         ).singleton(),
-        // --- Jobs ---
-        userPurgeJob: asClass(UserPurgeJob).singleton(),
-        refreshTokenPurgeJob: asClass(RefreshTokenPurgeJob).singleton(),
         markAllReadUseCase: asClass(
             MarkAllNotificationsAsReadUseCase,
         ).singleton(),
+        purgeExpiredNotificationsUseCase: asClass(
+            PurgeExpiredNotificationsUseCase,
+        ).singleton(),
+
+        // --- Jobs ---
+        userPurgeJob: asClass(UserPurgeJob).singleton(),
+        refreshTokenPurgeJob: asClass(RefreshTokenPurgeJob).singleton(),
+        notificationPurgeJob: asClass(NotificationPurgeJob),
 
         // --- Schedulers ---
         userPurgeScheduler: asFunction((userPurgeJob, config, logger) => {
@@ -213,6 +221,20 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
                 );
             },
         ).singleton(),
+
+        notificationPurgeScheduler: asFunction(
+            (notificationPurgeJob, config, logger) => {
+                return new NotificationPurgeScheduler(
+                    notificationPurgeJob,
+                    {
+                        cronExpression: config.NOTIFICATION_PURGE_CRON,
+                        gracePeriodDays:
+                            config.NOTIFICATION_PURGE_GRACE_PERIOD_DAYS,
+                    },
+                    logger,
+                );
+            },
+        ),
 
         // --- Controllers ---
         userController: asClass(UserController).singleton(),

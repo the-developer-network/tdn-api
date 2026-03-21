@@ -1,6 +1,6 @@
 import type {
     GetNotificationOutput,
-    NotificationRepository,
+    INotificationRepository,
 } from "@core/ports/repositories/notification.repository";
 
 export interface GetNotificationsInput {
@@ -18,7 +18,7 @@ export interface GetNotificationsOutput {
 
 export class GetUserNotificatonUseCase {
     public constructor(
-        private readonly notificationRepository: NotificationRepository,
+        private readonly notificationRepository: INotificationRepository,
     ) {}
 
     async execute(

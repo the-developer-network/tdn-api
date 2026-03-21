@@ -11,6 +11,8 @@ export class PrismaNotificationRepository implements INotificationRepository {
     constructor(private readonly prisma: PrismaTransactionalClient) {}
 
     async create(data: CreateNotificationInput): Promise<void> {
+        const notificationLimit = 100;
+
         const prismaType = data.type;
 
         await this.prisma.notification.create({
@@ -21,6 +23,23 @@ export class PrismaNotificationRepository implements INotificationRepository {
                 referenceId: data.referenceId,
             },
         });
+
+        const cutoffNotification = await this.prisma.notification.findMany({
+            where: { recipientId: data.recipientId },
+            orderBy: { createdAt: "desc" },
+            skip: notificationLimit,
+            take: 1,
+            select: { createdAt: true },
+        });
+
+        if (cutoffNotification.length > 0) {
+            await this.prisma.notification.deleteMany({
+                where: {
+                    recipientId: data.recipientId,
+                    createdAt: { lte: cutoffNotification[0].createdAt },
+                },
+            });
+        }
     }
 
     getUnreadCount(userId: string): Promise<number> {
@@ -77,5 +96,14 @@ export class PrismaNotificationRepository implements INotificationRepository {
                 isRead: true,
             },
         });
+    }
+
+    async deleteExpiredNotifications(cutoffDate: Date): Promise<number> {
+        const result = await this.prisma.notification.deleteMany({
+            where: {
+                createdAt: { lt: cutoffDate },
+            },
+        });
+        return result.count;
     }
 }

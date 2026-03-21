@@ -61,6 +61,8 @@ export const EnvSchema = Type.Object({
     }),
 
     REDIS_URL: Type.String(),
+    NOTIFICATION_PURGE_CRON: Type.String({ default: "0 3 * * *" }),
+    NOTIFICATION_PURGE_GRACE_PERIOD_DAYS: Type.Number({ default: 30 }),
 });
 
 export type EnvConfig = Static<typeof EnvSchema>;
