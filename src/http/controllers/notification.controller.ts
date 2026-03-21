@@ -1,10 +1,12 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { GetUserNotificatonUseCase } from "@core/use-cases/notification/get-user-notification.usecase";
 import type { GetNotificationsQuery } from "@typings/schemas/notification/get-notification.schema";
+import type { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/mark-all-notifications-as-read.usecase";
 
 export default class NotificationController {
     constructor(
         private readonly getUserNotificationsUseCase: GetUserNotificatonUseCase,
+        private readonly markAllReadUseCase: MarkAllNotificationsAsReadUseCase,
     ) {}
 
     async getNotifications(
@@ -29,6 +31,21 @@ export default class NotificationController {
                 total: response.total,
                 currentPage: response.currentPage,
                 totalPages: response.totalPages,
+            },
+        });
+    }
+
+    async markAllAsRead(
+        request: FastifyRequest,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const userId = request.user.id;
+
+        await this.markAllReadUseCase.execute(userId);
+
+        return reply.status(200).send({
+            meta: {
+                timestamp: new Date().toISOString(),
             },
         });
     }

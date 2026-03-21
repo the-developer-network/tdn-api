@@ -67,6 +67,7 @@ import { PrismaNotificationRepository } from "@infrastructure/repositories/prism
 import { RedisService } from "@infrastructure/redis/redis.service";
 import { GetUserNotificatonUseCase } from "@core/use-cases/notification/get-user-notification.usecase";
 import NotificationController from "@services/notification.controller";
+import { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/mark-all-notifications-as-read.usecase";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {
@@ -190,6 +191,9 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         // --- Jobs ---
         userPurgeJob: asClass(UserPurgeJob).singleton(),
         refreshTokenPurgeJob: asClass(RefreshTokenPurgeJob).singleton(),
+        markAllReadUseCase: asClass(
+            MarkAllNotificationsAsReadUseCase,
+        ).singleton(),
 
         // --- Schedulers ---
         userPurgeScheduler: asFunction((userPurgeJob, config, logger) => {

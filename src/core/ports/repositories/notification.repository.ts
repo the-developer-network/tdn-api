@@ -25,11 +25,12 @@ export interface GetNotificationOutput {
     isRead: boolean;
 }
 
-export interface NotificationRepository {
+export interface INotificationRepository {
     create(data: CreateNotificationInput): Promise<void>;
     getUnreadCount(userId: string): Promise<number>;
     findAllByUserId(
         input: FindNotificationsInput,
     ): Promise<GetNotificationOutput[]>;
     countByUserId(userId: string): Promise<number>;
+    markAllAsRead(userId: string): Promise<void>;
 }

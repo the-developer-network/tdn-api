@@ -18,4 +18,10 @@ export default function notificationRoutes(fastify: FastifyInstance): void {
         },
         notificationController.getNotifications.bind(notificationController),
     );
+
+    fastify.patch(
+        "/read-all",
+        { onRequest: [fastify.authenticate] },
+        notificationController.markAllAsRead.bind(notificationController),
+    );
 }
