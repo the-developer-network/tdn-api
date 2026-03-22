@@ -2,6 +2,10 @@ import {
     type CreatePostBody,
     createPostBodySchema,
 } from "@typings/schemas/post/create-post.schema";
+import {
+    getPostsQuerySchema,
+    type GetPostsQuery,
+} from "@typings/schemas/post/get-post.schema";
 import type { FastifyInstance } from "fastify";
 
 export function postRoutes(fastify: FastifyInstance): void {
@@ -23,5 +27,15 @@ export function postRoutes(fastify: FastifyInstance): void {
             onRequest: [fastify.authenticate],
         },
         postController.uploadMedia.bind(postController),
+    );
+
+    fastify.get<{ Querystring: GetPostsQuery }>(
+        "/",
+        {
+            schema: {
+                querystring: getPostsQuerySchema,
+            },
+        },
+        postController.getFeed.bind(postController),
     );
 }

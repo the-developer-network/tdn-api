@@ -1,14 +1,17 @@
 import { MediaLimitExceededError } from "@core/errors/media-limit-exceeded.error";
 import { NoMediaProvidedError } from "@core/errors/no-media-provided.error";
 import type { CreatePostUseCase } from "@core/use-cases/post/create-post/create-post.usecase";
+import type { GetPostsUseCase } from "@core/use-cases/post/get-post/get-posts.usecase";
 import type { UploadPostMediaUseCase } from "@core/use-cases/post/upload-post-media/upload-post-media.usecase";
 import type { CreatePostBody } from "@typings/schemas/post/create-post.schema";
+import type { GetPostsQuery } from "@typings/schemas/post/get-post.schema";
 import type { FastifyReply, FastifyRequest } from "fastify";
 
 export default class PostController {
     constructor(
         private readonly createPostUseCase: CreatePostUseCase,
         private readonly uploadPostMediaUseCase: UploadPostMediaUseCase,
+        private readonly getPostsUseCase: GetPostsUseCase,
     ) {}
 
     async create(
@@ -80,6 +83,39 @@ export default class PostController {
             meta: {
                 timestamp: new Date().toISOString(),
             },
+        });
+    }
+
+    async getFeed(
+        request: FastifyRequest<{ Querystring: GetPostsQuery }>,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const { page, limit, type } = request.query;
+
+        const cdnUrl = request.server.config.R2_PUBLIC_URL;
+
+        const result = await this.getPostsUseCase.execute({
+            page,
+            limit,
+            type,
+        });
+
+        const formattedData = result.data.map((post) => {
+            return {
+                ...post,
+                author: {
+                    ...post.author,
+
+                    avatarUrl: post.author.avatarUrl.startsWith("http")
+                        ? post.author.avatarUrl
+                        : `${cdnUrl}/${post.author.avatarUrl}`,
+                },
+            };
+        });
+
+        return reply.status(200).send({
+            data: formattedData,
+            meta: result.meta,
         });
     }
 }
