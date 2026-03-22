@@ -17,4 +17,11 @@ export function postRoutes(fastify: FastifyInstance): void {
         },
         postController.create.bind(postController),
     );
+    fastify.post(
+        "/media",
+        {
+            onRequest: [fastify.authenticate],
+        },
+        postController.uploadMedia.bind(postController),
+    );
 }

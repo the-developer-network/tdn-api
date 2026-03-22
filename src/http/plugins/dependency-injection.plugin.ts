@@ -74,6 +74,7 @@ import { PurgeExpiredNotificationsUseCase } from "@core/use-cases/notification/p
 import { CreatePostUseCase } from "@core/use-cases/post/create-post/create-post.usecase";
 import PostController from "@services/post.controller";
 import { PrismaPostRepository } from "@infrastructure/repositories/prisma-post.repository";
+import { UploadPostMediaUseCase } from "@core/use-cases/post/upload-post-media/upload-post-media.usecase";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {
@@ -201,7 +202,7 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
             PurgeExpiredNotificationsUseCase,
         ).singleton(),
         createPostUseCase: asClass(CreatePostUseCase).singleton(),
-
+        uploadPostMediaUseCase: asClass(UploadPostMediaUseCase).singleton(),
         // --- Jobs ---
         userPurgeJob: asClass(UserPurgeJob).singleton(),
         refreshTokenPurgeJob: asClass(RefreshTokenPurgeJob).singleton(),

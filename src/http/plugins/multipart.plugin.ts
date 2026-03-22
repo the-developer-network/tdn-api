@@ -9,7 +9,7 @@ function multipartPlugin(fastify: FastifyInstance): void {
             fieldSize: 100,
             fields: 10,
             fileSize: 5 * 1024 * 1024,
-            files: 1,
+            files: 4,
         },
     });
 }
