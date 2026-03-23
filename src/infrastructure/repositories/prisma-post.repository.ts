@@ -87,4 +87,43 @@ export class PrismaPostRepository implements IPostRepository {
 
         return { posts, total };
     }
+
+    async findById(id: string): Promise<PostOutput | null> {
+        const post = await this.prisma.post.findUnique({
+            where: { id },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        username: true,
+                        profile: { select: { avatarUrl: true } },
+                    },
+                },
+                tags: { select: { name: true } },
+            },
+        });
+
+        if (!post) return null;
+
+        return {
+            id: post.id,
+            content: post.content,
+            type: post.type as unknown as PostType,
+            mediaUrls: post.mediaUrls,
+            author: {
+                id: post.author.id,
+                username: post.author.username,
+                avatarUrl: post.author.profile?.avatarUrl as string,
+            },
+            tags: post.tags.map((tag) => tag.name),
+            createdAt: post.createdAt,
+            updatedAt: post.updatedAt,
+        };
+    }
+
+    async delete(id: string): Promise<void> {
+        await this.prisma.post.delete({
+            where: { id },
+        });
+    }
 }

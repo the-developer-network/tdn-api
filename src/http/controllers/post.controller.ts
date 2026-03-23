@@ -1,9 +1,11 @@
 import { MediaLimitExceededError } from "@core/errors/media-limit-exceeded.error";
 import { NoMediaProvidedError } from "@core/errors/no-media-provided.error";
 import type { CreatePostUseCase } from "@core/use-cases/post/create-post/create-post.usecase";
+import type { DeletePostUseCase } from "@core/use-cases/post/delete-post/delete-post.usecase";
 import type { GetPostsUseCase } from "@core/use-cases/post/get-post/get-posts.usecase";
 import type { UploadPostMediaUseCase } from "@core/use-cases/post/upload-post-media/upload-post-media.usecase";
 import type { CreatePostBody } from "@typings/schemas/post/create-post.schema";
+import type { DeletePostParams } from "@typings/schemas/post/delete-post.schema";
 import type { GetPostsQuery } from "@typings/schemas/post/get-post.schema";
 import type { FastifyReply, FastifyRequest } from "fastify";
 
@@ -12,6 +14,7 @@ export default class PostController {
         private readonly createPostUseCase: CreatePostUseCase,
         private readonly uploadPostMediaUseCase: UploadPostMediaUseCase,
         private readonly getPostsUseCase: GetPostsUseCase,
+        private readonly deletePostUseCase: DeletePostUseCase,
     ) {}
 
     async create(
@@ -117,5 +120,27 @@ export default class PostController {
             data: formattedData,
             meta: result.meta,
         });
+    }
+
+    async deletePost(
+        request: FastifyRequest<{ Params: DeletePostParams }>,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const userId = request.user.id;
+        const postId = request.params.id;
+
+        let cdnBaseUrl = request.server.config.R2_PUBLIC_URL;
+
+        if (cdnBaseUrl.endsWith("/")) {
+            cdnBaseUrl = cdnBaseUrl.slice(0, -1);
+        }
+
+        await this.deletePostUseCase.execute({
+            postId,
+            userId,
+            cdnBaseUrl,
+        });
+
+        return reply.status(204).send();
     }
 }

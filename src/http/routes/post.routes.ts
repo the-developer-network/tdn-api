@@ -3,6 +3,10 @@ import {
     createPostBodySchema,
 } from "@typings/schemas/post/create-post.schema";
 import {
+    type DeletePostParams,
+    deletePostParamsSchema,
+} from "@typings/schemas/post/delete-post.schema";
+import {
     getPostsQuerySchema,
     type GetPostsQuery,
 } from "@typings/schemas/post/get-post.schema";
@@ -37,5 +41,16 @@ export function postRoutes(fastify: FastifyInstance): void {
             },
         },
         postController.getFeed.bind(postController),
+    );
+
+    fastify.delete<{ Params: DeletePostParams }>(
+        "/:id",
+        {
+            onRequest: [fastify.authenticate],
+            schema: {
+                params: deletePostParamsSchema,
+            },
+        },
+        postController.deletePost.bind(postController),
     );
 }
