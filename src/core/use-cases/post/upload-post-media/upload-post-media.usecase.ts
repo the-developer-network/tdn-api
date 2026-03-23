@@ -1,12 +1,6 @@
 import type { StoragePort } from "@core/ports/services/storage.port";
 import { InvalidMediaTypeError } from "@core/errors";
-
-export interface UploadPostMediaInput {
-    userId: string;
-    fileBuffer: Buffer;
-    mimeType: string;
-    originalFileName: string;
-}
+import type { UploadPostMediaInput } from "./upload-post-media-usecase.input";
 
 export class UploadPostMediaUseCase {
     constructor(private readonly storageService: StoragePort) {}

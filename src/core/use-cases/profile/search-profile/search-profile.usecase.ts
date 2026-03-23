@@ -1,10 +1,6 @@
 import type { IProfileRepository } from "@core/ports/repositories/profile.repository";
-import type { Profile } from "@core/entities/profile.entitiy";
-
-export interface SearchProfileResult {
-    profile: Profile;
-    isMe: boolean;
-}
+import type { SearchProfileInput } from "./search-profile-usecase.input";
+import type { SearchProfileOutput } from "./search-profile-usecase.output";
 
 export class SearchProfilesUseCase {
     constructor(private readonly profileRepository: IProfileRepository) {}
@@ -15,24 +11,22 @@ export class SearchProfilesUseCase {
      * @param currentUserId - (Optional) The ID of the user making the request.
      * @param limit - (Optional) Maximum number of results.
      */
-    async execute(
-        query: string,
-        currentUserId?: string,
-        limit: number = 10,
-    ): Promise<SearchProfileResult[]> {
-        const sanitizedQuery = query.trim();
+    async execute(input: SearchProfileInput): Promise<SearchProfileOutput[]> {
+        const sanitizedQuery = input.query.trim();
         if (sanitizedQuery.length < 2) {
             return [];
         }
 
         const profiles = await this.profileRepository.search(
             sanitizedQuery,
-            limit,
+            input.limit,
         );
 
         return profiles.map((profile) => ({
             profile,
-            isMe: currentUserId ? profile.userId === currentUserId : false,
+            isMe: input.currentUserId
+                ? profile.userId === input.currentUserId
+                : false,
         }));
     }
 }

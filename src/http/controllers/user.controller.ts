@@ -1,8 +1,8 @@
-import type { ChangeEmailUseCase } from "@core/use-cases/user/change-email/change-email.usecase";
-import type { ChangePasswordUseCase } from "@core/use-cases/user/change-password/change-password-use.case";
-import type { ChangeUsernameUseCase } from "@core/use-cases/user/change-username/change-username.usecase";
-import type { GetMeUserUseCase } from "@core/use-cases/user/get-me/get-me-user-.usecase";
-import type SoftDeleteUserUseCase from "@core/use-cases/user/soft-delete/soft-delete-user.usecase";
+import type { ChangeEmailUseCase } from "@core/use-cases/user/change-email";
+import type { ChangePasswordUseCase } from "@core/use-cases/user/change-password";
+import type { ChangeUsernameUseCase } from "@core/use-cases/user/change-username";
+import type { GetMeUserUseCase } from "@core/use-cases/user/get-me";
+import type { SoftDeleteUserUseCase } from "@core/use-cases/user/soft-delete";
 import type { ChangeEmailBody } from "@typings/schemas/user/change-email.schema";
 import type { ChangePasswordBody } from "@typings/schemas/user/change-password.schema";
 import type { ChangeUsernameBody } from "@typings/schemas/user/change-username.schema";

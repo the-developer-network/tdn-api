@@ -1,5 +1,5 @@
-import type { FollowUserUseCase } from "@core/use-cases/follow-user/follow-user/follow-user.usecase";
-import type { UnfollowUserUseCase } from "@core/use-cases/follow-user/unfollow-user/unfollow-user.usecase";
+import type { FollowUserUseCase } from "@core/use-cases/follow-user/follow-user";
+import type { UnfollowUserUseCase } from "@core/use-cases/follow-user/unfollow-user";
 import type { FollowUserBody } from "@typings/schemas/follow-user/follow-user.schema";
 import type { FastifyRequest, FastifyReply } from "fastify";
 

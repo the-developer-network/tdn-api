@@ -1,20 +1,6 @@
-import type {
-    GetNotificationOutput,
-    INotificationRepository,
-} from "@core/ports/repositories/notification.repository";
-
-export interface GetNotificationsInput {
-    userId: string;
-    page: number;
-    limit: number;
-}
-
-export interface GetNotificationsOutput {
-    notifications: GetNotificationOutput[];
-    total: number;
-    currentPage: number;
-    totalPages: number;
-}
+import type { INotificationRepository } from "@core/ports/repositories/notification.repository";
+import type { GetNotificationsInput } from "./get-notifications-usecase.input";
+import type { GetNotificationsOutput } from "./get-notifications-usecase.output";
 
 export class GetUserNotificatonUseCase {
     public constructor(

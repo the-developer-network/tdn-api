@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import type { GetUserNotificatonUseCase } from "@core/use-cases/notification/get-user/get-user-notification.usecase";
+import type { GetUserNotificatonUseCase } from "@core/use-cases/notification/get-user";
 import type { GetNotificationsQuery } from "@typings/schemas/notification/get-notification.schema";
-import type { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/mark-all/mark-all-notifications-as-read.usecase";
+import type { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/mark-all";
 
 export default class NotificationController {
     constructor(

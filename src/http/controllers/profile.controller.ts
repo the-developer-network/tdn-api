@@ -1,12 +1,12 @@
 import { BadRequestError } from "@core/errors";
-import type { GetFollowersUseCase } from "@core/use-cases/follow-user/get-followers/get-followers.usecase";
-import type { GetFollowingUseCase } from "@core/use-cases/follow-user/get-following/get-following.usecase";
-import type { GetProfileUseCase } from "@core/use-cases/profile/get-profile/get-profile.usecase";
-import type { SearchProfilesUseCase } from "@core/use-cases/profile/search-profile/search-profile.usecase";
-import type { UpdateAvatarUseCase } from "@core/use-cases/profile/update-avatar/update-avatar.usecase";
-import type { UpdateBannerUseCase } from "@core/use-cases/profile/update-banner/update-banner.use-case";
-import type { UpdateProfileInput } from "@core/use-cases/profile/update-profil/update-profile-usecase.input";
-import type { UpdateProfileUseCase } from "@core/use-cases/profile/update-profil/update-profile.use-case";
+import type { GetFollowersUseCase } from "@core/use-cases/follow-user/get-followers";
+import type { GetFollowingUseCase } from "@core/use-cases/follow-user/get-following";
+import type { GetProfileUseCase } from "@core/use-cases/profile/get-profile";
+import type { SearchProfilesUseCase } from "@core/use-cases/profile/search-profile";
+import type { UpdateAvatarUseCase } from "@core/use-cases/profile/update-avatar";
+import type { UpdateBannerUseCase } from "@core/use-cases/profile/update-banner";
+import type { UpdateProfileInput } from "@core/use-cases/profile/update-profil";
+import type { UpdateProfileUseCase } from "@core/use-cases/profile/update-profil";
 import ProfilePrismaMapper from "@infrastructure/mappers/profile-prisma.mapper";
 import {
     type FollowersParams,
@@ -138,11 +138,11 @@ export class ProfileController {
         const { q, limit } = request.query;
         const currentUserId = request.user?.id;
 
-        const results = await this.searchProfileUseCase.execute(
-            q,
+        const results = await this.searchProfileUseCase.execute({
+            query: q,
             currentUserId,
             limit,
-        );
+        });
 
         const responseData = results.map(({ profile, isMe }) => {
             const profileData = ProfilePrismaMapper.toResponse(profile);

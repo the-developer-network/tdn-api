@@ -16,21 +16,21 @@ import { GithubAuthService } from "@infrastructure/services/github-auth.service"
 import { GoogleAuthService } from "@infrastructure/services/google-auth.service";
 
 // --- Use Cases ---
-import SoftDeleteUserUseCase from "@core/use-cases/user/soft-delete/soft-delete-user.usecase";
-import { CreateUserUseCase } from "@core/use-cases/user/create-user/create-user.usecase";
-import { RegisterUseCase } from "@core/use-cases/auth/register/register.usecase";
-import { LoginUseCase } from "@core/use-cases/auth/login/login.usecase";
-import { GithubLoginUseCase } from "@core/use-cases/oauth/oauth-github/github-login.usecase";
-import { RefreshUseCase } from "@core/use-cases/auth/refresh/refresh.usecase";
-import { LogoutUseCase } from "@core/use-cases/auth/logout/logout.usecase";
-import { SendVerificationEmailUseCase } from "@core/use-cases/auth/send-verification-email/send-verification-email.usecase";
-import { VerifyEmailUseCase } from "@core/use-cases/auth/verify-email/verify-email.usecase";
-import { ForgotPasswordUseCase } from "@core/use-cases/auth/forgot-password/forgot-password.usecase";
-import { ResetPasswordUseCase } from "@core/use-cases/auth/reset-password/reset-password.usecase";
-import { RecoverAccountUseCase } from "@core/use-cases/auth/recover-account/recover-account.usecase";
-import { GoogleLoginUseCase } from "@core/use-cases/oauth/oauth-google/google.login.usecase";
-import { PurgeExpiredUsersUseCase } from "@core/use-cases/user/purge-expired-users/purge-expired-users.use-case";
-import { PurgeExpiredTokensUseCase } from "@core/use-cases/auth/cleanup-refresh-tokens/purge-expires-tokens.use.case";
+import { SoftDeleteUserUseCase } from "@core/use-cases/user/soft-delete";
+import { CreateUserUseCase } from "@core/use-cases/user/create-user";
+import { RegisterUseCase } from "@core/use-cases/auth/register";
+import { LoginUseCase } from "@core/use-cases/auth/login";
+import { GithubLoginUseCase } from "@core/use-cases/oauth/oauth-github";
+import { RefreshUseCase } from "@core/use-cases/auth/refresh";
+import { LogoutUseCase } from "@core/use-cases/auth/logout";
+import { SendVerificationEmailUseCase } from "@core/use-cases/auth/send-verification-email";
+import { VerifyEmailUseCase } from "@core/use-cases/auth/verify-email";
+import { ForgotPasswordUseCase } from "@core/use-cases/auth/forgot-password";
+import { ResetPasswordUseCase } from "@core/use-cases/auth/reset-password";
+import { RecoverAccountUseCase } from "@core/use-cases/auth/recover-account";
+import { GoogleLoginUseCase } from "@core/use-cases/oauth/oauth-google";
+import { PurgeExpiredUsersUseCase } from "@core/use-cases/user/purge-expired-users";
+import { PurgeExpiredTokensUseCase } from "@core/use-cases/auth/cleanup-refresh-tokens";
 
 // --- Jobs & Schedulers ---
 import UserPurgeJob from "@infrastructure/jobs/user/user-purge.job";
@@ -42,41 +42,41 @@ import { RefreshTokenPurgeScheduler } from "@infrastructure/jobs/refresh-token/r
 import UserController from "@services/user.controller";
 import AuthController from "@services/auth.controller";
 import OAuthController from "@services/oauth.controller";
-import { GetMeUserUseCase } from "@core/use-cases/user/get-me/get-me-user-.usecase";
+import { GetMeUserUseCase } from "@core/use-cases/user/get-me";
 import { PrismaOAuthAccountRepository } from "@infrastructure/repositories/prisma-oauth-account.repository";
-import { ChangePasswordUseCase } from "@core/use-cases/user/change-password/change-password-use.case";
-import { ChangeUsernameUseCase } from "@core/use-cases/user/change-username/change-username.usecase";
-import { ChangeEmailUseCase } from "@core/use-cases/user/change-email/change-email.usecase";
+import { ChangePasswordUseCase } from "@core/use-cases/user/change-password";
+import { ChangeUsernameUseCase } from "@core/use-cases/user/change-username";
+import { ChangeEmailUseCase } from "@core/use-cases/user/change-email";
 import { ProfileController } from "@services/profile.controller";
-import { UpdateAvatarUseCase } from "@core/use-cases/profile/update-avatar/update-avatar.usecase";
+import { UpdateAvatarUseCase } from "@core/use-cases/profile/update-avatar";
 import { PrismaProfileRepository } from "@infrastructure/repositories/prisma-profile.repository";
 import { S3StorageService } from "@infrastructure/services/s3-storage.service";
-import { UpdateProfileUseCase } from "@core/use-cases/profile/update-profil/update-profile.use-case";
-import { UpdateBannerUseCase } from "@core/use-cases/profile/update-banner/update-banner.use-case";
-import { GetProfileUseCase } from "@core/use-cases/profile/get-profile/get-profile.usecase";
-import { SearchProfilesUseCase } from "@core/use-cases/profile/search-profile/search-profile.usecase";
+import { UpdateProfileUseCase } from "@core/use-cases/profile/update-profil";
+import { UpdateBannerUseCase } from "@core/use-cases/profile/update-banner";
+import { GetProfileUseCase } from "@core/use-cases/profile/get-profile";
+import { SearchProfilesUseCase } from "@core/use-cases/profile/search-profile";
 import { PrismaFollowUserRepository } from "@infrastructure/repositories/prisma-follow.repository";
-import { FollowUserUseCase } from "@core/use-cases/follow-user/follow-user/follow-user.usecase";
-import { UnfollowUserUseCase } from "@core/use-cases/follow-user/unfollow-user/unfollow-user.usecase";
+import { FollowUserUseCase } from "@core/use-cases/follow-user/follow-user";
+import { UnfollowUserUseCase } from "@core/use-cases/follow-user/unfollow-user";
 import { FollowUserController } from "@services/follow-user.controller";
-import { GetFollowersUseCase } from "@core/use-cases/follow-user/get-followers/get-followers.usecase";
-import { GetFollowingUseCase } from "@core/use-cases/follow-user/get-following/get-following.usecase";
+import { GetFollowersUseCase } from "@core/use-cases/follow-user/get-followers";
+import { GetFollowingUseCase } from "@core/use-cases/follow-user/get-following";
 import { WebSocketManager } from "@infrastructure/websocket/websocket-manager";
 import { FastifyRealtimeService } from "@infrastructure/services/fastify-realtime.service";
 import { PrismaNotificationRepository } from "@infrastructure/repositories/prisma-notification.repository";
 import { RedisService } from "@infrastructure/redis/redis.service";
-import { GetUserNotificatonUseCase } from "@core/use-cases/notification/get-user/get-user-notification.usecase";
+import { GetUserNotificatonUseCase } from "@core/use-cases/notification/get-user";
 import NotificationController from "@services/notification.controller";
-import { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/mark-all/mark-all-notifications-as-read.usecase";
+import { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/mark-all";
 import NotificationPurgeJob from "@infrastructure/jobs/notification/notification-purge.job";
 import { NotificationPurgeScheduler } from "@infrastructure/jobs/notification/notification-purge.scheduler";
-import { PurgeExpiredNotificationsUseCase } from "@core/use-cases/notification/purge-expired/purge-expired-notifications.usecase";
-import { CreatePostUseCase } from "@core/use-cases/post/create-post/create-post.usecase";
+import { PurgeExpiredNotificationsUseCase } from "@core/use-cases/notification/purge-expired";
+import { CreatePostUseCase } from "@core/use-cases/post/create-post";
 import PostController from "@services/post.controller";
 import { PrismaPostRepository } from "@infrastructure/repositories/prisma-post.repository";
-import { UploadPostMediaUseCase } from "@core/use-cases/post/upload-post-media/upload-post-media.usecase";
-import { GetPostsUseCase } from "@core/use-cases/post/get-post/get-posts.usecase";
-import { DeletePostUseCase } from "@core/use-cases/post/delete-post/delete-post.usecase";
+import { UploadPostMediaUseCase } from "@core/use-cases/post/upload-post-media";
+import { GetPostsUseCase } from "@core/use-cases/post/get-post";
+import { DeletePostUseCase } from "@core/use-cases/post/delete-post";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {

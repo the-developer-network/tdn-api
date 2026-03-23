@@ -1,8 +1,8 @@
 import { MediaLimitExceededError, NoMediaProvidedError } from "@core/errors";
-import type { CreatePostUseCase } from "@core/use-cases/post/create-post/create-post.usecase";
-import type { DeletePostUseCase } from "@core/use-cases/post/delete-post/delete-post.usecase";
-import type { GetPostsUseCase } from "@core/use-cases/post/get-post/get-posts.usecase";
-import type { UploadPostMediaUseCase } from "@core/use-cases/post/upload-post-media/upload-post-media.usecase";
+import type { CreatePostUseCase } from "@core/use-cases/post/create-post";
+import type { DeletePostUseCase } from "@core/use-cases/post/delete-post";
+import type { GetPostsUseCase } from "@core/use-cases/post/get-post";
+import type { UploadPostMediaUseCase } from "@core/use-cases/post/upload-post-media";
 import type { CreatePostBody } from "@typings/schemas/post/create-post.schema";
 import type { DeletePostParams } from "@typings/schemas/post/delete-post.schema";
 import type { GetPostsQuery } from "@typings/schemas/post/get-post.schema";
