@@ -76,6 +76,7 @@ import PostController from "@services/post.controller";
 import { PrismaPostRepository } from "@infrastructure/repositories/prisma-post.repository";
 import { UploadPostMediaUseCase } from "@core/use-cases/post/upload-post-media/upload-post-media.usecase";
 import { GetPostsUseCase } from "@core/use-cases/post/get-post/get-posts.usecase";
+import { DeletePostUseCase } from "@core/use-cases/post/delete-post/delete-post.usecase";
 
 function dependencyInjectionPlugin(fastify: FastifyInstance): void {
     fastify.register(fastifyAwilixPlugin, {
@@ -205,6 +206,10 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         createPostUseCase: asClass(CreatePostUseCase).singleton(),
         uploadPostMediaUseCase: asClass(UploadPostMediaUseCase).singleton(),
         getPostsUseCase: asClass(GetPostsUseCase).singleton(),
+        deletePostUseCase: asFunction(
+            (postRepository, storageService, logger) =>
+                new DeletePostUseCase(postRepository, storageService, logger),
+        ).singleton(),
         // --- Jobs ---
         userPurgeJob: asClass(UserPurgeJob).singleton(),
         refreshTokenPurgeJob: asClass(RefreshTokenPurgeJob).singleton(),

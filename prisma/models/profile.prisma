@@ -9,7 +9,7 @@ model Profile {
   location String?
 
   avatarUrl String @default("avatars/default_profile.png")
-  bannerUrl String @default("banners/default_banner.jpg")
+  bannerUrl String @default("banners/default_banner.jpe")
 
   socials Json?
 

@@ -40,4 +40,6 @@ export interface PaginatedPosts {
 export interface IPostRepository {
     create(data: CreatePostInput): Promise<void>;
     findAll(params: GetPostsParams): Promise<PaginatedPosts>;
+    findById(id: string): Promise<PostOutput | null>;
+    delete(id: string): Promise<void>;
 }
