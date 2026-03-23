@@ -1,6 +1,7 @@
 import { BadRequestError } from "@core/errors";
 import type { IFollowRepository } from "@core/ports/repositories/follow.repository";
 import type { INotificationRepository } from "@core/ports/repositories/notification.repository";
+import { Notification } from "@core/domain/entities/notification.entity";
 import { NotificationType } from "@core/domain/enums/notification-type.enum";
 import type { RealtimePort } from "@core/ports/services/realtime.port";
 
@@ -24,11 +25,13 @@ export class FollowUserUseCase {
 
         await this.followUserRepository.followUser(currentUserId, targetId);
 
-        await this.notificationRepository.create({
-            recipientId: targetId,
-            issuerId: currentUserId,
-            type: NotificationType.FOLLOW,
-        });
+        const notification = Notification.create(
+            targetId,
+            currentUserId,
+            NotificationType.FOLLOW,
+        );
+
+        await this.notificationRepository.create(notification);
 
         this.realtimeService.emitToUser(targetId, "new-notification", {
             type: NotificationType.FOLLOW,

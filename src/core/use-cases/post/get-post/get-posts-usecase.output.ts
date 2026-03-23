@@ -1,7 +1,7 @@
-import type { PostOutput } from "@core/ports/repositories/post.repository";
+import type { Post } from "@core/domain/entities/post.entity";
 
 export interface GetPostsOutput {
-    data: PostOutput[];
+    data: Post[];
     meta: {
         total: number;
         page: number;

@@ -1,8 +1,5 @@
 import type { PrismaClient } from "@generated/prisma/client";
-import type {
-    FollowList,
-    IFollowRepository,
-} from "@core/ports/repositories/follow.repository";
+import type { IFollowRepository } from "@core/ports/repositories/follow.repository";
 
 export class PrismaFollowUserRepository implements IFollowRepository {
     constructor(private readonly prisma: PrismaClient) {}
@@ -46,7 +43,15 @@ export class PrismaFollowUserRepository implements IFollowRepository {
         targetId: string,
         limit: number,
         offset: number,
-    ): Promise<FollowList[]> {
+    ): Promise<
+        {
+            userId: string;
+            username: string;
+            fullName: string;
+            avatarUrl: string;
+            bio: string | null;
+        }[]
+    > {
         const follows = await this.prisma.follow.findMany({
             where: { followingId: targetId },
             take: limit,
@@ -82,7 +87,15 @@ export class PrismaFollowUserRepository implements IFollowRepository {
         targetId: string,
         limit: number,
         offset: number,
-    ): Promise<FollowList[]> {
+    ): Promise<
+        {
+            userId: string;
+            username: string;
+            fullName: string;
+            avatarUrl: string;
+            bio: string | null;
+        }[]
+    > {
         const follows = await this.prisma.follow.findMany({
             where: { followerId: targetId },
             take: limit,

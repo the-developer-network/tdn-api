@@ -1,31 +1,25 @@
 import type {
     INotificationRepository,
-    CreateNotificationInput,
     FindNotificationsInput,
-    GetNotificationOutput,
 } from "@core/ports/repositories/notification.repository";
 import type { PrismaTransactionalClient } from "@infrastructure/database/prisma-client.type";
+import { Notification } from "@core/domain/entities/notification.entity";
 import { NotificationPrismaMapper } from "@infrastructure/mappers/notification-prisma.mapper";
 
 export class PrismaNotificationRepository implements INotificationRepository {
     constructor(private readonly prisma: PrismaTransactionalClient) {}
 
-    async create(data: CreateNotificationInput): Promise<void> {
+    async create(notification: Notification): Promise<void> {
         const notificationLimit = 100;
 
-        const prismaType = data.type;
+        const prismaData = NotificationPrismaMapper.toPrisma(notification);
 
         await this.prisma.notification.create({
-            data: {
-                recipientId: data.recipientId,
-                issuerId: data.issuerId,
-                type: prismaType,
-                referenceId: data.referenceId,
-            },
+            data: prismaData,
         });
 
         const cutoffNotification = await this.prisma.notification.findMany({
-            where: { recipientId: data.recipientId },
+            where: { recipientId: notification.recipientId },
             orderBy: { createdAt: "desc" },
             skip: notificationLimit,
             take: 1,
@@ -35,7 +29,7 @@ export class PrismaNotificationRepository implements INotificationRepository {
         if (cutoffNotification.length > 0) {
             await this.prisma.notification.deleteMany({
                 where: {
-                    recipientId: data.recipientId,
+                    recipientId: notification.recipientId,
                     createdAt: { lte: cutoffNotification[0].createdAt },
                 },
             });
@@ -55,7 +49,7 @@ export class PrismaNotificationRepository implements INotificationRepository {
         userId,
         take,
         skip,
-    }: FindNotificationsInput): Promise<GetNotificationOutput[]> {
+    }: FindNotificationsInput): Promise<Notification[]> {
         const raws = await this.prisma.notification.findMany({
             where: { recipientId: userId },
             take,
@@ -76,7 +70,17 @@ export class PrismaNotificationRepository implements INotificationRepository {
         });
 
         return raws.map((raw) => {
-            return NotificationPrismaMapper.toResponse(raw);
+            const notificationData = NotificationPrismaMapper.toResponse(raw);
+            return new Notification({
+                recipientId: raw.recipientId,
+                issuerId: raw.issuerId,
+                type: notificationData.type,
+                referenceId: raw.referenceId || undefined,
+                username: notificationData.username,
+                avatarUrl: notificationData.avatarUrl,
+                createdAt: raw.createdAt,
+                isRead: raw.isRead,
+            });
         });
     }
 

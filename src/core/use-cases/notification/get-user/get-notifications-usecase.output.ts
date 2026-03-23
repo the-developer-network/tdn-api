@@ -1,7 +1,7 @@
-import type { GetNotificationOutput } from "@core/ports/repositories/notification.repository";
+import type { Notification } from "@core/domain/entities/notification.entity";
 
 export interface GetNotificationsOutput {
-    notifications: GetNotificationOutput[];
+    notifications: Notification[];
     total: number;
     currentPage: number;
     totalPages: number;

@@ -1,4 +1,3 @@
-import type { GetNotificationOutput } from "@core/ports/repositories/notification.repository";
 import type { NotificationType } from "@generated/prisma/client";
 import type { NotificationType as CoreNotificationType } from "@core/domain/enums/notification-type.enum";
 import type { Notification } from "@core/domain/entities/notification.entity";
@@ -20,9 +19,19 @@ export interface PrismaNotificationItem {
 }
 
 export class NotificationPrismaMapper {
-    public static toResponse(
-        item: PrismaNotificationItem,
-    ): GetNotificationOutput {
+    /**
+     * Maps a Prisma notification item to a response object
+     * @param item - The Prisma notification item
+     * @returns A response object with notification data
+     */
+    public static toResponse(item: PrismaNotificationItem): {
+        avatarUrl: string;
+        createdAt: Date;
+        type: CoreNotificationType;
+        recipientId: string;
+        username: string;
+        isRead: boolean;
+    } {
         return {
             avatarUrl: item.issuer.profile!.avatarUrl,
             createdAt: item.createdAt,
@@ -33,16 +42,45 @@ export class NotificationPrismaMapper {
         };
     }
 
-    public static toGetNotificationOutput(
-        notification: Notification,
-    ): GetNotificationOutput {
+    /**
+     * Maps a Notification entity to a response object
+     * @param notification - The Notification entity
+     * @returns A response object with notification data
+     */
+    public static toGetNotificationOutput(notification: Notification): {
+        avatarUrl: string;
+        createdAt: Date;
+        type: CoreNotificationType;
+        recipientId: string;
+        username: string;
+        isRead: boolean;
+    } {
         return {
-            avatarUrl: notification.avatarUrl,
+            avatarUrl: notification.avatarUrl || "",
             createdAt: notification.createdAt,
             type: notification.type as CoreNotificationType,
             recipientId: notification.recipientId,
-            username: notification.username,
+            username: notification.username || "",
             isRead: notification.isRead,
+        };
+    }
+
+    /**
+     * Maps a Notification entity to Prisma notification data
+     * @param notification - The Notification entity
+     * @returns Prisma notification data
+     */
+    public static toPrisma(notification: Notification): {
+        recipientId: string;
+        issuerId: string;
+        type: NotificationType;
+        referenceId?: string | null;
+    } {
+        return {
+            recipientId: notification.recipientId,
+            issuerId: notification.issuerId,
+            type: notification.type as unknown as NotificationType,
+            referenceId: notification.referenceId || null,
         };
     }
 }

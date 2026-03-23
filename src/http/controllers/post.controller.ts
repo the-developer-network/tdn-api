@@ -108,9 +108,11 @@ export default class PostController {
                 author: {
                     id: post.author.id,
                     username: post.author.username,
-                    avatarUrl: post.author.avatarUrl.startsWith("http")
-                        ? post.author.avatarUrl
-                        : `${cdnUrl}/${post.author.avatarUrl}`,
+                    avatarUrl: post.author.avatarUrl
+                        ? post.author.avatarUrl.startsWith("http")
+                            ? post.author.avatarUrl
+                            : `${cdnUrl}/${post.author.avatarUrl}`
+                        : `${cdnUrl}/default-avatar.png`,
                 },
             };
         });

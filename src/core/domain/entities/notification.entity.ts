@@ -1,12 +1,16 @@
+import type { NotificationType } from "@core/domain/enums/notification-type.enum";
+
 /**
  * Props interface for Notification entity
  */
 export interface NotificationProps {
     recipientId: string;
-    username: string;
-    type: string; // NotificationType enum value
-    avatarUrl: string;
-    createdAt: Date;
+    issuerId: string;
+    type: NotificationType;
+    referenceId?: string;
+    username?: string;
+    avatarUrl?: string;
+    createdAt?: Date;
     isRead: boolean;
 }
 
@@ -18,6 +22,32 @@ export class Notification {
     constructor(private readonly props: NotificationProps) {}
 
     /**
+     * Creates a new Notification entity with minimal required data.
+     * @param recipientId - The ID of the user receiving the notification
+     * @param issuerId - The ID of the user issuing the notification
+     * @param type - The type of the notification
+     * @param referenceId - Optional reference ID for the notification
+     * @returns A new Notification entity
+     */
+    public static create(
+        recipientId: string,
+        issuerId: string,
+        type: NotificationType,
+        referenceId?: string,
+    ): Notification {
+        return new Notification({
+            recipientId,
+            issuerId,
+            type,
+            referenceId,
+            username: undefined,
+            avatarUrl: undefined,
+            createdAt: undefined,
+            isRead: false,
+        });
+    }
+
+    /**
      * Get the ID of the user who received this notification
      */
     get recipientId(): string {
@@ -25,31 +55,45 @@ export class Notification {
     }
 
     /**
+     * Get the ID of the user who issued this notification
+     */
+    get issuerId(): string {
+        return this.props.issuerId;
+    }
+
+    /**
      * Get the username of the notification issuer
      */
-    get username(): string {
+    get username(): string | undefined {
         return this.props.username;
     }
 
     /**
      * Get the type of the notification
      */
-    get type(): string {
+    get type(): NotificationType {
         return this.props.type;
     }
 
     /**
      * Get the avatar URL of the notification issuer
      */
-    get avatarUrl(): string {
+    get avatarUrl(): string | undefined {
         return this.props.avatarUrl;
+    }
+
+    /**
+     * Get the reference ID of the notification (optional)
+     */
+    get referenceId(): string | undefined {
+        return this.props.referenceId;
     }
 
     /**
      * Get the creation date of the notification
      */
     get createdAt(): Date {
-        return this.props.createdAt;
+        return this.props.createdAt!;
     }
 
     /**
@@ -112,6 +156,7 @@ export class Notification {
      * Check if the notification was created within the last specified hours
      */
     public isRecent(hours: number): boolean {
+        if (!this.props.createdAt) return false;
         const now = new Date();
         const timeDiff = now.getTime() - this.props.createdAt.getTime();
         const hoursDiff = timeDiff / (1000 * 60 * 60);

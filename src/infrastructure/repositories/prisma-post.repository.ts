@@ -1,37 +1,32 @@
-import type {
-    PrismaClient,
-    PostType as PrismaPostType,
-} from "@generated/prisma/client";
+import type { PrismaClient } from "@generated/prisma/client";
 
 import type {
     IPostRepository,
-    CreatePostInput,
     GetPostsParams,
-    PaginatedPosts,
-    PostOutput,
 } from "@core/ports/repositories/post.repository";
 import { Post } from "@core/domain/entities/post.entity";
-import type { PostType } from "@core/domain/enums/post-type.enum";
 import { PostPrismaMapper } from "@infrastructure/mappers/post-prisma.mapper";
+import type { PostType } from "@core/domain/enums/post-type.enum";
 
 export class PrismaPostRepository implements IPostRepository {
     constructor(private readonly prisma: PrismaClient) {}
 
-    async create(data: CreatePostInput): Promise<void> {
+    async create(post: Post): Promise<void> {
         const hashtagRegex = /#[\p{L}\p{N}_]+/gu;
-        const matches = data.content.match(hashtagRegex) || [];
+        const matches = post.content.match(hashtagRegex) || [];
         const uniqueTags = [
-            ...new Set(matches.map((tag) => tag.slice(1).toLowerCase())),
+            ...new Set(
+                matches.map((tag: string) => tag.slice(1).toLowerCase()),
+            ),
         ];
+
+        const prismaData = PostPrismaMapper.toPrisma(post);
 
         await this.prisma.post.create({
             data: {
-                content: data.content,
-                type: data.type as PrismaPostType,
-                mediaUrls: data.mediaUrls || [],
-                authorId: data.authorId,
+                ...prismaData,
                 tags: {
-                    connectOrCreate: uniqueTags.map((tag) => ({
+                    connectOrCreate: uniqueTags.map((tag: string) => ({
                         where: { name: tag },
                         create: { name: tag },
                     })),
@@ -40,11 +35,13 @@ export class PrismaPostRepository implements IPostRepository {
         });
     }
 
-    async findAll(params: GetPostsParams): Promise<PaginatedPosts> {
+    async findAll(
+        params: GetPostsParams,
+    ): Promise<{ posts: Post[]; total: number }> {
         const { page, limit, type } = params;
         const skip = (page - 1) * limit;
 
-        const whereCondition = type ? { type: type as PrismaPostType } : {};
+        const whereCondition = type ? { type } : {};
 
         const [total, rawPosts] = await Promise.all([
             this.prisma.post.count({ where: whereCondition }),
@@ -70,23 +67,21 @@ export class PrismaPostRepository implements IPostRepository {
             }),
         ]);
 
-        const posts: PostOutput[] = rawPosts.map((post) => {
-            return PostPrismaMapper.toPostOutput(
-                new Post({
-                    id: post.id,
-                    content: post.content,
-                    type: post.type as unknown as PostType,
-                    mediaUrls: post.mediaUrls,
-                    author: {
-                        id: post.author.id,
-                        username: post.author.username,
-                        avatarUrl: post.author.profile?.avatarUrl as string,
-                    },
-                    tags: post.tags.map((tag) => tag.name),
-                    createdAt: post.createdAt,
-                    updatedAt: post.updatedAt,
-                }),
-            );
+        const posts: Post[] = rawPosts.map((post) => {
+            return new Post({
+                id: post.id,
+                content: post.content,
+                type: post.type as PostType,
+                mediaUrls: post.mediaUrls,
+                author: {
+                    id: post.author.id,
+                    username: post.author.username,
+                    avatarUrl: post.author.profile?.avatarUrl as string,
+                },
+                tags: post.tags.map((tag) => tag.name),
+                createdAt: post.createdAt,
+                updatedAt: post.updatedAt,
+            });
         });
 
         return { posts, total };
@@ -112,7 +107,7 @@ export class PrismaPostRepository implements IPostRepository {
         return new Post({
             id: post.id,
             content: post.content,
-            type: post.type as unknown as PostType,
+            type: post.type as PostType,
             mediaUrls: post.mediaUrls,
             author: {
                 id: post.author.id,

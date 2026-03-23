@@ -1,9 +1,11 @@
-import type {
-    IFollowRepository,
-    FollowList,
-} from "@core/ports/repositories/follow.repository";
+import type { IFollowRepository } from "@core/ports/repositories/follow.repository";
 
-export interface FollowListItem extends FollowList {
+export interface FollowListItem {
+    userId: string;
+    username: string;
+    fullName: string;
+    avatarUrl: string;
+    bio: string | null;
     isFollowing: boolean;
     isMe: boolean;
 }
