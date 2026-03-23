@@ -203,12 +203,23 @@ function dependencyInjectionPlugin(fastify: FastifyInstance): void {
         purgeExpiredNotificationsUseCase: asClass(
             PurgeExpiredNotificationsUseCase,
         ).singleton(),
-        createPostUseCase: asClass(CreatePostUseCase).singleton(),
+        createPostUseCase: asFunction(
+            (postRepository, redisService) =>
+                new CreatePostUseCase(postRepository, redisService),
+        ).singleton(),
         uploadPostMediaUseCase: asClass(UploadPostMediaUseCase).singleton(),
-        getPostsUseCase: asClass(GetPostsUseCase).singleton(),
+        getPostsUseCase: asFunction(
+            (postRepository, redisService) =>
+                new GetPostsUseCase(postRepository, redisService),
+        ).singleton(),
         deletePostUseCase: asFunction(
-            (postRepository, storageService, logger) =>
-                new DeletePostUseCase(postRepository, storageService, logger),
+            (postRepository, storageService, logger, redisService) =>
+                new DeletePostUseCase(
+                    postRepository,
+                    storageService,
+                    logger,
+                    redisService,
+                ),
         ).singleton(),
         // --- Jobs ---
         userPurgeJob: asClass(UserPurgeJob).singleton(),

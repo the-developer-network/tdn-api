@@ -4,12 +4,14 @@ import type { LoggerPort } from "@core/ports/services/logger.port";
 import { UnauthorizedActionError } from "@core/errors/unauthorized-action.error";
 import NotFoundError from "@core/errors/not-found.error";
 import type { DeletePostUseCaseInput } from "./delete-post-usecase.input";
+import type { CachePort } from "@core/ports/services/cache.port";
 
 export class DeletePostUseCase {
     constructor(
         private readonly postRepository: IPostRepository,
         private readonly storageService: StoragePort,
         private readonly logger: LoggerPort,
+        private readonly cacheService: CachePort,
     ) {}
 
     async execute(input: DeletePostUseCaseInput): Promise<void> {
@@ -42,6 +44,7 @@ export class DeletePostUseCase {
             }
         }
 
+        await this.cacheService.deleteByPattern("posts:feed:*");
         await this.postRepository.delete(input.postId);
     }
 }

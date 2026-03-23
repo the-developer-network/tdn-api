@@ -1,7 +1,8 @@
 import Redis from "ioredis";
 import type { FastifyBaseLogger, FastifyInstance } from "fastify";
+import type { CachePort } from "@core/ports/services/cache.port";
 
-export class RedisService {
+export class RedisService implements CachePort {
     public readonly publisher: Redis;
     public readonly subscriber: Redis;
     private readonly logger: FastifyBaseLogger;
@@ -11,7 +12,6 @@ export class RedisService {
         const redisUrl = config.REDIS_URL;
 
         this.publisher = new Redis(redisUrl);
-
         this.subscriber = this.publisher.duplicate();
 
         this.setupListeners();
@@ -47,5 +47,46 @@ export class RedisService {
     async disconnect(): Promise<void> {
         await this.publisher.quit();
         await this.subscriber.quit();
+    }
+
+    async get(key: string): Promise<string | null> {
+        try {
+            return await this.publisher.get(key);
+        } catch (error) {
+            this.logger.error(
+                { err: error, key },
+                "Failed to get data from Redis cache",
+            );
+            return null;
+        }
+    }
+
+    async set(key: string, value: string, ttlSeconds?: number): Promise<void> {
+        try {
+            if (ttlSeconds) {
+                await this.publisher.set(key, value, "EX", ttlSeconds);
+            } else {
+                await this.publisher.set(key, value);
+            }
+        } catch (error) {
+            this.logger.error(
+                { err: error, key },
+                "Failed to set data in Redis cache",
+            );
+        }
+    }
+
+    async deleteByPattern(pattern: string): Promise<void> {
+        try {
+            const keys = await this.publisher.keys(pattern);
+            if (keys.length > 0) {
+                await this.publisher.del(...keys);
+            }
+        } catch (error) {
+            this.logger.error(
+                { err: error, pattern },
+                "Failed to delete keys by pattern in Redis cache",
+            );
+        }
     }
 }
