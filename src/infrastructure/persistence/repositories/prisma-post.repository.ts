@@ -58,10 +58,17 @@ export class PrismaPostRepository implements IPostRepository {
     async findAll(
         params: GetPostsParams,
     ): Promise<{ posts: Post[]; total: number }> {
-        const { page, limit, type } = params;
+        const { page, limit, type, authorId, savedByUserId, currentUserId } =
+            params;
         const skip = (page - 1) * limit;
 
-        const whereCondition = type ? { type } : {};
+        const whereCondition = {
+            ...(type ? { type } : {}),
+            ...(authorId ? { authorId } : {}),
+            ...(savedByUserId
+                ? { bookmarks: { some: { userId: savedByUserId } } }
+                : {}),
+        };
 
         const [total, rawPosts] = await Promise.all([
             this.prisma.post.count({ where: whereCondition }),
@@ -86,6 +93,13 @@ export class PrismaPostRepository implements IPostRepository {
                     _count: {
                         select: { likes: true },
                     },
+
+                    bookmarks: currentUserId
+                        ? {
+                              where: { userId: currentUserId },
+                              select: { id: true },
+                          }
+                        : false,
                 },
             }),
         ]);
@@ -106,6 +120,7 @@ export class PrismaPostRepository implements IPostRepository {
                 updatedAt: post.updatedAt,
                 likeCount: post._count.likes,
                 commentCount: post.commentCount,
+                isBookmarked: post.bookmarks && post.bookmarks.length > 0,
             });
         });
 

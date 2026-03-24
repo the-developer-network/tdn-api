@@ -37,6 +37,9 @@ import { DeletePostUseCase } from "@core/use-cases/post/delete-post";
 import { LikePostUseCase } from "@core/use-cases/post/like-post";
 import { UnlikePostUseCase } from "@core/use-cases/post/unlike-post";
 import { CreateCommentUseCase } from "@core/use-cases/comment/create-comment.usecase";
+import { CreateBookmarkUseCase } from "@core/use-cases/bookmark/create-bookmark/create-bookmark.usecase";
+import { RemoveBookmarkUseCase } from "@core/use-cases/bookmark/remove-bookmark/remove-bookmark.usecase";
+import { GetBookmarksUseCase } from "@core/use-cases/bookmark/get-bookmarks/get-bookmarks.usecase";
 
 /**
  * Dependency injection module for use cases
@@ -255,4 +258,20 @@ export const useCasesModule = {
      * Use case for creating a comment on a post
      */
     createCommentUseCase: asClass(CreateCommentUseCase).singleton(),
+    /**
+     *
+     */
+    createBookmarkUseCase: asClass(CreateBookmarkUseCase).singleton(),
+    /**
+     *
+     */
+    removeBookmarkUseCase: asClass(RemoveBookmarkUseCase).singleton(),
+    /**
+     *
+     */
+    getSavedPostsUseCase: asClass(GetPostsUseCase).singleton(),
+    /**
+     *
+     */
+    getBookmarksUseCase: asClass(GetBookmarksUseCase).singleton(),
 };

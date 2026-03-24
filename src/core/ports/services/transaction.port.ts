@@ -4,6 +4,7 @@ import type { IPostRepository } from "@core/ports/repositories/post.repository";
 import type { ICommentRepository } from "@core/ports/repositories/comment.repository";
 import type { IPostLikeRepository } from "@core/ports/repositories/post-like.repository";
 import type { INotificationRepository } from "@core/ports/repositories/notification.repository";
+import type { IBookmarkRepository } from "../repositories/bookmark.repository";
 
 /**
  * Provides transactional access to repositories within a single atomic operation.
@@ -26,6 +27,8 @@ export interface TransactionContext {
 
     /** Repository for notification-related data operations within the transaction. */
     readonly notificationRepository: INotificationRepository;
+
+    readonly bookmarkRepository: IBookmarkRepository;
 }
 
 /**

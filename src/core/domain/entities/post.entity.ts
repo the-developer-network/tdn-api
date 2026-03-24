@@ -125,6 +125,9 @@ export class Post {
         return this.props.commentCount!;
     }
 
+    get isBookmarked(): boolean {
+        return this.props.isBookmarked ?? false;
+    }
     /**
      * Check if the post has any media attached
      * @returns True if the post has one or more media items

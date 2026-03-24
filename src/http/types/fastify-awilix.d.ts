@@ -12,6 +12,7 @@ import type { NotificationPurgeScheduler } from "@infrastructure/jobs/notificati
 import type PostController from "@services/post.controller";
 import type { CommentController } from "@controllers/comment.controller";
 import type { LikeController } from "@controllers/like.controller";
+import type { BookmarkController } from "@controllers/bookmark.controller";
 
 /**
  * Fastify Awilix cradle interface for dependency injection
@@ -60,6 +61,9 @@ declare module "@fastify/awilix" {
 
         /** */
         likeController: LikeController;
+
+        /** */
+        bookmarkController: BookmarkController;
     }
 }
 

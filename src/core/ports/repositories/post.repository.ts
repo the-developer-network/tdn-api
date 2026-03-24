@@ -8,6 +8,9 @@ export interface GetPostsParams {
     page: number;
     limit: number;
     type?: PostType;
+    authorId?: string;
+    savedByUserId?: string;
+    currentUserId?: string;
 }
 
 /**

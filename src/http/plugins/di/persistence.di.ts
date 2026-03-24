@@ -9,6 +9,7 @@ import { PrismaNotificationRepository } from "@infrastructure/persistence/reposi
 import { PrismaPostRepository } from "@infrastructure/persistence/repositories/prisma-post.repository";
 import { PrismaPostLikeRepository } from "@infrastructure/persistence/repositories/prisma-post-like.repository";
 import { PrismaLikeRepository } from "@infrastructure/persistence/repositories/prisma-like.repository";
+import { PrismaBookmarkRepository } from "@infrastructure/persistence/repositories/prisma-bookmark.repository";
 
 /**
  * Dependency injection module for persistence layer
@@ -81,4 +82,8 @@ export const persistenceModule = {
      * Like repository for managing like count operations
      */
     likeRepository: asClass(PrismaLikeRepository).singleton(),
+    /**
+     *
+     */
+    bookmarkRepository: asClass(PrismaBookmarkRepository).singleton(),
 };

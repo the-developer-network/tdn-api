@@ -25,7 +25,8 @@ import notificationRoutes from "@routes/notification.routes";
 import notificationPurgePlugin from "@plugins/custom/notification-purge.plugin";
 import { postRoutes } from "@routes/post/post.routes";
 import { commentRoutes } from "@routes/post/comment.routes";
-import { likeRoutes } from "@routes/like/like.routes";
+import { likeRoutes } from "@routes/post/like.routes";
+import { bookmarkRoutes } from "@routes/post/bookmark.routes";
 
 /**
  * Main Application class responsible for orchestrating the Fastify server lifecycle.
@@ -127,6 +128,10 @@ export class App {
         });
 
         this.server.register(likeRoutes, {
+            prefix: "/api/v1/posts/:id",
+        });
+
+        this.server.register(bookmarkRoutes, {
             prefix: "/api/v1/posts",
         });
     }

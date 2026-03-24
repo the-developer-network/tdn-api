@@ -30,7 +30,7 @@ export function likeRoutes(fastify: FastifyInstance): void {
      * Requires authentication and applies sensitive rate limiting
      */
     fastify.post<{ Params: LikePostParams }>(
-        "/:id/like",
+        "/like",
         {
             onRequest: [fastify.authenticate],
             schema: {
@@ -47,7 +47,7 @@ export function likeRoutes(fastify: FastifyInstance): void {
      * Requires authentication and applies sensitive rate limiting
      */
     fastify.delete<{ Params: LikePostParams }>(
-        "/:id/unlike",
+        "/unlike",
         {
             onRequest: [fastify.authenticate],
             schema: {

@@ -12,6 +12,7 @@ export class PostPrismaMapper {
     /**
      * Maps a Post entity to a response object
      * @param post - The Post entity
+     * @param isBookmarked - Optional flag indicating if the post is bookmarked by the current user
      * @returns A response object with post data
      */
     public static toPostOutput(post: Post): {
@@ -28,6 +29,7 @@ export class PostPrismaMapper {
         updatedAt: Date;
         likeCount: number;
         commentCount: number;
+        isBookmarked?: boolean;
     } {
         return {
             id: post.id,
@@ -43,6 +45,7 @@ export class PostPrismaMapper {
             updatedAt: post.updatedAt,
             likeCount: post.likeCount,
             commentCount: post.commentCount,
+            isBookmarked: post.isBookmarked,
         };
     }
 

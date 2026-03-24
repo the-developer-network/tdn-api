@@ -8,6 +8,7 @@ import { LikeController } from "@controllers/like.controller";
 import { ProfileController } from "@controllers/profile.controller";
 import { FollowUserController } from "@controllers/follow-user.controller";
 import { CommentController } from "@controllers/comment.controller";
+import { BookmarkController } from "@controllers/bookmark.controller";
 
 /**
  * Dependency injection module for controllers
@@ -49,4 +50,5 @@ export const controllersModule = {
         (likePostUseCase, unlikePostUseCase) =>
             new LikeController(likePostUseCase, unlikePostUseCase),
     ).singleton(),
+    bookmarkController: asClass(BookmarkController).singleton(),
 };
