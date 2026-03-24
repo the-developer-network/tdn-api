@@ -3,6 +3,7 @@ import type { CreatePostUseCase } from "@core/use-cases/post/create-post";
 import type { DeletePostUseCase } from "@core/use-cases/post/delete-post";
 import type { GetPostsUseCase } from "@core/use-cases/post/get-post";
 import type { LikePostUseCase } from "@core/use-cases/post/like-post";
+import type { UnlikePostUseCase } from "@core/use-cases/post/unlike-post";
 import type { UploadPostMediaUseCase } from "@core/use-cases/post/upload-post-media";
 import type { CreatePostBody } from "@typings/schemas/post/create-post.schema";
 import type { DeletePostParams } from "@typings/schemas/post/delete-post.schema";
@@ -25,6 +26,7 @@ export class PostController {
      * @param getPostsUseCase - Use case for retrieving posts
      * @param deletePostUseCase - Use case for deleting posts
      * @param likePostUseCase - Use case for liking posts
+     * @param unlikePostUseCase - Use case for unliking posts
      */
     constructor(
         private readonly createPostUseCase: CreatePostUseCase,
@@ -32,6 +34,7 @@ export class PostController {
         private readonly getPostsUseCase: GetPostsUseCase,
         private readonly deletePostUseCase: DeletePostUseCase,
         private readonly likePostUseCase: LikePostUseCase,
+        private readonly unlikePostUseCase: UnlikePostUseCase,
     ) {}
 
     /**
@@ -203,6 +206,23 @@ export class PostController {
         const postId = request.params.id;
 
         await this.likePostUseCase.execute({ postId, userId });
+
+        return reply.status(204).send();
+    }
+
+    /**
+     * Unlikes a post by ID
+     * @param request - HTTP request containing the post ID to unlike
+     * @param reply - HTTP response object
+     */
+    async unlikePost(
+        request: FastifyRequest<{ Params: LikePostParams }>,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const userId = request.user.id;
+        const postId = request.params.id;
+
+        await this.unlikePostUseCase.execute({ postId, userId });
 
         return reply.status(204).send();
     }

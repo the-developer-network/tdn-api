@@ -35,6 +35,7 @@ import { UploadPostMediaUseCase } from "@core/use-cases/post/upload-post-media";
 import { GetPostsUseCase } from "@core/use-cases/post/get-post";
 import { DeletePostUseCase } from "@core/use-cases/post/delete-post";
 import { LikePostUseCase } from "@core/use-cases/post/like-post";
+import { UnlikePostUseCase } from "@core/use-cases/post/unlike-post";
 
 /**
  * Dependency injection module for use cases
@@ -243,4 +244,9 @@ export const useCasesModule = {
      * Use case for liking a post
      */
     likePostUseCase: asClass(LikePostUseCase).singleton(),
+
+    /**
+     * Use case for unliking a post
+     */
+    unlikePostUseCase: asClass(UnlikePostUseCase).singleton(),
 };

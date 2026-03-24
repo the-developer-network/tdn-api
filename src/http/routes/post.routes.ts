@@ -122,4 +122,21 @@ export function postRoutes(fastify: FastifyInstance): void {
         },
         postController.likePost.bind(postController),
     );
+
+    /**
+     * Unlike a post by ID
+     * Requires authentication and applies sensitive rate limiting
+     */
+    fastify.delete<{ Params: LikePostParams }>(
+        "/:id/unlike",
+        {
+            onRequest: [fastify.authenticate],
+            schema: {
+                params: LikePostParamsSchema,
+                tags: ["Post"],
+            },
+            config: { rateLimit: RateLimitPolicies.SENSITIVE },
+        },
+        postController.unlikePost.bind(postController),
+    );
 }

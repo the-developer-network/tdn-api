@@ -42,4 +42,18 @@ export class PrismaPostLikeRepository implements IPostLikeRepository {
 
         return !!like;
     }
+
+    /**
+     * Removes a like relationship between a user and a post
+     * @param postId - The unique identifier of the post
+     * @param userId - The unique identifier of the user
+     * @returns Promise<void>
+     */
+    async unlike(postId: string, userId: string): Promise<void> {
+        await this.prisma.postLike.delete({
+            where: {
+                postId_userId: { postId, userId },
+            },
+        });
+    }
 }

@@ -21,4 +21,12 @@ export interface IPostLikeRepository {
      * @returns Promise<boolean> - True if the user has liked the post, false otherwise
      */
     isLiked(postId: string, userId: string): Promise<boolean>;
+
+    /**
+     * Removes a like relationship between a user and a post
+     * @param postId - The unique identifier of the post
+     * @param userId - The unique identifier of the user
+     * @returns Promise<void>
+     */
+    unlike(postId: string, userId: string): Promise<void>;
 }
