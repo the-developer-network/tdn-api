@@ -1,3 +1,4 @@
+import { RateLimitPolicies } from "@plugins/rate-limit.plugin";
 import {
     type ChangeEmailBody,
     ChangeEmailSchema,
@@ -26,13 +27,17 @@ function userRoutes(fastify: FastifyInstance): void {
                 body: SoftDeleteUserSchema,
             },
             onRequest: [fastify.authenticate],
+            config: { rateLimit: RateLimitPolicies.STRICT },
         },
         userController.softDeleteMe.bind(userController),
     );
 
     fastify.get(
         "/me",
-        { onRequest: [fastify.authenticate] },
+        {
+            onRequest: [fastify.authenticate],
+            config: { rateLimit: RateLimitPolicies.STANDARD },
+        },
         userController.getMe.bind(userController),
     );
 
@@ -43,6 +48,7 @@ function userRoutes(fastify: FastifyInstance): void {
                 body: ChangePasswordSchema,
             },
             onRequest: [fastify.authenticate],
+            config: { rateLimit: RateLimitPolicies.STRICT },
         },
         userController.changePasswordMe.bind(userController),
     );
@@ -54,6 +60,7 @@ function userRoutes(fastify: FastifyInstance): void {
                 body: ChangeUsernameSchema,
             },
             onRequest: [fastify.authenticate],
+            config: { rateLimit: RateLimitPolicies.STRICT },
         },
         userController.changeUsernameMe.bind(userController),
     );
@@ -64,6 +71,7 @@ function userRoutes(fastify: FastifyInstance): void {
                 body: ChangeEmailSchema,
             },
             onRequest: [fastify.authenticate],
+            config: { rateLimit: RateLimitPolicies.STRICT },
         },
         userController.changeEmailMe.bind(userController),
     );

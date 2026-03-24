@@ -1,3 +1,4 @@
+import { RateLimitPolicies } from "@plugins/rate-limit.plugin";
 import {
     GetNotificationsQuerySchema,
     type GetNotificationsQuery,
@@ -15,13 +16,17 @@ export default function notificationRoutes(fastify: FastifyInstance): void {
             schema: {
                 querystring: GetNotificationsQuerySchema,
             },
+            config: { rateLimit: RateLimitPolicies.STANDARD },
         },
         notificationController.getNotifications.bind(notificationController),
     );
 
     fastify.patch(
         "/read-all",
-        { onRequest: [fastify.authenticate] },
+        {
+            onRequest: [fastify.authenticate],
+            config: { rateLimit: RateLimitPolicies.STANDARD },
+        },
         notificationController.markAllAsRead.bind(notificationController),
     );
 }

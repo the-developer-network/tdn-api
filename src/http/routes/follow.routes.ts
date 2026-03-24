@@ -1,3 +1,4 @@
+import { RateLimitPolicies } from "@plugins/rate-limit.plugin";
 import {
     type FollowUserBody,
     FollowUserBodySchema,
@@ -14,6 +15,7 @@ export default function followRoutes(fastify: FastifyInstance): void {
                 body: FollowUserBodySchema,
             },
             onRequest: [fastify.authenticate],
+            config: { rateLimit: RateLimitPolicies.SENSITIVE },
         },
         followController.follow.bind(followController),
     );
@@ -25,6 +27,7 @@ export default function followRoutes(fastify: FastifyInstance): void {
                 body: FollowUserBodySchema,
             },
             onRequest: [fastify.authenticate],
+            config: { rateLimit: RateLimitPolicies.SENSITIVE },
         },
         followController.unfollow.bind(followController),
     );

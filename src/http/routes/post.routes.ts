@@ -1,3 +1,4 @@
+import { RateLimitPolicies } from "@plugins/rate-limit.plugin";
 import {
     type CreatePostBody,
     createPostBodySchema,
@@ -22,6 +23,7 @@ export function postRoutes(fastify: FastifyInstance): void {
             schema: {
                 body: createPostBodySchema,
             },
+            config: { rateLimit: RateLimitPolicies.SENSITIVE },
         },
         postController.create.bind(postController),
     );
@@ -29,6 +31,7 @@ export function postRoutes(fastify: FastifyInstance): void {
         "/media",
         {
             onRequest: [fastify.authenticate],
+            config: { rateLimit: RateLimitPolicies.SENSITIVE },
         },
         postController.uploadMedia.bind(postController),
     );
@@ -39,6 +42,7 @@ export function postRoutes(fastify: FastifyInstance): void {
             schema: {
                 querystring: getPostsQuerySchema,
             },
+            config: { rateLimit: RateLimitPolicies.STANDARD },
         },
         postController.getFeed.bind(postController),
     );
@@ -50,6 +54,7 @@ export function postRoutes(fastify: FastifyInstance): void {
             schema: {
                 params: deletePostParamsSchema,
             },
+            config: { rateLimit: RateLimitPolicies.SENSITIVE },
         },
         postController.deletePost.bind(postController),
     );

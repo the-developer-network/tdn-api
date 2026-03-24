@@ -8,7 +8,6 @@ import corsPlugin from "@plugins/cors.plugin";
 import helmetPlugin from "@plugins/helmet.plugin";
 import errorHandlerPlugin from "@plugins/custom/error-handler.plugin";
 import prismaPlugin from "@plugins/custom/prisma.plugin";
-import healthRoutes from "@routes/health.route";
 import authRoutes from "@routes/auth.routes";
 import dependencyInjectionPlugin from "@plugins/dependency-injection.plugin";
 import userRoutes from "@routes/user.routes";
@@ -105,7 +104,6 @@ export class App {
      * @private
      */
     private registerRoutes(): void {
-        this.server.register(healthRoutes, { prefix: "/api/v1" });
         this.server.register(authRoutes, { prefix: "/api/v1/auth" });
         this.server.register(userRoutes, { prefix: "/api/v1/users" });
         this.server.register(oauthRoutes, { prefix: "/api/v1/oauth" });
