@@ -1,5 +1,18 @@
+/**
+ * @module RealtimeRoutes
+ * Realtime routes including WebSocket connection with authentication.
+ * @author TDN Team
+ * @version 1.0.0
+ */
+
 import type { FastifyInstance, FastifyRequest } from "fastify";
 
+/**
+ * Sets up realtime routes on the Fastify instance
+ *
+ * @param fastify - The Fastify application instance
+ * @returns void
+ */
 export default function realtimeRoutes(fastify: FastifyInstance): void {
     const wsManager = fastify.diContainer.cradle.wsManager;
 

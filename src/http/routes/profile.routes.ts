@@ -1,3 +1,10 @@
+/**
+ * @module ProfileRoutes
+ * Profile routes including update, search, get followers and following.
+ * @author TDN Team
+ * @version 1.0.0
+ */
+
 import { RateLimitPolicies } from "@plugins/rate-limit.plugin";
 import {
     FollowersParamsSchema,
@@ -17,6 +24,12 @@ import {
 } from "@typings/schemas/profile/update-profile.schema";
 import type { FastifyInstance, FastifyRequest } from "fastify";
 
+/**
+ * Sets up profile routes on the Fastify instance
+ *
+ * @param fastify - The Fastify application instance
+ * @returns void
+ */
 function profileRoutes(fastify: FastifyInstance): void {
     const profileController = fastify.diContainer.cradle.profileController;
 

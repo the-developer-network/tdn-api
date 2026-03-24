@@ -1,3 +1,10 @@
+/**
+ * @module UserRoutes
+ * User routes including soft delete, get me, change password, username and email.
+ * @author TDN Team
+ * @version 1.0.0
+ */
+
 import { RateLimitPolicies } from "@plugins/rate-limit.plugin";
 import {
     type ChangeEmailBody,
@@ -17,6 +24,12 @@ import {
 } from "@typings/schemas/user/solft-delete.schema";
 import type { FastifyInstance } from "fastify";
 
+/**
+ * Sets up user routes on the Fastify instance
+ *
+ * @param fastify - The Fastify application instance
+ * @returns void
+ */
 function userRoutes(fastify: FastifyInstance): void {
     const userController = fastify.diContainer.cradle.userController;
 

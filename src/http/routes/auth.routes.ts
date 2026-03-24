@@ -1,3 +1,17 @@
+/**
+ * Authentication routes module
+ *
+ * This module defines all authentication-related API endpoints including:
+ * - User registration and login
+ * - Token refresh and logout
+ * - Email verification
+ * - Password reset functionality
+ * - Account recovery
+ *
+ * @author TDN Team
+ * @version 1.0.0
+ */
+
 import { RateLimitPolicies } from "@plugins/rate-limit.plugin";
 import {
     ForgotPasswordBodySchema,
@@ -37,6 +51,12 @@ import {
 } from "@typings/schemas/auth/verify-email.schema";
 import type { FastifyInstance } from "fastify";
 
+/**
+ * Sets up authentication routes on the Fastify instance
+ *
+ * @param fastify - The Fastify application instance
+ * @returns void
+ */
 export function authRoutes(fastify: FastifyInstance): void {
     const authController = fastify.diContainer.cradle.authController;
 
