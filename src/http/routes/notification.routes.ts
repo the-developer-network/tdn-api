@@ -15,6 +15,7 @@ export default function notificationRoutes(fastify: FastifyInstance): void {
             onRequest: [fastify.authenticate],
             schema: {
                 querystring: GetNotificationsQuerySchema,
+                tags: ["Notification"],
             },
             config: { rateLimit: RateLimitPolicies.STANDARD },
         },
@@ -26,6 +27,9 @@ export default function notificationRoutes(fastify: FastifyInstance): void {
         {
             onRequest: [fastify.authenticate],
             config: { rateLimit: RateLimitPolicies.STANDARD },
+            schema: {
+                tags: ["Notification"],
+            },
         },
         notificationController.markAllAsRead.bind(notificationController),
     );

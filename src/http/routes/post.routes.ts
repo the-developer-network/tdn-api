@@ -22,6 +22,7 @@ export function postRoutes(fastify: FastifyInstance): void {
             onRequest: [fastify.authenticate],
             schema: {
                 body: createPostBodySchema,
+                tags: ["Post"],
             },
             config: { rateLimit: RateLimitPolicies.SENSITIVE },
         },
@@ -32,6 +33,9 @@ export function postRoutes(fastify: FastifyInstance): void {
         {
             onRequest: [fastify.authenticate],
             config: { rateLimit: RateLimitPolicies.SENSITIVE },
+            schema: {
+                tags: ["Post"],
+            },
         },
         postController.uploadMedia.bind(postController),
     );
@@ -41,6 +45,7 @@ export function postRoutes(fastify: FastifyInstance): void {
         {
             schema: {
                 querystring: getPostsQuerySchema,
+                tags: ["Post"],
             },
             config: { rateLimit: RateLimitPolicies.STANDARD },
         },
@@ -53,6 +58,7 @@ export function postRoutes(fastify: FastifyInstance): void {
             onRequest: [fastify.authenticate],
             schema: {
                 params: deletePostParamsSchema,
+                tags: ["Post"],
             },
             config: { rateLimit: RateLimitPolicies.SENSITIVE },
         },

@@ -27,6 +27,9 @@ function profileRoutes(fastify: FastifyInstance): void {
             config: {
                 rateLimit: RateLimitPolicies.STRICT,
             },
+            schema: {
+                tags: ["Profile"],
+            },
         },
         profileController.uploadAvatarMe.bind(profileController),
     );
@@ -38,6 +41,9 @@ function profileRoutes(fastify: FastifyInstance): void {
             config: {
                 rateLimit: RateLimitPolicies.STRICT,
             },
+            schema: {
+                tags: ["Profile"],
+            },
         },
         profileController.uploadBannerMe.bind(profileController),
     );
@@ -47,6 +53,7 @@ function profileRoutes(fastify: FastifyInstance): void {
         {
             schema: {
                 body: UpdateProfileBodySchema,
+                tags: ["Profile"],
             },
             onRequest: [fastify.authenticate],
         },
@@ -58,6 +65,7 @@ function profileRoutes(fastify: FastifyInstance): void {
         {
             schema: {
                 querystring: SearchProfilesQuerySchema,
+                tags: ["Profile"],
             },
             onRequest: async (request) => {
                 if (request.headers.authorization) {
@@ -73,6 +81,7 @@ function profileRoutes(fastify: FastifyInstance): void {
         {
             schema: {
                 params: GetProfileParamsSchema,
+                tags: ["Profile"],
             },
             onRequest: async (request: FastifyRequest) => {
                 if (request.headers.authorization) {
@@ -89,6 +98,7 @@ function profileRoutes(fastify: FastifyInstance): void {
             schema: {
                 params: FollowersParamsSchema,
                 querystring: PaginationQuerySchema,
+                tags: ["Profile"],
             },
         },
         profileController.getFollowers.bind(profileController),
@@ -100,6 +110,7 @@ function profileRoutes(fastify: FastifyInstance): void {
             schema: {
                 params: FollowersParamsSchema,
                 querystring: PaginationQuerySchema,
+                tags: ["Profile"],
             },
         },
         profileController.getFollowing.bind(profileController),

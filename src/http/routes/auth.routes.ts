@@ -47,6 +47,7 @@ export function authRoutes(fastify: FastifyInstance): void {
             schema: {
                 body: RegisterBodySchema,
                 response: { 201: RegisterResponseSchema },
+                tags: ["Auth"],
             },
         },
         authController.register.bind(authController),
@@ -59,6 +60,7 @@ export function authRoutes(fastify: FastifyInstance): void {
             schema: {
                 body: LoginBodySchema,
                 response: { 200: LoginResponseSchema },
+                tags: ["Auth"],
             },
         },
         authController.login.bind(authController),
@@ -70,6 +72,7 @@ export function authRoutes(fastify: FastifyInstance): void {
             config: { rateLimit: RateLimitPolicies.SENSITIVE },
             schema: {
                 response: { 200: LoginResponseSchema },
+                tags: ["Auth"],
             },
         },
         authController.refresh.bind(authController),
@@ -79,6 +82,9 @@ export function authRoutes(fastify: FastifyInstance): void {
         "/logout",
         {
             config: { rateLimit: RateLimitPolicies.STANDARD },
+            schema: {
+                tags: ["Auth"],
+            },
         },
         authController.logout.bind(authController),
     );
@@ -90,6 +96,7 @@ export function authRoutes(fastify: FastifyInstance): void {
             config: { rateLimit: RateLimitPolicies.STRICT },
             schema: {
                 response: { 200: SendVerificationResponseSchema },
+                tags: ["Auth"],
             },
         },
         authController.sendVerification.bind(authController),
@@ -106,6 +113,7 @@ export function authRoutes(fastify: FastifyInstance): void {
             schema: {
                 body: VerifyEmailBodySchema,
                 response: { 200: VerifyEmailResponseSchema },
+                tags: ["Auth"],
             },
         },
 
@@ -116,7 +124,10 @@ export function authRoutes(fastify: FastifyInstance): void {
         "/forgot-password",
         {
             config: { rateLimit: RateLimitPolicies.STRICT },
-            schema: { body: ForgotPasswordBodySchema },
+            schema: {
+                body: ForgotPasswordBodySchema,
+                tags: ["Auth"],
+            },
         },
         authController.forgotPassword.bind(authController),
     );
@@ -131,6 +142,7 @@ export function authRoutes(fastify: FastifyInstance): void {
             schema: {
                 body: ResetPasswordBodySchema,
                 response: { 200: ResetPasswordResponseSchema },
+                tags: ["Auth"],
             },
         },
         authController.resetPassword.bind(authController),
@@ -142,6 +154,7 @@ export function authRoutes(fastify: FastifyInstance): void {
             config: { rateLimit: RateLimitPolicies.STRICT },
             schema: {
                 body: RecoverAccountSchema,
+                tags: ["Auth"],
             },
         },
         authController.recoverAccount,

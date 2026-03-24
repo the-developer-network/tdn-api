@@ -13,6 +13,7 @@ export default function followRoutes(fastify: FastifyInstance): void {
         {
             schema: {
                 body: FollowUserBodySchema,
+                tags: ["Follow"],
             },
             onRequest: [fastify.authenticate],
             config: { rateLimit: RateLimitPolicies.SENSITIVE },
@@ -25,6 +26,7 @@ export default function followRoutes(fastify: FastifyInstance): void {
         {
             schema: {
                 body: FollowUserBodySchema,
+                tags: ["Follow"],
             },
             onRequest: [fastify.authenticate],
             config: { rateLimit: RateLimitPolicies.SENSITIVE },
