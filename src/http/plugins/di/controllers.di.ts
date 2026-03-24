@@ -6,7 +6,12 @@ import { NotificationController } from "@controllers/notification.controller";
 import { PostController } from "@controllers/post.controller";
 import { ProfileController } from "@controllers/profile.controller";
 import { FollowUserController } from "@controllers/follow-user.controller";
+import { CommentController } from "@controllers/comment.controller";
 
+/**
+ * Dependency injection module for controllers
+ * Registers all HTTP controllers as singleton instances
+ */
 export const controllersModule = {
     // --- Controllers ---
     userController: asClass(UserController).singleton(),
@@ -38,4 +43,5 @@ export const controllersModule = {
     followUserController: asClass(FollowUserController).singleton(),
     notificationController: asClass(NotificationController).singleton(),
     postController: asClass(PostController).singleton(),
+    commentController: asClass(CommentController).singleton(),
 };

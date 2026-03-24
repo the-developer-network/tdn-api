@@ -9,21 +9,23 @@ import helmetPlugin from "@plugins/helmet.plugin";
 import swaggerPlugin from "@plugins/swagger.plugin";
 import errorHandlerPlugin from "@plugins/custom/error-handler.plugin";
 import prismaPlugin from "@plugins/custom/prisma.plugin";
-import authRoutes from "@routes/auth.routes";
+import authRoutes from "@routes/auth/auth.routes";
 import dependencyInjectionPlugin from "@plugins/dependency-injection.plugin";
-import userRoutes from "@routes/user.routes";
+import userRoutes from "@routes/auth/user.routes";
 import authenticationDecorator from "@decorators/authenticate.decorator";
-import oauthRoutes from "@routes/oauth.route";
+import oauthRoutes from "@routes/oauth/oauth.route";
 import userPurgePlugin from "@plugins/custom/user-purge.plugin";
 import refreshTokenPurgePlugin from "@plugins/custom/refresh-token-purge.plugin";
 import multipartPlugin from "@plugins/multipart.plugin";
-import profileRoutes from "@routes/profile.routes";
-import followRoutes from "@routes/follow.routes";
+import profileRoutes from "@routes/profile/profile.routes";
+import followRoutes from "@routes/profile/follow.routes";
 import websocketPlugin from "./http/plugins/websocket.plugin";
 import realtimeRoutes from "@routes/realtime.routes";
 import notificationRoutes from "@routes/notification.routes";
 import notificationPurgePlugin from "@plugins/custom/notification-purge.plugin";
-import { postRoutes } from "@routes/post.routes";
+import { postRoutes } from "@routes/post/post.routes";
+import { commentRoutes } from "@routes/post/comment.routes";
+
 /**
  * Main Application class responsible for orchestrating the Fastify server lifecycle.
  * It handles plugin registration, decorator injection, and route mounting.
@@ -117,6 +119,10 @@ export class App {
         });
         this.server.register(postRoutes, {
             prefix: "/api/v1/posts",
+        });
+
+        this.server.register(commentRoutes, {
+            prefix: "/api/v1/posts/:id/comments",
         });
     }
 

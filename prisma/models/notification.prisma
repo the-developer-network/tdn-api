@@ -1,6 +1,8 @@
 enum NotificationType {
   FOLLOW
   NEW_POST
+  COMMENT
+  LIKE
 }
 
 model Notification {

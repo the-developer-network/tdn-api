@@ -1,5 +1,8 @@
 import type { IRefreshTokenRepository } from "@core/ports/repositories/refresh-token.repository";
 import type { IUserRepository } from "@core/ports/repositories/user.repository";
+import type { IPostRepository } from "@core/ports/repositories/post.repository";
+import type { ICommentRepository } from "@core/ports/repositories/comment.repository";
+import type { INotificationRepository } from "../repositories/notification.repository";
 
 /**
  * Provides transactional access to repositories within a single atomic operation.
@@ -10,6 +13,15 @@ export interface TransactionContext {
 
     /** Repository for refresh token-related data operations within the transaction. */
     readonly refreshTokenRepository: IRefreshTokenRepository;
+
+    /** Repository for comment-related data operations within the transaction. */
+    readonly commentRepository: ICommentRepository;
+
+    /** Repository for post-related data operations within the transaction. */
+    readonly postRepository: IPostRepository;
+
+    /** Repository for notification-related data operations within the transaction. */
+    readonly notificationRepository: INotificationRepository;
 }
 
 /**

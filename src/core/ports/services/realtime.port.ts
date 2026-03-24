@@ -10,6 +10,9 @@ export interface RealtimeNotificationPayload {
 
     /** Optional message content for the notification. */
     message?: string;
+
+    /** Optional post ID related to the notification. */
+    postId?: string;
 }
 
 /**

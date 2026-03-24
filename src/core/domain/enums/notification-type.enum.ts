@@ -16,4 +16,9 @@ export enum NotificationType {
      * Notification when a user likes another user's post
      */
     LIKE = "LIKE",
+
+    /**
+     * Notification when a user comments on another user's post
+     */
+    COMMENT = "COMMENT",
 }

@@ -118,6 +118,14 @@ export class Post {
     }
 
     /**
+     * Get the comment count of the post
+     * @returns The number of comments the post has received
+     */
+    get commentCount(): number {
+        return this.props.commentCount!;
+    }
+
+    /**
      * Check if the post has any media attached
      * @returns True if the post has one or more media items
      */

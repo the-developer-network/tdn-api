@@ -43,4 +43,7 @@ export interface PostProps {
 
     /** Optional like count for the post */
     likeCount?: number;
+
+    /** Optional comment count for the post */
+    commentCount?: number;
 }

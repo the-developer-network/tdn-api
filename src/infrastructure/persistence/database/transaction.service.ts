@@ -6,13 +6,31 @@ import type {
 import { PrismaUserRepository } from "../repositories/prisma-user.repository";
 import { PrismaRefreshTokenRepository } from "../repositories/prisma-refresh-token.repository";
 import type { FastifyInstance } from "fastify";
+import { PrismaCommentRepository } from "../repositories/prisma-comment.repository";
+import { PrismaPostRepository } from "../repositories/prisma-post.repository";
+import { PrismaNotificationRepository } from "../repositories/prisma-notification.repository";
 
+/**
+ * Transaction service implementation for managing database transactions
+ * Provides atomic operations across multiple repositories within a single transaction
+ */
 export class TransactionService implements TransactionPort {
+    /**
+     * Creates a new TransactionService instance
+     * @param prisma - The Prisma client instance
+     * @param config - Fastify configuration containing grace period settings
+     */
     constructor(
         private readonly prisma: PrismaClient,
         private readonly config: FastifyInstance["config"],
     ) {}
 
+    /**
+     * Executes a unit of work within a single atomic transaction
+     * If the work throws, the transaction is rolled back
+     * @param work - A callback receiving the transactional context with scoped repositories
+     * @returns A promise that resolves to the return value of the work callback
+     */
     async runInTransaction<T>(
         work: (ctx: TransactionContext) => Promise<T>,
     ): Promise<T> {
@@ -25,6 +43,9 @@ export class TransactionService implements TransactionPort {
                     gracePeriodDays:
                         this.config.REFRESH_TOKEN_PURGE_GRACE_PERIOD_DAYS,
                 }),
+                commentRepository: new PrismaCommentRepository(tx),
+                postRepository: new PrismaPostRepository(tx),
+                notificationRepository: new PrismaNotificationRepository(tx),
             };
 
             return await work(context);

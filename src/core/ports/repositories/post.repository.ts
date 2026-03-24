@@ -42,4 +42,16 @@ export interface IPostRepository {
      * @param id - The unique identifier of the post to be deleted.
      */
     delete(id: string): Promise<void>;
+
+    /**
+     * Increments the comment count for a post
+     * @param postId - The ID of the post to increment comment count for
+     */
+    incrementCommentsCount(postId: string): Promise<void>;
+
+    /**
+     * Decrements the comment count for a post
+     * @param postId - The ID of the post to decrement comment count for
+     */
+    decrementCommentsCount(postId: string): Promise<void>;
 }

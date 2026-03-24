@@ -1,5 +1,3 @@
-import type { PrismaClient } from "@generated/prisma/client";
-
 import type {
     IPostRepository,
     GetPostsParams,
@@ -7,6 +5,7 @@ import type {
 import { Post } from "@core/domain/entities/post.entity";
 import { PostPrismaMapper } from "@infrastructure/persistence/mappers/post-prisma.mapper";
 import type { PostType } from "@core/domain/enums/post-type.enum";
+import type { PrismaTransactionalClient } from "@infrastructure/persistence/database/prisma-client.type";
 
 /**
  * Prisma implementation of the Post repository
@@ -20,7 +19,7 @@ export class PrismaPostRepository implements IPostRepository {
      * Creates a new PrismaPostRepository instance
      * @param prisma - The Prisma client instance
      */
-    constructor(private readonly prisma: PrismaClient) {}
+    constructor(private readonly prisma: PrismaTransactionalClient) {}
 
     /**
      * Creates a new post in the database
@@ -106,6 +105,7 @@ export class PrismaPostRepository implements IPostRepository {
                 createdAt: post.createdAt,
                 updatedAt: post.updatedAt,
                 likeCount: post._count.likes,
+                commentCount: post.commentCount,
             });
         });
 
@@ -151,6 +151,7 @@ export class PrismaPostRepository implements IPostRepository {
             createdAt: post.createdAt,
             updatedAt: post.updatedAt,
             likeCount: post._count.likes,
+            commentCount: post.commentCount,
         });
     }
 
@@ -162,6 +163,30 @@ export class PrismaPostRepository implements IPostRepository {
     async delete(id: string): Promise<void> {
         await this.prisma.post.delete({
             where: { id },
+        });
+    }
+
+    /**
+     * Increments the comment count for a post
+     * @param postId - The ID of the post to increment comment count for
+     * @returns Promise<void>
+     */
+    async incrementCommentsCount(postId: string): Promise<void> {
+        await this.prisma.post.update({
+            where: { id: postId },
+            data: { commentCount: { increment: 1 } },
+        });
+    }
+
+    /**
+     * Decrements the comment count for a post
+     * @param postId - The ID of the post to decrement comment count for
+     * @returns Promise<void>
+     */
+    async decrementCommentsCount(postId: string): Promise<void> {
+        await this.prisma.post.update({
+            where: { id: postId },
+            data: { commentCount: { decrement: 1 } },
         });
     }
 }

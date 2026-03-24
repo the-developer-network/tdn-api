@@ -27,6 +27,7 @@ export class PostPrismaMapper {
         createdAt: Date;
         updatedAt: Date;
         likeCount: number;
+        commentCount: number;
     } {
         return {
             id: post.id,
@@ -41,6 +42,7 @@ export class PostPrismaMapper {
             createdAt: post.createdAt,
             updatedAt: post.updatedAt,
             likeCount: post.likeCount,
+            commentCount: post.commentCount,
         };
     }
 

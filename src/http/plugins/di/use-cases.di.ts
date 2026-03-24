@@ -36,6 +36,7 @@ import { GetPostsUseCase } from "@core/use-cases/post/get-post";
 import { DeletePostUseCase } from "@core/use-cases/post/delete-post";
 import { LikePostUseCase } from "@core/use-cases/post/like-post";
 import { UnlikePostUseCase } from "@core/use-cases/post/unlike-post";
+import { CreateCommentUseCase } from "@core/use-cases/comment/create-comment.usecase";
 
 /**
  * Dependency injection module for use cases
@@ -249,4 +250,9 @@ export const useCasesModule = {
      * Use case for unliking a post
      */
     unlikePostUseCase: asClass(UnlikePostUseCase).singleton(),
+
+    /**
+     * Use case for creating a comment on a post
+     */
+    createCommentUseCase: asClass(CreateCommentUseCase).singleton(),
 };
