@@ -5,7 +5,12 @@ export default function realtimeRoutes(fastify: FastifyInstance): void {
 
     fastify.get(
         "/ws",
-        { websocket: true },
+        {
+            websocket: true,
+            schema: {
+                tags: ["Realtime"],
+            },
+        },
         (connection, req: FastifyRequest) => {
             const query = req.query as { token?: string };
             const token = query.token;

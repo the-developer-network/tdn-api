@@ -25,6 +25,7 @@ function userRoutes(fastify: FastifyInstance): void {
         {
             schema: {
                 body: SoftDeleteUserSchema,
+                tags: ["User"],
             },
             onRequest: [fastify.authenticate],
             config: { rateLimit: RateLimitPolicies.STRICT },
@@ -37,6 +38,9 @@ function userRoutes(fastify: FastifyInstance): void {
         {
             onRequest: [fastify.authenticate],
             config: { rateLimit: RateLimitPolicies.STANDARD },
+            schema: {
+                tags: ["User"],
+            },
         },
         userController.getMe.bind(userController),
     );
@@ -46,6 +50,7 @@ function userRoutes(fastify: FastifyInstance): void {
         {
             schema: {
                 body: ChangePasswordSchema,
+                tags: ["User"],
             },
             onRequest: [fastify.authenticate],
             config: { rateLimit: RateLimitPolicies.STRICT },
@@ -58,6 +63,7 @@ function userRoutes(fastify: FastifyInstance): void {
         {
             schema: {
                 body: ChangeUsernameSchema,
+                tags: ["User"],
             },
             onRequest: [fastify.authenticate],
             config: { rateLimit: RateLimitPolicies.STRICT },
@@ -69,6 +75,7 @@ function userRoutes(fastify: FastifyInstance): void {
         {
             schema: {
                 body: ChangeEmailSchema,
+                tags: ["User"],
             },
             onRequest: [fastify.authenticate],
             config: { rateLimit: RateLimitPolicies.STRICT },

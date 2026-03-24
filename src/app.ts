@@ -6,6 +6,7 @@ import cookiePlugin from "@plugins/cookie.plugin";
 import rateLimitPlugin from "@plugins/rate-limit.plugin";
 import corsPlugin from "@plugins/cors.plugin";
 import helmetPlugin from "@plugins/helmet.plugin";
+import swaggerPlugin from "@plugins/swagger.plugin";
 import errorHandlerPlugin from "@plugins/custom/error-handler.plugin";
 import prismaPlugin from "@plugins/custom/prisma.plugin";
 import authRoutes from "@routes/auth.routes";
@@ -68,6 +69,7 @@ export class App {
         this.server.register(rateLimitPlugin);
         this.server.register(corsPlugin);
         this.server.register(helmetPlugin);
+        this.server.register(swaggerPlugin);
         this.server.register(multipartPlugin);
         this.server.register(websocketPlugin);
     }
