@@ -223,45 +223,49 @@ export class EmailService implements EmailPort {
     async sendVerificationEmail(input: OtpEmailInput): Promise<void> {
         const html = buildEmailHtml({
             type: "otp",
-            title: "E-posta Doğrulama",
-            heading: "Hesap Doğrulama",
-            greeting: "Merhaba,",
-            body: "İşleme devam edebilmek için tek kullanımlık doğrulama kodunuz aşağıdadır.",
+            title: "Email Verification",
+            heading: "Account Verification",
+            greeting: "Hello,",
+            body: "Your one-time verification code is below to continue the process.",
             otp: input.otp,
-            footer: "Bu kod 10 dakika boyunca geçerlidir. Kodu kimseyle paylaşmayın.",
+            footer: "This code is valid for 10 minutes. Do not share this code with anyone.",
         });
 
-        await this.send(input.to, "E-posta Doğrulama Kodunuz (OTP)", html);
+        await this.send(input.to, "Your Email Verification Code (OTP)", html);
         this.logger.info("Send");
     }
 
     async sendPasswordResetEmail(input: OtpEmailInput): Promise<void> {
         const html = buildEmailHtml({
             type: "otp",
-            title: "Şifre Sıfırlama",
-            heading: "Şifre Sıfırlama",
-            greeting: "Merhaba,",
-            body: "Şifre sıfırlama talebiniz için tek kullanımlık doğrulama kodunuz aşağıdadır.",
+            title: "Password Reset",
+            heading: "Password Reset",
+            greeting: "Hello,",
+            body: "Your one-time verification code for password reset request is below.",
             otp: input.otp,
-            footer: "Bu kod 10 dakika boyunca geçerlidir. Kodu kimseyle paylaşmayın.",
+            footer: "This code is valid for 10 minutes. Do not share this code with anyone.",
         });
 
-        await this.send(input.to, "Şifre Sıfırlama İsteği", html);
+        await this.send(input.to, "Password Reset Request", html);
     }
 
     async sendDeleteUserEmail(input: EmailInput): Promise<void> {
         const html = buildEmailHtml({
             type: "alert",
-            title: "Hesap Silme",
-            heading: "Hesap Silme",
-            greeting: "Merhaba,",
-            body: "Hesabınızı silme talebinizi aldık ve işleminizi başlattık. Hesabınız tam <strong>30 gün sonra</strong> sistemlerimizden kalıcı olarak silinecektir.",
-            alertTitle: "Fikrinizi Değiştirirseniz?",
+            title: "Account Deletion",
+            heading: "Account Deletion",
+            greeting: "Hello,",
+            body: "We have received your request to delete your account and have initiated the process. Your account will be permanently deleted from our systems in <strong>30 days</strong>.",
+            alertTitle: "Change Your Mind?",
             alertBody:
-                "Önümüzdeki 30 gün içinde hesabınıza tekrar giriş yaparsanız, silme işlemi otomatik olarak iptal edilecek ve hesabınızı kullanmaya devam edebileceksiniz.",
-            footer: "Şimdiye kadar bizimle olduğunuz için teşekkür ederiz.",
+                "If you log back into your account within the next 30 days, the deletion process will be automatically canceled and you can continue using your account.",
+            footer: "Thank you for being with us until now.",
         });
 
-        await this.send(input.to, "Hesabınız Silinmek İçin Programlandı", html);
+        await this.send(
+            input.to,
+            "Your Account is Scheduled for Deletion",
+            html,
+        );
     }
 }

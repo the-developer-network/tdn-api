@@ -15,7 +15,7 @@
 
 [![License](https://img.shields.io/badge/License-Source--Available-blue?style=flat-square)](./LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](https://github.com/the-developer-network/tdn-api/pulls)
-[![Swagger Docs](https://img.shields.io/badge/API_Docs-Swagger-85EA2D?style=flat-square&logo=swagger&logoColor=black)](http://localhost:8080/api/v1/docs)
+[![Swagger Docs](https://img.shields.io/badge/API_Docs-Swagger-85EA2D?style=flat-square&logo=swagger&logoColor=black)](https://api.developernetwork.net/api/v1/docs)
 
 <br/>
 
