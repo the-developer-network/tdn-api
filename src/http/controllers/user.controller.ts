@@ -9,7 +9,7 @@ import type { ChangeUsernameBody } from "@typings/schemas/user/change-username.s
 import type { SoftDeleteUserBody } from "@typings/schemas/user/solft-delete.schema";
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-export default class UserController {
+export class UserController {
     constructor(
         private readonly softDeleteUserUseCase: SoftDeleteUserUseCase,
         private readonly getMeUserUseCase: GetMeUserUseCase,

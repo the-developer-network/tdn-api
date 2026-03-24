@@ -5,7 +5,7 @@ import type { UserProps } from "@core/domain/interfaces/user-props.interface";
  * Mapper class responsible for transforming User data across different layers.
  * Handles conversions between Prisma database records, Domain entities, and safe Response objects.
  */
-export default class UserPrismaMapper {
+export class UserPrismaMapper {
     /**
      * Maps a Prisma database record to a core Domain entity.
      *

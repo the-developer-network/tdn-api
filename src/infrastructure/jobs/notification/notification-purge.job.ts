@@ -1,6 +1,6 @@
 import type { PurgeExpiredNotificationsUseCase } from "@core/use-cases/notification/purge-expired/purge-expired-notifications.usecase";
 
-export default class NotificationPurgeJob {
+export class NotificationPurgeJob {
     constructor(
         private readonly purgeExpiredNotificationsUseCase: PurgeExpiredNotificationsUseCase,
     ) {}

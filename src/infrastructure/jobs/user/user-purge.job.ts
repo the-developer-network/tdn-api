@@ -1,6 +1,6 @@
 import type { PurgeExpiredUsersUseCase } from "@core/use-cases/user/purge-expired-users/purge-expired-users.use-case";
 
-export default class UserPurgeJob {
+export class UserPurgeJob {
     constructor(
         private readonly purgeExpiredUsersUseCase: PurgeExpiredUsersUseCase,
     ) {}

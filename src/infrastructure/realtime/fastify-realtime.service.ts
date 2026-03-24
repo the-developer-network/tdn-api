@@ -2,8 +2,8 @@ import type {
     RealtimePort,
     RealtimeNotificationPayload,
 } from "@core/ports/services/realtime.port";
-import type { WebSocketManager } from "../websocket/websocket-manager";
-import type { RedisService } from "../redis/redis.service";
+import type { WebSocketManager } from "./websocket/websocket-manager";
+import type { RedisService } from "./redis/redis.service";
 import type { FastifyBaseLogger } from "fastify";
 
 const REDIS_CHANNEL = "realtime_events";

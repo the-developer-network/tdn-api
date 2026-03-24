@@ -1,6 +1,6 @@
 import fastifyPlugin from "fastify-plugin";
 import fastifyJwt from "@fastify/jwt";
-import { AuthTokenService } from "@infrastructure/services/auth-token.service";
+import { AuthTokenService } from "@infrastructure/security/auth-token.service";
 import type { FastifyInstance } from "fastify";
 
 function jwtPlugin(fastify: FastifyInstance): void {

@@ -18,7 +18,7 @@ type PrismaProfileWithUserAndCounts = PrismaProfile & {
  * Mapper class responsible for transforming Profile data across different layers.
  * Handles conversions between Prisma database records, Domain entities, and safe Response objects.
  */
-export default class ProfilePrismaMapper {
+export class ProfilePrismaMapper {
     /**
      * Maps a Prisma database record to a core Domain entity.
      * * @param dbProfile - The profile record retrieved from the Prisma database.

@@ -3,10 +3,10 @@ import type { FastifyReply, FastifyRequest, FastifyInstance } from "fastify";
 import type { GithubAuthPort } from "@core/ports/services/github-auth.port";
 import { AccountPendingDeletionError } from "@core/errors";
 import type { GithubLoginUseCase } from "@core/use-cases/oauth/oauth-github";
-import type { GoogleAuthService } from "@infrastructure/services/google-auth.service";
+import type { GoogleAuthService } from "@infrastructure/external/google-auth.service";
 import type { GoogleLoginUseCase } from "@core/use-cases/oauth/oauth-google";
 
-export default class OAuthController extends BaseAuthController {
+export class OAuthController extends BaseAuthController {
     constructor(
         private readonly githubAuthService: GithubAuthPort,
         private readonly githubLoginUseCase: GithubLoginUseCase,

@@ -1,8 +1,8 @@
 import type { IVerificationTokenRepository } from "@core/ports/repositories/verification-token.repository";
 import type { VerificationToken } from "@core/domain/entities/verification-token.entity";
 import type { TokenType } from "@core/domain/enums/token-type.enum";
-import { VerificationTokenPrismaMapper } from "../mappers/verification-token.prisma.mapper";
-import type { PrismaTransactionalClient } from "../database/prisma-client.type";
+import type { PrismaTransactionalClient } from "@infrastructure/persistence/database/prisma-client.type";
+import { VerificationTokenPrismaMapper } from "@infrastructure/persistence/mappers/verification-token.prisma.mapper";
 
 export class PrismaVerificationTokenRepository implements IVerificationTokenRepository {
     constructor(private readonly prisma: PrismaTransactionalClient) {}

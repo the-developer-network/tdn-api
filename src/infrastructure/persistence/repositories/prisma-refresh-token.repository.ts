@@ -1,7 +1,7 @@
 import type { IRefreshTokenRepository } from "@core/ports/repositories/refresh-token.repository";
 import type { RefreshToken } from "@core/domain/entities/refresh-token.entity";
-import { RefreshTokenPrismaMapper } from "@infrastructure/mappers/refresh-token.prisma.mapper";
-import type { PrismaTransactionalClient } from "@infrastructure/database/prisma-client.type";
+import { RefreshTokenPrismaMapper } from "@infrastructure/persistence/mappers/refresh-token.prisma.mapper";
+import type { PrismaTransactionalClient } from "@infrastructure/persistence/database/prisma-client.type";
 
 export interface PrismaRefreshTokenRepositoryOptions {
     gracePeriodDays: number;

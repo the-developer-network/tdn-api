@@ -17,7 +17,7 @@ import type { VerifyEmailBody } from "@typings/schemas/auth/verify-email.schema"
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { BaseAuthController } from "./base-auth.controller";
 
-export default class AuthController extends BaseAuthController {
+export class AuthController extends BaseAuthController {
     constructor(
         private readonly registerUseCase: RegisterUseCase,
         private readonly loginUseCase: LoginUseCase,

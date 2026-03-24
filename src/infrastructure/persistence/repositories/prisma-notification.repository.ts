@@ -2,9 +2,9 @@ import type {
     INotificationRepository,
     FindNotificationsInput,
 } from "@core/ports/repositories/notification.repository";
-import type { PrismaTransactionalClient } from "@infrastructure/database/prisma-client.type";
+import type { PrismaTransactionalClient } from "@infrastructure/persistence/database/prisma-client.type";
 import { Notification } from "@core/domain/entities/notification.entity";
-import { NotificationPrismaMapper } from "@infrastructure/mappers/notification-prisma.mapper";
+import { NotificationPrismaMapper } from "@infrastructure/persistence/mappers/notification-prisma.mapper";
 
 export class PrismaNotificationRepository implements INotificationRepository {
     constructor(private readonly prisma: PrismaTransactionalClient) {}

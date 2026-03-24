@@ -1,10 +1,10 @@
 import type { User } from "@core/domain/entities/user.entity";
 import type { IUserRepository } from "@core/ports/repositories/user.repository";
-import UserPrismaMapper from "../mappers/user-prisma.mapper";
+import { UserPrismaMapper } from "@infrastructure/persistence/mappers/user-prisma.mapper";
 import { UserAlreadyExistsError } from "@core/errors";
 import { ConflictError } from "@core/errors";
 import { Prisma } from "@generated/prisma/client";
-import type { PrismaTransactionalClient } from "@infrastructure/database/prisma-client.type";
+import type { PrismaTransactionalClient } from "@infrastructure/persistence/database/prisma-client.type";
 
 export interface PrismaUserRepositoryOptions {
     gracePeriodDays: number;

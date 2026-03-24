@@ -1,7 +1,7 @@
 import { BadRequestError } from "@core/errors";
 import type { IUserRepository } from "@core/ports/repositories/user.repository";
 import type { IVerificationTokenRepository } from "@core/ports/repositories/verification-token.repository";
-import type { PasswordService } from "@infrastructure/services/password.service";
+import type { PasswordService } from "@infrastructure/security/password.service";
 import { TokenType } from "@core/domain/enums/token-type.enum";
 import type { CryptoPort } from "@core/ports/services/crypto.port";
 import type { ResetPasswordInput } from "./reset-password.input";

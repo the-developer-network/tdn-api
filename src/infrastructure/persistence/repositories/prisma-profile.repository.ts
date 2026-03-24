@@ -5,8 +5,8 @@ import type {
     Prisma,
 } from "@generated/prisma/client";
 import type { Profile } from "@core/domain/entities/profile.entity";
-import type { PrismaTransactionalClient } from "@infrastructure/database/prisma-client.type";
-import ProfilePrismaMapper from "@infrastructure/mappers/profile-prisma.mapper";
+import type { PrismaTransactionalClient } from "@infrastructure/persistence/database/prisma-client.type";
+import { ProfilePrismaMapper } from "@infrastructure/persistence/mappers/profile-prisma.mapper";
 
 export class PrismaProfileRepository implements IProfileRepository {
     constructor(private readonly prisma: PrismaTransactionalClient) {}

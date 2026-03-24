@@ -1,6 +1,6 @@
 import type { FastifyBaseLogger } from "fastify";
 import cron, { type ScheduledTask } from "node-cron";
-import type NotificationPurgeJob from "./notification-purge.job";
+import type { NotificationPurgeJob } from "./notification-purge.job";
 
 export interface NotificationPurgeSchedulerOptions {
     cronExpression: string;

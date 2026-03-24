@@ -1,6 +1,6 @@
 import type { FastifyBaseLogger } from "fastify";
 import cron, { type ScheduledTask } from "node-cron";
-import type UserPurgeJob from "./user-purge.job";
+import type { UserPurgeJob } from "./user-purge.job";
 
 export interface UserPurgeSchedulerOptions {
     cronExpression: string;

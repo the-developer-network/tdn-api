@@ -1,7 +1,7 @@
 import { UnauthorizedError } from "@core/errors";
 import type { IOAuthAccountRepository } from "@core/ports/repositories/oauth-account.repository";
 import type { IUserRepository } from "@core/ports/repositories/user.repository";
-import UserPrismaMapper from "@infrastructure/mappers/user-prisma.mapper";
+import { UserPrismaMapper } from "@infrastructure/persistence/mappers/user-prisma.mapper";
 import type { GetMeUserUseCaseInput } from "./get-me-user-usecase.input";
 import type { GetMeUserUseCaseOutput } from "./get-me-user-usecase.output";
 

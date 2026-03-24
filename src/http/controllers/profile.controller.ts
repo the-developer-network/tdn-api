@@ -7,7 +7,7 @@ import type { UpdateAvatarUseCase } from "@core/use-cases/profile/update-avatar"
 import type { UpdateBannerUseCase } from "@core/use-cases/profile/update-banner";
 import type { UpdateProfileInput } from "@core/use-cases/profile/update-profil";
 import type { UpdateProfileUseCase } from "@core/use-cases/profile/update-profil";
-import ProfilePrismaMapper from "@infrastructure/mappers/profile-prisma.mapper";
+import { ProfilePrismaMapper } from "@infrastructure/persistence/mappers/profile-prisma.mapper";
 import {
     type FollowersParams,
     type PaginationQuery,

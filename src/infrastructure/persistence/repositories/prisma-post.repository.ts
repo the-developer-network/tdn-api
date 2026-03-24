@@ -5,7 +5,7 @@ import type {
     GetPostsParams,
 } from "@core/ports/repositories/post.repository";
 import { Post } from "@core/domain/entities/post.entity";
-import { PostPrismaMapper } from "@infrastructure/mappers/post-prisma.mapper";
+import { PostPrismaMapper } from "@infrastructure/persistence/mappers/post-prisma.mapper";
 import type { PostType } from "@core/domain/enums/post-type.enum";
 
 export class PrismaPostRepository implements IPostRepository {

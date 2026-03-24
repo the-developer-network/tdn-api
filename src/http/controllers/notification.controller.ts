@@ -3,7 +3,7 @@ import type { GetUserNotificatonUseCase } from "@core/use-cases/notification/get
 import type { GetNotificationsQuery } from "@typings/schemas/notification/get-notification.schema";
 import type { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/mark-all";
 
-export default class NotificationController {
+export class NotificationController {
     constructor(
         private readonly getUserNotificationsUseCase: GetUserNotificatonUseCase,
         private readonly markAllReadUseCase: MarkAllNotificationsAsReadUseCase,
