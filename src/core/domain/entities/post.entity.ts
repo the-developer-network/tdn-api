@@ -128,6 +128,10 @@ export class Post {
     get isBookmarked(): boolean {
         return this.props.isBookmarked ?? false;
     }
+
+    get isLiked(): boolean {
+        return this.props.isLiked ?? false;
+    }
     /**
      * Check if the post has any media attached
      * @returns True if the post has one or more media items

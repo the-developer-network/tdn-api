@@ -38,7 +38,7 @@ export interface IPostRepository {
      * @param id - The unique identifier of the post.
      * @returns The Post entity if found, otherwise null.
      */
-    findById(id: string): Promise<Post | null>;
+    findById(id: string, currentUserId?: string): Promise<Post | null>;
 
     /**
      * Deletes a post by its unique identifier.

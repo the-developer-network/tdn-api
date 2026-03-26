@@ -15,9 +15,13 @@ import {
     deletePostParamsSchema,
 } from "@typings/schemas/post/delete-post.schema";
 import {
+    type GetPostParams,
+    getPostParamsSchema,
+} from "@typings/schemas/post/get-post.schema";
+import {
     getPostsQuerySchema,
     type GetPostsQuery,
-} from "@typings/schemas/post/get-post.schema";
+} from "@typings/schemas/post/get-posts.schema";
 import type { FastifyInstance } from "fastify";
 
 /**
@@ -100,5 +104,17 @@ export function postRoutes(fastify: FastifyInstance): void {
             config: { rateLimit: RateLimitPolicies.SENSITIVE },
         },
         postController.deletePost.bind(postController),
+    );
+
+    fastify.get<{ Params: GetPostParams }>(
+        "/:id",
+        {
+            schema: {
+                params: getPostParamsSchema,
+                tags: ["Post"],
+            },
+            config: { rateLimit: RateLimitPolicies.STANDARD },
+        },
+        postController.getPost.bind(postController),
     );
 }

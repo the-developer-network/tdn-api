@@ -12,6 +12,8 @@ export type PostWithRelations = Prisma.PostGetPayload<{
             };
         };
         tags: true;
+        likes: true;
+        bookmarks: true;
     };
 }>;
 
@@ -28,84 +30,52 @@ export interface PostResponse {
         username?: string;
         avatarUrl: string;
     };
+    isLiked: boolean;
+    isBookmarked: boolean;
 }
 
 /**
- * Mapper class for converting between Post entities and Prisma data structures
- *
- * Provides utility methods for transforming Post domain entities to and from
- * the data structures used by Prisma ORM. This ensures clean separation between
- * the domain layer and the persistence layer.
+ * Mapper class responsible for transforming Post data across different layers.
+ * Handles conversions between Prisma database records, Domain entities, and safe Response objects.
  */
 export class PostPrismaMapper {
-    static toDomain(raw: PostWithRelations): Post {
+    /**
+     * Maps a Prisma database record to a core Domain entity.
+     *
+     * @param dbPost - The post record retrieved from the Prisma database with relations.
+     * @returns The instantiated Post domain entity.
+     */
+    static toDomainPost(dbPost: PostWithRelations): Post {
         return new Post({
-            id: raw.id,
-            content: raw.content,
-            type: raw.type as PostType,
-            mediaUrls: raw.mediaUrls,
+            id: dbPost.id,
+            content: dbPost.content,
+            type: dbPost.type as PostType,
+            mediaUrls: dbPost.mediaUrls,
 
             author: {
-                id: raw.authorId,
-                username: raw.author?.username ?? undefined,
-                avatarUrl: raw.author?.profile?.avatarUrl ?? undefined,
+                id: dbPost.authorId,
+                username: dbPost.author?.username ?? undefined,
+                avatarUrl: dbPost.author?.profile?.avatarUrl ?? undefined,
             },
 
-            tags: raw.tags?.map((t) => t.name) || [],
+            tags: dbPost.tags?.map((t) => t.name) || [],
 
-            createdAt: raw.createdAt,
-            updatedAt: raw.updatedAt,
-            likeCount: raw.likeCount,
-            commentCount: raw.commentCount,
+            createdAt: dbPost.createdAt,
+            updatedAt: dbPost.updatedAt,
+            likeCount: dbPost.likeCount,
+            commentCount: dbPost.commentCount,
+            isLiked: dbPost.likes && dbPost.likes.length > 0,
+            isBookmarked: dbPost.bookmarks && dbPost.bookmarks.length > 0,
         });
     }
 
     /**
-     * Maps a Post entity to a response object
-     * @param post - The Post entity
-     * @param isBookmarked - Optional flag indicating if the post is bookmarked by the current user
-     * @returns A response object with post data
+     * Maps domain entity data to a Prisma-compatible object.
+     *
+     * @param post - The Post domain entity.
+     * @returns The Prisma-formatted input object for database operations.
      */
-    public static toPostOutput(post: Post): {
-        id: string;
-        content: string;
-        type: PostType;
-        mediaUrls: string[];
-        author: {
-            id: string;
-            username: string;
-            avatarUrl: string;
-        };
-        createdAt: Date;
-        updatedAt: Date;
-        likeCount: number;
-        commentCount: number;
-        isBookmarked?: boolean;
-    } {
-        return {
-            id: post.id,
-            content: post.content,
-            type: post.type as PostType,
-            mediaUrls: post.mediaUrls,
-            author: {
-                id: post.author.id,
-                username: post.author.username || "",
-                avatarUrl: post.author.avatarUrl || "",
-            },
-            createdAt: post.createdAt,
-            updatedAt: post.updatedAt,
-            likeCount: post.likeCount,
-            commentCount: post.commentCount,
-            isBookmarked: post.isBookmarked,
-        };
-    }
-
-    /**
-     * Maps a Post entity to Prisma post data
-     * @param post - The Post entity
-     * @returns Prisma post data
-     */
-    public static toPrisma(post: Post): {
+    static toPrismaPost(post: Post): {
         content: string;
         type: PostType;
         mediaUrls: string[];
@@ -119,6 +89,14 @@ export class PostPrismaMapper {
         };
     }
 
+    /**
+     * Maps a Domain entity to a safe public response object.
+     * Formats avatar URLs and includes user-specific interaction states (likes/bookmarks).
+     *
+     * @param post - The Post domain entity.
+     * @param cdnUrl - Base URL for the CDN to resolve media links.
+     * @returns A sanitized post object safe for external API responses.
+     */
     static toResponse(post: Post, cdnUrl: string): PostResponse {
         return {
             id: post.id,
@@ -126,12 +104,13 @@ export class PostPrismaMapper {
             type: post.type,
             mediaUrls: post.mediaUrls,
             createdAt: post.createdAt,
-            likeCount: post.likeCount,
-            commentCount: post.commentCount,
+            likeCount: post.likeCount || 0,
+            commentCount: post.commentCount || 0,
+            isLiked: post.isLiked || false,
+            isBookmarked: post.isBookmarked || false,
             author: {
                 id: post.author.id,
                 username: post.author.username,
-
                 avatarUrl: post.author.avatarUrl
                     ? post.author.avatarUrl.startsWith("http")
                         ? post.author.avatarUrl
@@ -141,6 +120,13 @@ export class PostPrismaMapper {
         };
     }
 
+    /**
+     * Maps an array of Domain entities to safe public response objects.
+     *
+     * @param posts - Array of Post domain entities.
+     * @param cdnUrl - Base URL for the CDN to resolve media links.
+     * @returns An array of sanitized post objects safe for external API responses.
+     */
     static toFeedResponse(posts: Post[], cdnUrl: string): PostResponse[] {
         return posts.map((post) => this.toResponse(post, cdnUrl));
     }

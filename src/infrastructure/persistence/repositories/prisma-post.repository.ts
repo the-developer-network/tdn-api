@@ -2,8 +2,11 @@ import type {
     IPostRepository,
     GetPostsParams,
 } from "@core/ports/repositories/post.repository";
-import { Post } from "@core/domain/entities/post.entity";
-import { PostPrismaMapper } from "@infrastructure/persistence/mappers/post-prisma.mapper";
+import type { Post } from "@core/domain/entities/post.entity";
+import {
+    PostPrismaMapper,
+    type PostWithRelations,
+} from "@infrastructure/persistence/mappers/post-prisma.mapper";
 import type { PostType } from "@core/domain/enums/post-type.enum";
 import type { PrismaTransactionalClient } from "@infrastructure/persistence/database/prisma-client.type";
 import type { Prisma } from "@generated/prisma/client";
@@ -16,17 +19,8 @@ import type { Prisma } from "@generated/prisma/client";
  * data access patterns across different persistence implementations.
  */
 export class PrismaPostRepository implements IPostRepository {
-    /**
-     * Creates a new PrismaPostRepository instance
-     * @param prisma - The Prisma client instance
-     */
     constructor(private readonly prisma: PrismaTransactionalClient) {}
 
-    /**
-     * Creates a new post in the database
-     * @param post - The Post entity to create
-     * @returns Promise<void>
-     */
     async create(post: Post): Promise<Post> {
         const hashtagRegex = /#[\p{L}\p{N}_]+/gu;
         const matches = post.content.match(hashtagRegex) || [];
@@ -36,7 +30,7 @@ export class PrismaPostRepository implements IPostRepository {
             ),
         ];
 
-        const prismaData = PostPrismaMapper.toPrisma(post);
+        const prismaData = PostPrismaMapper.toPrismaPost(post);
 
         const createdRaw = await this.prisma.post.create({
             data: {
@@ -48,27 +42,23 @@ export class PrismaPostRepository implements IPostRepository {
                     })),
                 },
             },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        username: true,
+                        profile: { select: { avatarUrl: true } },
+                    },
+                },
+                tags: true,
+                likes: false,
+                bookmarks: false,
+            },
         });
 
-        return new Post({
-            id: createdRaw.id,
-            content: createdRaw.content,
-            type: createdRaw.type as PostType,
-            mediaUrls: createdRaw.mediaUrls,
-            author: { id: createdRaw.authorId },
-            tags: [],
-            createdAt: createdRaw.createdAt,
-            updatedAt: createdRaw.updatedAt,
-            commentCount: createdRaw.commentCount,
-            likeCount: 0,
-        });
+        return PostPrismaMapper.toDomainPost(createdRaw as PostWithRelations);
     }
 
-    /**
-     * Retrieves a paginated list of posts with optional type filtering
-     * @param params - Pagination and filtering parameters
-     * @returns Promise containing posts array and total count
-     */
     async findAll(
         params: GetPostsParams,
     ): Promise<{ posts: Post[]; total: number }> {
@@ -91,63 +81,35 @@ export class PrismaPostRepository implements IPostRepository {
                 skip,
                 take: limit,
                 orderBy: { createdAt: "desc" },
+
                 include: {
                     author: {
                         select: {
                             id: true,
                             username: true,
-                            profile: {
-                                select: { avatarUrl: true },
-                            },
+                            profile: { select: { avatarUrl: true } },
                         },
                     },
-                    tags: {
-                        select: { name: true },
-                    },
-                    _count: {
-                        select: { likes: true },
-                    },
-
+                    tags: true,
+                    likes: currentUserId
+                        ? { where: { userId: currentUserId } }
+                        : false,
                     bookmarks: currentUserId
-                        ? {
-                              where: { userId: currentUserId },
-                              select: { id: true },
-                          }
+                        ? { where: { userId: currentUserId } }
                         : false,
                 },
             }),
         ]);
 
-        const posts: Post[] = rawPosts.map((post) => {
-            return new Post({
-                id: post.id,
-                content: post.content,
-                type: post.type as PostType,
-                mediaUrls: post.mediaUrls,
-                author: {
-                    id: post.author.id,
-                    username: post.author.username,
-                    avatarUrl: post.author.profile?.avatarUrl as string,
-                },
-                tags: post.tags.map((tag) => tag.name),
-                createdAt: post.createdAt,
-                updatedAt: post.updatedAt,
-                likeCount: post._count.likes,
-                commentCount: post.commentCount,
-                isBookmarked: post.bookmarks && post.bookmarks.length > 0,
-            });
-        });
+        const posts = rawPosts.map((post) =>
+            PostPrismaMapper.toDomainPost(post as PostWithRelations),
+        );
 
         return { posts, total };
     }
 
-    /**
-     * Retrieves a post by its unique identifier
-     * @param id - The unique identifier of the post
-     * @returns Promise containing the Post entity or null if not found
-     */
-    async findById(id: string): Promise<Post | null> {
-        const post = await this.prisma.post.findUnique({
+    async findById(id: string, currentUserId?: string): Promise<Post | null> {
+        const raw = await this.prisma.post.findUnique({
             where: { id },
             include: {
                 author: {
@@ -157,49 +119,27 @@ export class PrismaPostRepository implements IPostRepository {
                         profile: { select: { avatarUrl: true } },
                     },
                 },
-                tags: { select: { name: true } },
-                _count: {
-                    select: { likes: true },
-                },
+                tags: true,
+                likes: currentUserId
+                    ? { where: { userId: currentUserId } }
+                    : false,
+                bookmarks: currentUserId
+                    ? { where: { userId: currentUserId } }
+                    : false,
             },
         });
 
-        if (!post) return null;
+        if (!raw) return null;
 
-        return new Post({
-            id: post.id,
-            content: post.content,
-            type: post.type as PostType,
-            mediaUrls: post.mediaUrls,
-            author: {
-                id: post.author.id,
-                username: post.author.username,
-                avatarUrl: post.author.profile?.avatarUrl as string,
-            },
-            tags: post.tags.map((tag) => tag.name),
-            createdAt: post.createdAt,
-            updatedAt: post.updatedAt,
-            likeCount: post._count.likes,
-            commentCount: post.commentCount,
-        });
+        return PostPrismaMapper.toDomainPost(raw as PostWithRelations);
     }
 
-    /**
-     * Deletes a post by its unique identifier
-     * @param id - The unique identifier of the post to delete
-     * @returns Promise<void>
-     */
     async delete(id: string): Promise<void> {
         await this.prisma.post.delete({
             where: { id },
         });
     }
 
-    /**
-     * Increments the comment count for a post
-     * @param postId - The ID of the post to increment comment count for
-     * @returns Promise<void>
-     */
     async incrementCommentsCount(postId: string): Promise<void> {
         await this.prisma.post.update({
             where: { id: postId },
@@ -207,11 +147,6 @@ export class PrismaPostRepository implements IPostRepository {
         });
     }
 
-    /**
-     * Decrements the comment count for a post
-     * @param postId - The ID of the post to decrement comment count for
-     * @returns Promise<void>
-     */
     async decrementCommentsCount(postId: string): Promise<void> {
         await this.prisma.post.update({
             where: { id: postId },
@@ -252,13 +187,16 @@ export class PrismaPostRepository implements IPostRepository {
                         },
                     },
                     tags: true,
-                    _count: { select: { likes: true, comments: true } },
+                    likes: false,
+                    bookmarks: false,
                 },
             }),
             this.prisma.post.count({ where: whereClause }),
         ]);
 
-        const posts = rawPosts.map((raw) => PostPrismaMapper.toDomain(raw));
+        const posts = rawPosts.map((raw) =>
+            PostPrismaMapper.toDomainPost(raw as PostWithRelations),
+        );
 
         return { posts, total };
     }

@@ -1,11 +1,14 @@
 import { MediaLimitExceededError, NoMediaProvidedError } from "@core/errors";
 import type { CreatePostUseCase } from "@core/use-cases/post/create-post";
 import type { DeletePostUseCase } from "@core/use-cases/post/delete-post";
-import type { GetPostsUseCase } from "@core/use-cases/post/get-post";
+import type { GetPostDetailUseCase } from "@core/use-cases/post/get-post-detail/get-post-detail.usecase";
+import type { GetPostsUseCase } from "@core/use-cases/post/get-posts";
 import type { UploadPostMediaUseCase } from "@core/use-cases/post/upload-post-media";
+import { PostPrismaMapper } from "@infrastructure/persistence/mappers/post-prisma.mapper";
 import type { CreatePostBody } from "@typings/schemas/post/create-post.schema";
 import type { DeletePostParams } from "@typings/schemas/post/delete-post.schema";
-import type { GetPostsQuery } from "@typings/schemas/post/get-post.schema";
+import type { GetPostParams } from "@typings/schemas/post/get-post.schema";
+import type { GetPostsQuery } from "@typings/schemas/post/get-posts.schema";
 import type { FastifyReply, FastifyRequest } from "fastify";
 
 /**
@@ -28,6 +31,7 @@ export class PostController {
         private readonly uploadPostMediaUseCase: UploadPostMediaUseCase,
         private readonly getPostsUseCase: GetPostsUseCase,
         private readonly deletePostUseCase: DeletePostUseCase,
+        private readonly getPostDetailUseCase: GetPostDetailUseCase,
     ) {}
 
     /**
@@ -48,7 +52,7 @@ export class PostController {
             type,
             mediaUrls,
         });
-        console.log(post.id);
+
         return reply.status(201).send({
             data: {
                 id: post.id,
@@ -187,5 +191,23 @@ export class PostController {
         });
 
         return reply.status(204).send();
+    }
+
+    async getPost(
+        request: FastifyRequest<{ Params: GetPostParams }>,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const { id } = request.params;
+        const userId = request.user?.id;
+
+        const cdnUrl = request.server.config.R2_PUBLIC_URL;
+
+        const post = await this.getPostDetailUseCase.execute(id, userId);
+
+        const formattedData = PostPrismaMapper.toResponse(post, cdnUrl);
+
+        return reply.status(200).send({
+            data: formattedData,
+        });
     }
 }

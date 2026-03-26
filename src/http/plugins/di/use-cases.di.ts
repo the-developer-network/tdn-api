@@ -32,7 +32,7 @@ import { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/
 import { PurgeExpiredNotificationsUseCase } from "@core/use-cases/notification/purge-expired";
 import { CreatePostUseCase } from "@core/use-cases/post/create-post";
 import { UploadPostMediaUseCase } from "@core/use-cases/post/upload-post-media";
-import { GetPostsUseCase } from "@core/use-cases/post/get-post";
+import { GetPostsUseCase } from "@core/use-cases/post/get-posts";
 import { DeletePostUseCase } from "@core/use-cases/post/delete-post";
 import { LikePostUseCase } from "@core/use-cases/post/like-post";
 import { UnlikePostUseCase } from "@core/use-cases/post/unlike-post";
@@ -42,6 +42,7 @@ import { RemoveBookmarkUseCase } from "@core/use-cases/bookmark/remove-bookmark/
 import { GetBookmarksUseCase } from "@core/use-cases/bookmark/get-bookmarks/get-bookmarks.usecase";
 import { DeleteCommentUseCase } from "@core/use-cases/comment/delete-comment/delete-comment.usecase";
 import { GetUserPostsUseCase } from "@core/use-cases/post/get-user-posts/get-user.posts.usecase";
+import { GetPostDetailUseCase } from "@core/use-cases/post/get-post-detail/get-post-detail.usecase";
 
 /**
  * Dependency injection module for use cases
@@ -284,4 +285,8 @@ export const useCasesModule = {
      *
      */
     getUserPostsUseCase: asClass(GetUserPostsUseCase).singleton(),
+    /**
+     *
+     */
+    getPostDetailUseCase: asClass(GetPostDetailUseCase).singleton(),
 };

@@ -49,4 +49,6 @@ export interface PostProps {
 
     /** Indicates if the current authenticated user has bookmarked this post */
     isBookmarked?: boolean;
+
+    isLiked?: boolean;
 }
