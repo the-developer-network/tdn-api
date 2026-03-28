@@ -18,12 +18,6 @@ export const EnvSchema = Type.Object({
     REFRESH_TOKEN_PURGE_CRON: Type.String({ default: "0 */6 * * *" }),
     REFRESH_TOKEN_PURGE_GRACE_PERIOD_DAYS: Type.Number({ default: 24 }),
 
-    // --- SMTP & Email Configuration ---
-    SMTP_HOST: Type.String({ default: "sdasa" }),
-    SMTP_PORT: Type.Number({ default: 2525 }),
-    SMTP_SECURE: Type.Boolean({ default: false }),
-    SMTP_USER: Type.String({ default: "user" }),
-    SMTP_PASS: Type.String({ default: "123" }),
     EMAIL_FROM: Type.String({ default: "email" }),
 
     // --- Others ---
@@ -63,6 +57,8 @@ export const EnvSchema = Type.Object({
     REDIS_URL: Type.String(),
     NOTIFICATION_PURGE_CRON: Type.String({ default: "0 3 * * *" }),
     NOTIFICATION_PURGE_GRACE_PERIOD_DAYS: Type.Number({ default: 30 }),
+
+    RESEND_API_KEY: Type.String({ default: "resend_api_key" }),
 });
 
 export type EnvConfig = Static<typeof EnvSchema>;

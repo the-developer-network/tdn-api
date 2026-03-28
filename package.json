@@ -62,12 +62,11 @@
         "fastify-plugin": "^5.1.0",
         "ioredis": "^5.10.1",
         "node-cron": "^4.2.1",
-        "nodemailer": "^8.0.4"
+        "resend": "^6.9.4"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@types/node": "^25.5.0",
-        "@types/nodemailer": "^7.0.11",
         "@types/supertest": "^7.2.0",
         "@vitest/coverage-v8": "4.1.0",
         "cross-env": "^10.1.0",

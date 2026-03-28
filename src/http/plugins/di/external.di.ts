@@ -10,11 +10,7 @@ export const externalModule = {
     emailService: asFunction((config, logger) => {
         return new EmailService(
             {
-                host: config.SMTP_HOST,
-                port: config.SMTP_PORT,
-                secure: config.SMTP_SECURE,
-                user: config.SMTP_USER,
-                pass: config.SMTP_PASS,
+                apiKey: config.RESEND_API_KEY,
                 from: config.EMAIL_FROM,
             },
             logger,

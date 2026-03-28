@@ -28,7 +28,7 @@ function rateLimitPlugin(fastify: FastifyInstance): void {
         global: true,
         max: 100,
         timeWindow: "1 minute",
-
+        allowList: fastify.config.NODE_ENV === "test" ? ["127.0.0.1"] : [],
         errorResponseBuilder: () => {
             throw new TooManyRequestsError();
         },
