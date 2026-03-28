@@ -4,11 +4,17 @@
  */
 import type { CreateCommentUseCase } from "@core/use-cases/comment/create-comment/create-comment.usecase";
 import type { DeleteCommentUseCase } from "@core/use-cases/comment/delete-comment/delete-comment.usecase";
+import type { GetPostCommentsUseCase } from "@core/use-cases/comment/get-post-comments/get-post-comments.usecase";
+import { CommentPrismaMapper } from "@infrastructure/persistence/mappers/comment-prisma.mapper";
 import type {
     CreateCommentBody,
     CreateCommentParams,
 } from "@typings/schemas/comment/create-comment.schema";
 import type { DeleteCommentParams } from "@typings/schemas/comment/delete-comment.schema";
+import type {
+    GetPostCommentsQuery,
+    GetPostCommentsParams,
+} from "@typings/schemas/comment/get-post-comments.schema";
 import type { FastifyRequest, FastifyReply } from "fastify";
 
 export class CommentController {
@@ -19,6 +25,7 @@ export class CommentController {
     constructor(
         private readonly createCommentUseCase: CreateCommentUseCase,
         private readonly deleteCommentUseCase: DeleteCommentUseCase,
+        private readonly getPostCommentsUseCase: GetPostCommentsUseCase,
     ) {}
 
     /**
@@ -69,5 +76,40 @@ export class CommentController {
         });
 
         return reply.status(204).send();
+    }
+
+    async getPostComments(
+        request: FastifyRequest<{
+            Params: GetPostCommentsParams;
+            Querystring: GetPostCommentsQuery;
+        }>,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const { id } = request.params;
+        const { page = 1, limit = 10 } = request.query;
+
+        const currentUserId = request.user?.id;
+
+        const cdnUrl = request.server.config.R2_PUBLIC_URL;
+
+        const comments = await this.getPostCommentsUseCase.execute({
+            postId: id,
+            page,
+            limit,
+            currentUserId,
+        });
+
+        const formattedData = CommentPrismaMapper.toListResponse(
+            comments,
+            cdnUrl,
+        );
+
+        return reply.status(200).send({
+            data: formattedData,
+            meta: {
+                currentPage: page,
+                limit,
+            },
+        });
     }
 }

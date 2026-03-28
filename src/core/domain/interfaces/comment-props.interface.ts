@@ -38,4 +38,14 @@ export interface CommentProps {
      * Last update timestamp of the comment (optional for new comments)
      */
     updatedAt?: Date;
+
+    author?: {
+        id: string;
+        username?: string;
+        avatarUrl?: string;
+    };
+
+    likeCount?: number;
+    replyCount?: number;
+    isLiked?: boolean;
 }

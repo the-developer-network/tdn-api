@@ -16,6 +16,12 @@ import {
     type DeleteCommentParams,
     deleteCommentParamsSchema,
 } from "@typings/schemas/comment/delete-comment.schema";
+import {
+    type GetPostCommentsParams,
+    getPostCommentsParamsSchema,
+    type GetPostCommentsQuery,
+    getPostCommentsQuerySchema,
+} from "@typings/schemas/comment/get-post-comments.schema";
 import { type FastifyInstance } from "fastify";
 
 /**
@@ -59,5 +65,19 @@ export function commentRoutes(fastify: FastifyInstance): void {
             config: { rateLimit: RateLimitPolicies.STANDARD },
         },
         commentController.delete.bind(commentController),
+    );
+    fastify.get<{
+        Params: GetPostCommentsParams;
+        Querystring: GetPostCommentsQuery;
+    }>(
+        "/:id/comments",
+        {
+            schema: {
+                params: getPostCommentsParamsSchema,
+                querystring: getPostCommentsQuerySchema,
+                tags: ["Post", "Comment"],
+            },
+        },
+        commentController.getPostComments.bind(commentController),
     );
 }

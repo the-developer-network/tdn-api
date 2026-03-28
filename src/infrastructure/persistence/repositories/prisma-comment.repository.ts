@@ -4,7 +4,11 @@
  */
 import type { PrismaTransactionalClient } from "@infrastructure/persistence/database/prisma-client.type";
 import type { ICommentRepository } from "@core/ports/repositories/comment.repository";
-import { Comment } from "@core/domain/entities/comment.entity";
+import type { Comment } from "@core/domain/entities/comment.entity";
+import {
+    CommentPrismaMapper,
+    type CommentWithRelations,
+} from "../mappers/comment-prisma.mapper";
 
 export class PrismaCommentRepository implements ICommentRepository {
     /**
@@ -19,16 +23,30 @@ export class PrismaCommentRepository implements ICommentRepository {
      * @returns Promise that resolves when the comment is created
      */
     async create(comment: Comment): Promise<Comment> {
-        const rawComment = await this.prisma.comment.create({
+        const createdRaw = await this.prisma.comment.create({
             data: {
+                id: comment.id,
                 content: comment.content,
                 postId: comment.postId,
                 authorId: comment.authorId,
                 parentId: comment.parentId,
             },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        username: true,
+                        profile: { select: { avatarUrl: true } },
+                    },
+                },
+                likes: false,
+                _count: { select: { replies: true } },
+            },
         });
 
-        return Comment.with(rawComment);
+        return CommentPrismaMapper.toDomainComment(
+            createdRaw as unknown as CommentWithRelations,
+        );
     }
 
     /**
@@ -36,13 +54,31 @@ export class PrismaCommentRepository implements ICommentRepository {
      * @param id - The comment ID to search for
      * @returns Promise that resolves to the comment or null if not found
      */
-    async findById(id: string): Promise<Comment | null> {
+    async findById(
+        id: string,
+        currentUserId?: string,
+    ): Promise<Comment | null> {
         const raw = await this.prisma.comment.findUnique({
             where: { id },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        username: true,
+                        profile: { select: { avatarUrl: true } },
+                    },
+                },
+                likes: currentUserId
+                    ? { where: { userId: currentUserId } }
+                    : false,
+                _count: { select: { replies: true } },
+            },
         });
 
         if (!raw) return null;
-        return Comment.with(raw);
+        return CommentPrismaMapper.toDomainComment(
+            raw as unknown as CommentWithRelations,
+        );
     }
 
     /**
@@ -56,18 +92,36 @@ export class PrismaCommentRepository implements ICommentRepository {
         postId: string,
         limit: number,
         offset: number,
+        currentUserId?: string,
     ): Promise<Comment[]> {
         const rawComments = await this.prisma.comment.findMany({
             where: {
-                postId,
+                postId: postId,
                 parentId: null,
             },
-            orderBy: { createdAt: "desc" },
-            take: limit,
             skip: offset,
+            take: limit,
+            orderBy: { createdAt: "desc" },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        username: true,
+                        profile: { select: { avatarUrl: true } },
+                    },
+                },
+                likes: currentUserId
+                    ? { where: { userId: currentUserId } }
+                    : false,
+                _count: { select: { replies: true } },
+            },
         });
 
-        return rawComments.map((raw) => Comment.with(raw));
+        return rawComments.map((raw) =>
+            CommentPrismaMapper.toDomainComment(
+                raw as unknown as CommentWithRelations,
+            ),
+        );
     }
 
     /**
@@ -89,7 +143,11 @@ export class PrismaCommentRepository implements ICommentRepository {
             skip: offset,
         });
 
-        return rawReplies.map((raw) => Comment.with(raw));
+        return rawReplies.map((raw) =>
+            CommentPrismaMapper.toDomainComment(
+                raw as unknown as CommentWithRelations,
+            ),
+        );
     }
 
     /**
@@ -97,19 +155,9 @@ export class PrismaCommentRepository implements ICommentRepository {
      * @param id - The ID of the comment to delete
      * @returns Promise that resolves when the comment is deleted
      */
-    async delete(id: string, postId: string): Promise<void> {
-        await this.prisma.comment.delete({
-            where: { id },
-        });
-
-        await this.prisma.post.update({
-            where: { id: postId },
-            data: {
-                commentCount: { decrement: 1 },
-            },
-        });
+    async delete(id: string): Promise<void> {
+        await this.prisma.comment.delete({ where: { id } });
     }
-
     /**
      * Counts the number of replies for a specific parent comment
      * @param parentId - The ID of the parent comment

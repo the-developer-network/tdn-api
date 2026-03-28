@@ -89,6 +89,24 @@ export class Comment {
         });
     }
 
+    public get author():
+        | { id: string; username?: string; avatarUrl?: string }
+        | undefined {
+        return this.props.author;
+    }
+
+    public get likeCount(): number {
+        return this.props.likeCount || 0;
+    }
+
+    public get replyCount(): number {
+        return this.props.replyCount || 0;
+    }
+
+    public get isLiked(): boolean {
+        return this.props.isLiked || false;
+    }
+
     /**
      * Factory method to create a comment from existing properties
      * @param props - Comment properties including optional ID and timestamps

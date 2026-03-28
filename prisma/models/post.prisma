@@ -97,6 +97,8 @@ model Comment {
   replies  Comment[] @relation("CommentReplies")
 
   likes CommentLike[]
+  likeCount  Int @default(0) @map("like_count")
+  replyCount Int @default(0) @map("reply_count")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

@@ -17,7 +17,7 @@ export interface ICommentRepository {
      * @param id - The comment ID to search for
      * @returns Promise that resolves to the comment or null if not found
      */
-    findById(id: string): Promise<Comment | null>;
+    findById(id: string, currentUserId?: string): Promise<Comment | null>;
 
     /**
      * Retrieves top-level comments for a post (where parentId is null)
@@ -30,6 +30,7 @@ export interface ICommentRepository {
         postId: string,
         limit: number,
         offset: number,
+        currentUserId?: string,
     ): Promise<Comment[]>;
 
     /**
@@ -43,14 +44,14 @@ export interface ICommentRepository {
         parentId: string,
         limit: number,
         offset: number,
+        currentUserId?: string,
     ): Promise<Comment[]>;
 
     /**
      * Deletes a comment and decrements the post's comment count
      * Note: Cascade will handle replies, but we need to decrement count
      * @param id - The ID of the comment to delete
-     * @param postId - The ID of the post this comment belongs to
      * @returns Promise that resolves when the comment is deleted
      */
-    delete(id: string, postId: string): Promise<void>;
+    delete(id: string): Promise<void>;
 }
