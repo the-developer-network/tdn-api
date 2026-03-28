@@ -168,4 +168,37 @@ export class PrismaCommentRepository implements ICommentRepository {
             where: { parentId },
         });
     }
+
+    async hasUserLiked(commentId: string, userId: string): Promise<boolean> {
+        const like = await this.prisma.commentLike.findUnique({
+            where: { commentId_userId: { commentId, userId } },
+        });
+        return !!like;
+    }
+
+    async addLike(commentId: string, userId: string): Promise<void> {
+        await this.prisma.commentLike.create({
+            data: { commentId, userId },
+        });
+    }
+
+    async removeLike(commentId: string, userId: string): Promise<void> {
+        await this.prisma.commentLike.delete({
+            where: { commentId_userId: { commentId, userId } },
+        });
+    }
+
+    async incrementLikeCount(commentId: string): Promise<void> {
+        await this.prisma.comment.update({
+            where: { id: commentId },
+            data: { likeCount: { increment: 1 } },
+        });
+    }
+
+    async decrementLikeCount(commentId: string): Promise<void> {
+        await this.prisma.comment.update({
+            where: { id: commentId },
+            data: { likeCount: { decrement: 1 } },
+        });
+    }
 }

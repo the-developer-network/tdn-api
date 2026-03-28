@@ -5,6 +5,8 @@
 import type { CreateCommentUseCase } from "@core/use-cases/comment/create-comment/create-comment.usecase";
 import type { DeleteCommentUseCase } from "@core/use-cases/comment/delete-comment/delete-comment.usecase";
 import type { GetPostCommentsUseCase } from "@core/use-cases/comment/get-post-comments/get-post-comments.usecase";
+import type { LikeCommentUseCase } from "@core/use-cases/comment/like-comment/like-comment.usecase";
+import type { UnlikeCommentUseCase } from "@core/use-cases/comment/unlike-comment/unlike-comment.usecase";
 import { CommentPrismaMapper } from "@infrastructure/persistence/mappers/comment-prisma.mapper";
 import type {
     CreateCommentBody,
@@ -15,6 +17,7 @@ import type {
     GetPostCommentsQuery,
     GetPostCommentsParams,
 } from "@typings/schemas/comment/get-post-comments.schema";
+import type { CommentActionParams } from "@typings/schemas/comment/like-comment.schema";
 import type { FastifyRequest, FastifyReply } from "fastify";
 
 export class CommentController {
@@ -26,6 +29,8 @@ export class CommentController {
         private readonly createCommentUseCase: CreateCommentUseCase,
         private readonly deleteCommentUseCase: DeleteCommentUseCase,
         private readonly getPostCommentsUseCase: GetPostCommentsUseCase,
+        private readonly likeCommentUseCase: LikeCommentUseCase,
+        private readonly unlikeCommentUseCase: UnlikeCommentUseCase,
     ) {}
 
     /**
@@ -109,6 +114,38 @@ export class CommentController {
             meta: {
                 currentPage: page,
                 limit,
+            },
+        });
+    }
+
+    async likeComment(
+        request: FastifyRequest<{ Params: CommentActionParams }>,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const { id } = request.params;
+        const userId = request.user!.id;
+
+        await this.likeCommentUseCase.execute({ commentId: id, userId });
+
+        return reply.status(200).send({
+            meta: {
+                timestamp: new Date().toISOString(),
+            },
+        });
+    }
+
+    async unlikeComment(
+        request: FastifyRequest<{ Params: CommentActionParams }>,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const { id } = request.params;
+        const userId = request.user!.id;
+
+        await this.unlikeCommentUseCase.execute({ commentId: id, userId });
+
+        return reply.status(200).send({
+            meta: {
+                timestamp: new Date().toISOString(),
             },
         });
     }

@@ -54,4 +54,9 @@ export interface ICommentRepository {
      * @returns Promise that resolves when the comment is deleted
      */
     delete(id: string): Promise<void>;
+    hasUserLiked(commentId: string, userId: string): Promise<boolean>;
+    addLike(commentId: string, userId: string): Promise<void>;
+    removeLike(commentId: string, userId: string): Promise<void>;
+    incrementLikeCount(commentId: string): Promise<void>;
+    decrementLikeCount(commentId: string): Promise<void>;
 }

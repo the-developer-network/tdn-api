@@ -22,6 +22,10 @@ import {
     type GetPostCommentsQuery,
     getPostCommentsQuerySchema,
 } from "@typings/schemas/comment/get-post-comments.schema";
+import {
+    type CommentActionParams,
+    commentActionParamsSchema,
+} from "@typings/schemas/comment/like-comment.schema";
 import { type FastifyInstance } from "fastify";
 
 /**
@@ -79,5 +83,29 @@ export function commentRoutes(fastify: FastifyInstance): void {
             },
         },
         commentController.getPostComments.bind(commentController),
+    );
+
+    fastify.post<{ Params: CommentActionParams }>(
+        "/:id/like",
+        {
+            onRequest: [fastify.authenticate],
+            schema: {
+                params: commentActionParamsSchema,
+                tags: ["Comment", "Interaction"],
+            },
+        },
+        commentController.likeComment.bind(commentController),
+    );
+
+    fastify.delete<{ Params: CommentActionParams }>(
+        "/:id/unlike",
+        {
+            onRequest: [fastify.authenticate],
+            schema: {
+                params: commentActionParamsSchema,
+                tags: ["Comment", "Interaction"],
+            },
+        },
+        commentController.unlikeComment.bind(commentController),
     );
 }

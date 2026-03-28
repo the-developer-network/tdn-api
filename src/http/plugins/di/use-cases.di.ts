@@ -44,6 +44,8 @@ import { DeleteCommentUseCase } from "@core/use-cases/comment/delete-comment/del
 import { GetUserPostsUseCase } from "@core/use-cases/post/get-user-posts/get-user.posts.usecase";
 import { GetPostDetailUseCase } from "@core/use-cases/post/get-post-detail/get-post-detail.usecase";
 import { GetPostCommentsUseCase } from "@core/use-cases/comment/get-post-comments/get-post-comments.usecase";
+import { LikeCommentUseCase } from "@core/use-cases/comment/like-comment/like-comment.usecase";
+import { UnlikeCommentUseCase } from "@core/use-cases/comment/unlike-comment/unlike-comment.usecase";
 
 /**
  * Dependency injection module for use cases
@@ -294,4 +296,12 @@ export const useCasesModule = {
      *
      */
     getPostCommentsUseCase: asClass(GetPostCommentsUseCase).singleton(),
+    /**
+     *
+     */
+    likeCommentUseCase: asClass(LikeCommentUseCase).singleton(),
+    /**
+     *
+     */
+    unlikeCommentUseCase: asClass(UnlikeCommentUseCase).singleton(),
 };

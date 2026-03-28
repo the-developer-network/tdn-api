@@ -13,6 +13,8 @@ export interface RealtimeNotificationPayload {
 
     /** Optional post ID related to the notification. */
     postId?: string;
+
+    commentId?: string;
 }
 
 /**

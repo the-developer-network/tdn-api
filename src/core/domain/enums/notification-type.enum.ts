@@ -21,4 +21,8 @@ export enum NotificationType {
      * Notification when a user comments on another user's post
      */
     COMMENT = "COMMENT",
+    /**
+     *
+     */
+    COMMENT_LIKE = "COMMENT_LIKE",
 }
