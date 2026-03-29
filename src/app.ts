@@ -46,6 +46,7 @@ export class App {
 
         this.server = Fastify({
             allowErrorHandlerOverride: true,
+            ignoreTrailingSlash: true,
             logger: isTest
                 ? false
                 : isDevelopment
