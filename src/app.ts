@@ -121,15 +121,16 @@ export class App {
 
         this.server.register(profileRoutes, { prefix: "/api/v1/profiles" });
 
-        this.server.register(followRoutes, { prefix: "/api/v1/follows" });
+        this.server.register(followRoutes, { prefix: "/api/v1" });
 
         this.server.register(realtimeRoutes, { prefix: "/api/v1/realtime" });
 
         this.server.register(notificationRoutes, {
-            prefix: "/api/v1/notifications",
+            prefix: "/api/v1",
         });
+
         this.server.register(postRoutes, {
-            prefix: "/api/v1/posts",
+            prefix: "/api/v1",
         });
 
         this.server.register(commentRoutes, {

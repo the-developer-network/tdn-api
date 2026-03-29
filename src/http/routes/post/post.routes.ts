@@ -45,7 +45,7 @@ export function postRoutes(fastify: FastifyInstance): void {
      * Requires authentication and applies sensitive rate limiting
      */
     fastify.post<{ Body: CreatePostBody }>(
-        "/",
+        "/posts",
         {
             onRequest: [fastify.authenticate],
             schema: {
@@ -78,7 +78,7 @@ export function postRoutes(fastify: FastifyInstance): void {
      * Applies standard rate limiting
      */
     fastify.get<{ Querystring: GetPostsQuery }>(
-        "/",
+        "/posts",
         {
             schema: {
                 querystring: getPostsQuerySchema,
@@ -94,7 +94,7 @@ export function postRoutes(fastify: FastifyInstance): void {
      * Requires authentication and applies sensitive rate limiting
      */
     fastify.delete<{ Params: DeletePostParams }>(
-        "/:id",
+        "/posts/:id",
         {
             onRequest: [fastify.authenticate],
             schema: {
@@ -107,7 +107,7 @@ export function postRoutes(fastify: FastifyInstance): void {
     );
 
     fastify.get<{ Params: GetPostParams }>(
-        "/:id",
+        "/posts/:id",
         {
             schema: {
                 params: getPostParamsSchema,

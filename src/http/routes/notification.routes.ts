@@ -27,7 +27,7 @@ export default function notificationRoutes(fastify: FastifyInstance): void {
         fastify.diContainer.cradle.notificationController;
 
     fastify.get<{ Querystring: GetNotificationsQuery }>(
-        "/",
+        "/notifications",
         {
             onRequest: [fastify.authenticate],
             schema: {
@@ -40,7 +40,7 @@ export default function notificationRoutes(fastify: FastifyInstance): void {
     );
 
     fastify.patch(
-        "/read-all",
+        "/notifications/read-all",
         {
             onRequest: [fastify.authenticate],
             config: { rateLimit: RateLimitPolicies.STANDARD },

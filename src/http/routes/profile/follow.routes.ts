@@ -25,7 +25,7 @@ export default function followRoutes(fastify: FastifyInstance): void {
     const followController = fastify.diContainer.cradle.followUserController;
 
     fastify.post<{ Body: FollowUserBody }>(
-        "/",
+        "/follows",
         {
             schema: {
                 body: FollowUserBodySchema,
@@ -38,7 +38,7 @@ export default function followRoutes(fastify: FastifyInstance): void {
     );
 
     fastify.delete<{ Body: FollowUserBody }>(
-        "/",
+        "/follows",
         {
             schema: {
                 body: FollowUserBodySchema,
