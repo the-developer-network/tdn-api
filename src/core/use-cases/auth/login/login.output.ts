@@ -1,7 +1,9 @@
-import type { UserPayload } from "@core/ports/services/auth-token.port";
-
 export interface LoginOutput {
-    user: UserPayload;
+    user: {
+        id: string;
+        username: string;
+        isEmailVerified: boolean;
+    };
     tokens: {
         accessToken: string;
         expiresAt: number;

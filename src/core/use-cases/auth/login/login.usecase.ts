@@ -94,7 +94,11 @@ export class LoginUseCase {
         });
 
         return {
-            user: AuthMapper.toUserOutput(payload),
+            user: {
+                id: payload.id,
+                username: payload.username,
+                isEmailVerified: user.isEmailVerified,
+            },
             tokens: AuthMapper.toTokenOutput({
                 accessToken,
                 expiresAt,
