@@ -70,10 +70,11 @@ export class RecoverAccountUseCase {
         });
 
         return {
-            user: AuthMapper.toUserOutput({
+            user: {
                 id: user.id,
                 username: user.username,
-            }),
+                isEmailVerified: user.isEmailVerified,
+            },
             tokens: AuthMapper.toTokenOutput({
                 accessToken: tokens.accessToken,
                 expiresAt: tokens.expiresAt,

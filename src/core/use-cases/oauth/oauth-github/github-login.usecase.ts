@@ -102,7 +102,10 @@ export class GithubLoginUseCase {
         });
 
         return {
-            user: AuthMapper.toUserOutput(payload),
+            user: {
+                ...AuthMapper.toUserOutput(payload),
+                isEmailVerified: user.isEmailVerified,
+            },
             tokens: AuthMapper.toTokenOutput({
                 accessToken,
                 expiresAt,
