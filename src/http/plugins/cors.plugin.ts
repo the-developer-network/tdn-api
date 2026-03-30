@@ -2,9 +2,17 @@ import { type FastifyInstance } from "fastify";
 import cors from "@fastify/cors";
 import fastifyPlugin from "fastify-plugin";
 
-function corsPlugin(fastify: FastifyInstance): void {
-    fastify.register(cors, {
-        origin: fastify.config.CORS_ORIGIN,
+/**
+ * CORS Plugin for handling cross-origin requests.
+ * Supports both single and comma-separated multiple origins from env config.
+ */
+async function corsPlugin(fastify: FastifyInstance): Promise<void> {
+    const origins = fastify.config.CORS_ORIGIN.split(",").map((origin) =>
+        origin.trim(),
+    );
+
+    await fastify.register(cors, {
+        origin: origins,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
         credentials: true,
         maxAge: 86400,
