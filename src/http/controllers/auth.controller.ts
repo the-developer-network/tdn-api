@@ -15,7 +15,9 @@ import type { RegisterBody } from "@typings/schemas/auth/register.schema";
 import type { ResetPasswordBody } from "@typings/schemas/auth/reset-password.schema";
 import type { VerifyEmailBody } from "@typings/schemas/auth/verify-email.schema";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import type { CheckUserUseCase } from "@core/use-cases/auth/check-user";
 import { BaseAuthController } from "./base-auth.controller";
+import type { CheckUserBody } from "@typings/schemas/auth/check-user.schema";
 
 export class AuthController extends BaseAuthController {
     constructor(
@@ -28,6 +30,7 @@ export class AuthController extends BaseAuthController {
         private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
         private readonly resetPasswordUseCase: ResetPasswordUseCase,
         private readonly recoverAccountUseCase: RecoverAccountUseCase,
+        private readonly checkUserUseCase: CheckUserUseCase,
         config: FastifyInstance["config"],
     ) {
         super(config);
@@ -199,6 +202,24 @@ export class AuthController extends BaseAuthController {
                 user: response.user,
             },
             meta: { timestamp: new Date().toISOString() },
+        });
+    }
+
+    async checkUser(
+        request: FastifyRequest<{ Body: CheckUserBody }>,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const isCheck = await this.checkUserUseCase.execute({
+            identifier: request.body.identifier,
+        });
+
+        return reply.status(200).send({
+            data: {
+                check: isCheck,
+            },
+            meta: {
+                timestamp: new Date().toISOString(),
+            },
         });
     }
 }

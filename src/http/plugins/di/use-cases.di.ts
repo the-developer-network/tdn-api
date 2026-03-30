@@ -46,6 +46,7 @@ import { GetPostDetailUseCase } from "@core/use-cases/post/get-post-detail/get-p
 import { GetPostCommentsUseCase } from "@core/use-cases/comment/get-post-comments/get-post-comments.usecase";
 import { LikeCommentUseCase } from "@core/use-cases/comment/like-comment/like-comment.usecase";
 import { UnlikeCommentUseCase } from "@core/use-cases/comment/unlike-comment/unlike-comment.usecase";
+import { CheckUserUseCase } from "@core/use-cases/auth/check-user";
 
 /**
  * Dependency injection module for use cases
@@ -304,4 +305,8 @@ export const useCasesModule = {
      *
      */
     unlikeCommentUseCase: asClass(UnlikeCommentUseCase).singleton(),
+    /**
+     *
+     */
+    checkUserUseCase: asClass(CheckUserUseCase).singleton(),
 };

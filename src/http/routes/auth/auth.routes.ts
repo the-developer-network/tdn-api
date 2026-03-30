@@ -14,6 +14,10 @@
 
 import { RateLimitPolicies } from "@plugins/rate-limit.plugin";
 import {
+    type CheckUserBody,
+    checkUserBodySchema,
+} from "@typings/schemas/auth/check-user.schema";
+import {
     ForgotPasswordBodySchema,
     type ForgotPasswordBody,
 } from "@typings/schemas/auth/forgot-password.schema";
@@ -178,6 +182,18 @@ export function authRoutes(fastify: FastifyInstance): void {
             },
         },
         authController.recoverAccount,
+    );
+
+    fastify.post<{ Body: CheckUserBody }>(
+        "/check",
+        {
+            schema: {
+                body: checkUserBodySchema,
+                tags: ["Auth"],
+            },
+            config: { rateLimit: RateLimitPolicies.STANDARD },
+        },
+        authController.checkUser.bind(authController),
     );
 }
 
