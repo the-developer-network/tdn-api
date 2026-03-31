@@ -4,13 +4,17 @@
 import type { TransactionPort } from "@core/ports/services/transaction.port";
 import { NotFoundError } from "@core/errors";
 import type { CreateBookmarkInput } from "./create-bookmark-usecase.input";
+import type { CachePort } from "@core/ports/services/cache.port";
 
 export class CreateBookmarkUseCase {
     /**
      * Creates a new CreateBookmarkUseCase instance
      * @param transactionService - Transaction service for database operations
      */
-    constructor(private readonly transactionService: TransactionPort) {}
+    constructor(
+        private readonly transactionService: TransactionPort,
+        private readonly redisService: CachePort,
+    ) {}
 
     /**
      * Executes the bookmark creation use case
@@ -34,5 +38,8 @@ export class CreateBookmarkUseCase {
 
             await ctx.bookmarkRepository.save(input.postId, input.userId);
         });
+        await this.redisService.deleteByPattern(
+            `posts:feed:*user:${input.userId}*`,
+        );
     }
 }
