@@ -20,7 +20,7 @@ interface CachedFeedData {
 export class GetPostsUseCase {
     constructor(
         private readonly postRepository: IPostRepository,
-        private readonly cacheService: CachePort,
+        private readonly redisService: CachePort,
     ) {}
 
     async execute(input: GetPostsInput): Promise<GetPostsOutput> {
@@ -30,7 +30,7 @@ export class GetPostsUseCase {
 
         const cacheKey = `posts:feed:page:${page}:limit:${limit}:type:${typeStr}:user:${input.currentUserId || "guest"}`;
 
-        const cachedData = await this.cacheService.get(cacheKey);
+        const cachedData = await this.redisService.get(cacheKey);
 
         if (cachedData) {
             const parsed = JSON.parse(cachedData) as CachedFeedData;
@@ -65,7 +65,7 @@ export class GetPostsUseCase {
             total,
         };
 
-        await this.cacheService.set(cacheKey, JSON.stringify(response), 60);
+        await this.redisService.set(cacheKey, JSON.stringify(response), 60);
 
         return response;
     }
