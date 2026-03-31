@@ -8,6 +8,7 @@ import type { SaveBookmarkParams } from "@typings/schemas/bookmark/save-bookmark
 import type { DeleteBookmarkParams } from "@typings/schemas/bookmark/delete-bookmark.params.schema";
 import type { GetBookmarksQuery } from "@typings/schemas/bookmark/get-bookmarks-query.schema";
 import type { GetBookmarksUseCase } from "@core/use-cases/bookmark/get-bookmarks/get-bookmarks.usecase";
+import { PostPrismaMapper } from "@infrastructure/persistence/mappers/post-prisma.mapper";
 
 export class BookmarkController {
     /**
@@ -75,14 +76,21 @@ export class BookmarkController {
         const userId = request.user.id;
         const { page, limit } = request.query;
 
+        const cdnUrl = request.server.config.R2_PUBLIC_URL;
+
         const result = await this.getBookmarksUseCase.execute({
             userId,
             page: page ?? 1,
             limit: limit ?? 10,
         });
 
+        const formattedData = PostPrismaMapper.toFeedResponse(
+            result.posts,
+            cdnUrl,
+        );
+
         return reply.status(200).send({
-            data: result.posts,
+            data: formattedData,
             meta: {
                 total: result.total,
                 page: page ?? 1,
