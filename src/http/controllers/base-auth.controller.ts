@@ -1,5 +1,7 @@
 import type { FastifyReply, FastifyRequest, FastifyInstance } from "fastify";
 
+const PRODUCTION_DOMAIN = ".developernetwork.net";
+
 export abstract class BaseAuthController {
     constructor(protected readonly config: FastifyInstance["config"]) {}
 
@@ -21,7 +23,8 @@ export abstract class BaseAuthController {
             path,
             httpOnly: true,
             secure: this.isProduction,
-            sameSite: "strict",
+            sameSite: this.isProduction ? "none" : "strict",
+            domain: this.isProduction ? PRODUCTION_DOMAIN : undefined,
             maxAge: maxAge instanceof Date ? this.dateToMaxAge(maxAge) : maxAge,
             signed: true,
         });
@@ -32,7 +35,8 @@ export abstract class BaseAuthController {
             path: "/",
             httpOnly: true,
             secure: this.isProduction,
-            sameSite: "strict",
+            sameSite: this.isProduction ? "none" : "strict",
+            domain: this.isProduction ? PRODUCTION_DOMAIN : undefined,
             signed: true,
         });
     }
