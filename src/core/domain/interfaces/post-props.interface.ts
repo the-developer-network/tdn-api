@@ -30,6 +30,11 @@ export interface PostProps {
 
         /** Optional avatar URL of the author for display purposes */
         avatarUrl?: string;
+
+        /**Optional fullName URL of the author for display name */
+        fullName?: string;
+
+        isMe?: boolean;
     };
 
     /** Array of tags associated with the post for categorization and discovery */

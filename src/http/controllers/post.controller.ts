@@ -142,6 +142,7 @@ export class PostController {
         const formattedData = PostPrismaMapper.toFeedResponse(
             result.posts,
             cdnUrl,
+            request.user?.id,
         );
 
         const totalPages = Math.ceil(result.total / limit);

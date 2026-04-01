@@ -81,7 +81,12 @@ export class Post {
      * Get the author information of the post
      * @returns Object containing author ID and optional display details
      */
-    get author(): { id: string; username?: string; avatarUrl?: string } {
+    get author(): {
+        id: string;
+        username?: string;
+        avatarUrl?: string;
+        fullName?: string;
+    } {
         return this.props.author;
     }
 

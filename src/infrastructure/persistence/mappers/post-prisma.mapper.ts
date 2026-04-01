@@ -8,7 +8,7 @@ export type PostWithRelations = Prisma.PostGetPayload<{
             select: {
                 id: true;
                 username: true;
-                profile: { select: { avatarUrl: true } };
+                profile: { select: { avatarUrl: true; fullName: true } };
             };
         };
         tags: true;
@@ -16,7 +16,6 @@ export type PostWithRelations = Prisma.PostGetPayload<{
         bookmarks: true;
     };
 }>;
-
 export interface PostResponse {
     id: string;
     content: string;
@@ -29,6 +28,8 @@ export interface PostResponse {
         id: string;
         username?: string;
         avatarUrl: string;
+        isMe?: boolean;
+        fullName?: string;
     };
     isLiked: boolean;
     isBookmarked: boolean;
@@ -56,10 +57,10 @@ export class PostPrismaMapper {
                 id: dbPost.authorId,
                 username: dbPost.author?.username ?? undefined,
                 avatarUrl: dbPost.author?.profile?.avatarUrl ?? undefined,
+                fullName: dbPost.author?.profile?.fullName ?? undefined,
             },
 
             tags: dbPost.tags?.map((t) => t.name) || [],
-
             createdAt: dbPost.createdAt,
             updatedAt: dbPost.updatedAt,
             likeCount: dbPost.likeCount,
@@ -97,7 +98,11 @@ export class PostPrismaMapper {
      * @param cdnUrl - Base URL for the CDN to resolve media links.
      * @returns A sanitized post object safe for external API responses.
      */
-    static toResponse(post: Post, cdnUrl: string): PostResponse {
+    static toResponse(
+        post: Post,
+        cdnUrl: string,
+        currentUserId?: string,
+    ): PostResponse {
         return {
             id: post.id,
             content: post.content,
@@ -116,6 +121,8 @@ export class PostPrismaMapper {
                         ? post.author.avatarUrl
                         : `${cdnUrl}/${post.author.avatarUrl}`
                     : `${cdnUrl}/default-avatar.png`,
+                fullName: post.author.fullName,
+                isMe: currentUserId ? post.author.id === currentUserId : false,
             },
         };
     }
@@ -127,7 +134,13 @@ export class PostPrismaMapper {
      * @param cdnUrl - Base URL for the CDN to resolve media links.
      * @returns An array of sanitized post objects safe for external API responses.
      */
-    static toFeedResponse(posts: Post[], cdnUrl: string): PostResponse[] {
-        return posts.map((post) => this.toResponse(post, cdnUrl));
+    static toFeedResponse(
+        posts: Post[],
+        cdnUrl: string,
+        currentUserId?: string,
+    ): PostResponse[] {
+        return posts.map((post) =>
+            this.toResponse(post, cdnUrl, currentUserId),
+        );
     }
 }
