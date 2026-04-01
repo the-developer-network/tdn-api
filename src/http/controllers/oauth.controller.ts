@@ -72,7 +72,9 @@ export class OAuthController extends BaseAuthController {
                 );
             }
 
-            reply.redirect(`${this.frontendUrl}/login?error=oauth_failed`);
+            reply.redirect(
+                `${this.frontendUrl}/oauth-success?error=oauth_failed`,
+            );
         }
     }
 
@@ -125,7 +127,9 @@ export class OAuthController extends BaseAuthController {
                 );
             }
 
-            reply.redirect(`${this.frontendUrl}/login?error=oauth_failed`);
+            reply.redirect(
+                `${this.frontendUrl}/oauth-success?error=oauth_failed`,
+            );
         }
     }
 }
