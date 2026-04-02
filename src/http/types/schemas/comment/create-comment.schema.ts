@@ -14,6 +14,12 @@ export const createCommentBodySchema = Type.Object({
             description: "Optional parent comment ID for replies",
         }),
     ),
+    mediaUrls: Type.Optional(
+        Type.Array(Type.String({ format: "uri" }), {
+            description: "Optional array of media URLs for the comment",
+            maxItems: 4,
+        }),
+    ),
 });
 
 export type CreateCommentBody = Static<typeof createCommentBodySchema>;

@@ -63,6 +63,7 @@ export class CreateCommentUseCase {
                 input.postId,
                 input.authorId,
                 input.parentId,
+                input.mediaUrls || [],
             );
 
             const savedComment =

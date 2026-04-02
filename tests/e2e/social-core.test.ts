@@ -66,6 +66,7 @@ describe("E2E Social Core Flow (Post -> Comment -> Like)", () => {
             headers: { authorization: `Bearer ${accessToken}` },
             payload: {
                 content: "content 🎩",
+                mediaUrls: ["https://cdn.developernetwork.net/test-image.png"],
             },
         });
 

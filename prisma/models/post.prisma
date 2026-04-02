@@ -85,6 +85,7 @@ model CommentLike {
 model Comment {
   id      String @id @default(uuid())
   content String @db.Text
+  mediaUrls String[] @default([]) @map("media_urls")
 
   postId   String @map("post_id")
   authorId String @map("author_id")

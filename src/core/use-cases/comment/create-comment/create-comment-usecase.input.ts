@@ -3,4 +3,5 @@ export interface CreateCommentUseCaseInput {
     postId: string;
     authorId: string;
     parentId?: string;
+    mediaUrls?: string[];
 }

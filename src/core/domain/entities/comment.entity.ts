@@ -27,6 +27,10 @@ export class Comment {
         return this.props.content;
     }
 
+    public get mediaUrls(): string[] {
+        return this.props.mediaUrls || [];
+    }
+
     /**
      * Gets the ID of the post this comment belongs to
      * @returns The post ID
@@ -80,12 +84,14 @@ export class Comment {
         postId: string,
         authorId: string,
         parentId: string | null = null,
+        mediaUrls: string[] = [],
     ): Comment {
         return new Comment({
             content,
             postId,
             authorId,
             parentId,
+            mediaUrls,
         });
     }
 

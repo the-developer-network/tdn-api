@@ -37,14 +37,15 @@ export class CommentController {
         reply: FastifyReply,
     ): Promise<void> {
         const userId = request.user.id;
-        const { postId } = request.params; // ŞEFİN SİHRİ: 'id' yerine 'postId'
-        const { content, parentId } = request.body;
+        const { postId } = request.params;
+        const { content, parentId, mediaUrls } = request.body;
 
         const comment = await this.createCommentUseCase.execute({
             content,
             postId,
             authorId: userId,
             parentId,
+            mediaUrls,
         });
 
         return reply.status(201).send({
@@ -61,7 +62,7 @@ export class CommentController {
         request: FastifyRequest<{ Params: DeleteCommentParams }>,
         reply: FastifyReply,
     ): Promise<void> {
-        const { commentId } = request.params; // ŞEFİN SİHRİ: Sadece commentId alıyoruz
+        const { commentId } = request.params;
         const userId = request.user.id;
 
         await this.deleteCommentUseCase.execute({

@@ -27,6 +27,7 @@ export class PrismaCommentRepository implements ICommentRepository {
             data: {
                 id: comment.id,
                 content: comment.content,
+                mediaUrls: comment.mediaUrls,
                 postId: comment.postId,
                 authorId: comment.authorId,
                 parentId: comment.parentId,

@@ -19,6 +19,7 @@ export interface CommentResponse {
     id: string;
     content: string;
     postId: string;
+    mediaUrls: string[];
     parentId: string | null;
     createdAt: Date;
     author: {
@@ -45,6 +46,7 @@ export class CommentPrismaMapper {
             postId: dbComment.postId,
             authorId: dbComment.authorId,
             parentId: dbComment.parentId,
+            mediaUrls: dbComment.mediaUrls,
             createdAt: dbComment.createdAt,
             updatedAt: dbComment.updatedAt,
 
@@ -68,6 +70,7 @@ export class CommentPrismaMapper {
             content: comment.content,
             postId: comment.postId,
             parentId: comment.parentId,
+            mediaUrls: comment.mediaUrls,
             createdAt: comment.createdAt,
             likeCount: comment.likeCount,
             replyCount: comment.replyCount,
