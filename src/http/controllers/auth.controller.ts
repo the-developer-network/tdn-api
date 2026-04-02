@@ -83,8 +83,14 @@ export class AuthController extends BaseAuthController {
         });
     }
 
-    async refresh(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-        const token = this.unsignRefreshToken(request);
+    async refresh(
+        request: FastifyRequest<{ Body?: { refreshToken?: string } }>,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const token =
+            this.unsignRefreshToken(request) ??
+            request.body?.refreshToken ??
+            null;
 
         if (!token) {
             throw new UnauthorizedError("Authentication session not found");
