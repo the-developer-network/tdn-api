@@ -55,15 +55,8 @@ export class OAuthController extends BaseAuthController {
                 userAgent: request.headers["user-agent"] ?? "Unknown Device",
             });
 
-            this.setRefreshTokenCookie(
-                reply,
-                response.tokens.refreshToken,
-                response.tokens.refreshTokenExpiresAt,
-                "/auth/refresh",
-            );
-
             reply.redirect(
-                `${this.frontendUrl}/oauth-success?token=${response.tokens.accessToken}`,
+                `${this.frontendUrl}/oauth-success?token=${response.tokens.accessToken}&refreshToken=${response.tokens.refreshToken}`,
             );
         } catch (err: unknown) {
             if (err instanceof AccountPendingDeletionError) {
@@ -110,15 +103,8 @@ export class OAuthController extends BaseAuthController {
                 userAgent: request.headers["user-agent"] ?? "Unknown Device",
             });
 
-            this.setRefreshTokenCookie(
-                reply,
-                response.tokens.refreshToken,
-                response.tokens.refreshTokenExpiresAt,
-                "/auth/refresh",
-            );
-
             reply.redirect(
-                `${this.frontendUrl}/oauth-success?token=${response.tokens.accessToken}`,
+                `${this.frontendUrl}/oauth-success?token=${response.tokens.accessToken}&refreshToken=${response.tokens.refreshToken}`,
             );
         } catch (err: unknown) {
             if (err instanceof AccountPendingDeletionError) {
