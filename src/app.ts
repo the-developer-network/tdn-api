@@ -60,6 +60,7 @@ export class App {
                         },
                     }
                   : true,
+            trustProxy: true,
         }).withTypeProvider<TypeBoxTypeProvider>();
     }
 

@@ -119,7 +119,7 @@ export class AuthController extends BaseAuthController {
             await this.logoutUseCase.execute({ token });
         }
 
-        this.clearRefreshTokenCookie(reply);
+        this.clearRefreshTokenCookie(reply, "/auth/refresh");
 
         reply.status(204).send();
     }

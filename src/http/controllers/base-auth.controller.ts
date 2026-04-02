@@ -23,19 +23,22 @@ export abstract class BaseAuthController {
             path,
             httpOnly: true,
             secure: this.isProduction,
-            sameSite: this.isProduction ? "none" : "strict",
+            sameSite: this.isProduction ? "none" : "lax",
             domain: this.isProduction ? PRODUCTION_DOMAIN : undefined,
             maxAge: maxAge instanceof Date ? this.dateToMaxAge(maxAge) : maxAge,
             signed: true,
         });
     }
 
-    protected clearRefreshTokenCookie(reply: FastifyReply): void {
+    protected clearRefreshTokenCookie(
+        reply: FastifyReply,
+        path: string = "/",
+    ): void {
         reply.clearCookie("refreshToken", {
-            path: "/",
+            path,
             httpOnly: true,
             secure: this.isProduction,
-            sameSite: this.isProduction ? "none" : "strict",
+            sameSite: this.isProduction ? "none" : "lax",
             domain: this.isProduction ? PRODUCTION_DOMAIN : undefined,
             signed: true,
         });
