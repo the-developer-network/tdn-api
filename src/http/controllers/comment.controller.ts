@@ -49,12 +49,12 @@ export class CommentController {
         });
 
         return reply.status(201).send({
-            data: {
-                id: comment.id,
-            },
-            meta: {
-                timestamp: new Date().toISOString(),
-            },
+            data: CommentPrismaMapper.toResponse(
+                comment,
+                request.server.config.R2_PUBLIC_URL,
+                userId,
+            ),
+            meta: { timestamp: new Date().toISOString() },
         });
     }
 

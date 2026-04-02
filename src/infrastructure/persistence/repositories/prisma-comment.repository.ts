@@ -37,7 +37,9 @@ export class PrismaCommentRepository implements ICommentRepository {
                     select: {
                         id: true,
                         username: true,
-                        profile: { select: { avatarUrl: true } },
+                        profile: {
+                            select: { avatarUrl: true, fullName: true },
+                        },
                     },
                 },
                 likes: false,

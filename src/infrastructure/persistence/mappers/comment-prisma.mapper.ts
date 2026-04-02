@@ -7,7 +7,7 @@ export type CommentWithRelations = Prisma.CommentGetPayload<{
             select: {
                 id: true;
                 username: true;
-                profile: { select: { avatarUrl: true } };
+                profile: { select: { avatarUrl: true; fullName: true } };
             };
         };
         likes: true;
@@ -25,7 +25,9 @@ export interface CommentResponse {
     author: {
         id: string;
         username?: string;
+        fullName?: string;
         avatarUrl: string;
+        isMe: boolean;
     };
     likeCount: number;
     replyCount: number;
@@ -61,10 +63,11 @@ export class CommentPrismaMapper {
         });
     }
 
-    /**
-     * Maps a Domain entity to a safe public response object.
-     */
-    static toResponse(comment: Comment, cdnUrl: string): CommentResponse {
+    static toResponse(
+        comment: Comment,
+        cdnUrl: string,
+        currentUserId?: string,
+    ): CommentResponse {
         return {
             id: comment.id,
             content: comment.content,
@@ -77,23 +80,27 @@ export class CommentPrismaMapper {
             isLiked: comment.isLiked,
             author: {
                 id: comment.authorId,
-                username: comment.author?.username || "Unknown User",
+                username: comment.author?.username || "Unknown",
+                fullName: comment.author?.fullName || "Full Name",
                 avatarUrl: comment.author?.avatarUrl
                     ? comment.author.avatarUrl.startsWith("http")
                         ? comment.author.avatarUrl
                         : `${cdnUrl}/${comment.author.avatarUrl}`
                     : `${cdnUrl}/default-avatar.png`,
+                isMe: currentUserId
+                    ? comment.authorId === currentUserId
+                    : false,
             },
         };
     }
 
-    /**
-     * Maps an array of Domain entities to safe public response objects.
-     */
     static toListResponse(
         comments: Comment[],
         cdnUrl: string,
+        currentUserId?: string,
     ): CommentResponse[] {
-        return comments.map((comment) => this.toResponse(comment, cdnUrl));
+        return comments.map((comment) =>
+            this.toResponse(comment, cdnUrl, currentUserId),
+        );
     }
 }

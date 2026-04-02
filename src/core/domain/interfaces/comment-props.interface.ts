@@ -43,6 +43,7 @@ export interface CommentProps {
         id: string;
         username?: string;
         avatarUrl?: string;
+        fullName?: string;
     };
 
     likeCount?: number;

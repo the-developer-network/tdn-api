@@ -96,7 +96,12 @@ export class Comment {
     }
 
     public get author():
-        | { id: string; username?: string; avatarUrl?: string }
+        | {
+              id: string;
+              username?: string;
+              avatarUrl?: string;
+              fullName?: string;
+          }
         | undefined {
         return this.props.author;
     }
