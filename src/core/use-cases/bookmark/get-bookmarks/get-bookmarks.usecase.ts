@@ -1,35 +1,47 @@
 /**
- * Use case for retrieving a user's bookmarked posts
+ * Use case for retrieving a user's bookmarked posts and comments
  */
 import type { IPostRepository } from "@core/ports/repositories/post.repository";
+import type { ICommentBookmarkRepository } from "@core/ports/repositories/comment-bookmark.repository";
 import type { GetBookmarksUseCaseInput } from "./get-bookmarks-usecase.input";
 import type { Post } from "@core/domain/entities/post.entity";
+import type { Comment } from "@core/domain/entities/comment.entity";
 
 export class GetBookmarksUseCase {
-    /**
-     * Creates a new GetBookmarksUseCase instance
-     * @param postRepository - Repository for post operations
-     */
-    constructor(private readonly postRepository: IPostRepository) {}
+    constructor(
+        private readonly postRepository: IPostRepository,
+        private readonly commentBookmarkRepository: ICommentBookmarkRepository,
+    ) {}
 
-    /**
-     * Executes the process of fetching saved posts
-     * @param input - Contains userId and pagination options
-     * @returns Paginated posts and total count
-     */
-    async execute(
-        input: GetBookmarksUseCaseInput,
-    ): Promise<{ posts: Post[]; total: number }> {
+    async execute(input: GetBookmarksUseCaseInput): Promise<{
+        posts: Post[];
+        postTotal: number;
+        comments: Comment[];
+        commentTotal: number;
+    }> {
         const page = input.page || 1;
         const limit = input.limit || 10;
+        const offset = (page - 1) * limit;
 
-        const { posts, total } = await this.postRepository.findAll({
-            page,
-            limit,
-            savedByUserId: input.userId,
-            currentUserId: input.userId,
-        });
+        const [postResult, commentResult] = await Promise.all([
+            this.postRepository.findAll({
+                page,
+                limit,
+                savedByUserId: input.userId,
+                currentUserId: input.userId,
+            }),
+            this.commentBookmarkRepository.findBookmarkedByUserId(
+                input.userId,
+                limit,
+                offset,
+            ),
+        ]);
 
-        return { posts, total };
+        return {
+            posts: postResult.posts,
+            postTotal: postResult.total,
+            comments: commentResult.comments,
+            commentTotal: commentResult.total,
+        };
     }
 }
