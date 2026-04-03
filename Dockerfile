@@ -24,6 +24,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY package.json pnpm-lock.yaml ./
+# patches/ is required by pnpm for patchedDependencies declared in package.json
+COPY patches/ ./patches/
 RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 
 COPY --from=build /app/dist ./dist
