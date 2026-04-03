@@ -8,27 +8,21 @@ import type { SaveBookmarkParams } from "@typings/schemas/bookmark/save-bookmark
 import type { DeleteBookmarkParams } from "@typings/schemas/bookmark/delete-bookmark.params.schema";
 import type { GetBookmarksQuery } from "@typings/schemas/bookmark/get-bookmarks-query.schema";
 import type { GetBookmarksUseCase } from "@core/use-cases/bookmark/get-bookmarks/get-bookmarks.usecase";
+import type { SaveCommentBookmarkUseCase } from "@core/use-cases/bookmark/save-comment-bookmark/save-comment-bookmark.usecase";
+import type { RemoveCommentBookmarkUseCase } from "@core/use-cases/bookmark/remove-comment-bookmark/remove-comment-bookmark.usecase";
+import type { CommentActionParams } from "@typings/schemas/comment/like-comment.schema";
 import { PostPrismaMapper } from "@infrastructure/persistence/mappers/post-prisma.mapper";
+import { CommentPrismaMapper } from "@infrastructure/persistence/mappers/comment-prisma.mapper";
 
 export class BookmarkController {
-    /**
-     * Creates a new BookmarkController instance
-     * @param createBookmarkUseCase - Use case for creating bookmarks
-     * @param removeBookmarkUseCase - Use case for removing bookmarks
-     * @param getBookmarksUseCase - Use case for retrieving bookmarks
-     */
     constructor(
         private readonly createBookmarkUseCase: CreateBookmarkUseCase,
         private readonly removeBookmarkUseCase: RemoveBookmarkUseCase,
         private readonly getBookmarksUseCase: GetBookmarksUseCase,
+        private readonly saveCommentBookmarkUseCase: SaveCommentBookmarkUseCase,
+        private readonly removeCommentBookmarkUseCase: RemoveCommentBookmarkUseCase,
     ) {}
 
-    /**
-     * Creates a bookmark for a post
-     * @param request - Fastify request containing post ID in params
-     * @param reply - Fastify reply for sending response
-     * @returns Promise that resolves when bookmark is created
-     */
     async save(
         request: FastifyRequest<{ Params: SaveBookmarkParams }>,
         reply: FastifyReply,
@@ -43,12 +37,6 @@ export class BookmarkController {
         });
     }
 
-    /**
-     * Removes a bookmark for a post
-     * @param request - Fastify request containing post ID in params
-     * @param reply - Fastify reply for sending response
-     * @returns Promise that resolves when bookmark is removed
-     */
     async unsave(
         request: FastifyRequest<{ Params: DeleteBookmarkParams }>,
         reply: FastifyReply,
@@ -63,12 +51,34 @@ export class BookmarkController {
         });
     }
 
-    /**
-     * Retrieves bookmarks for the authenticated user
-     * @param request - Fastify request containing pagination query parameters
-     * @param reply - Fastify reply for sending response
-     * @returns Promise that resolves with bookmarked posts
-     */
+    async saveComment(
+        request: FastifyRequest<{ Params: CommentActionParams }>,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const userId = request.user.id;
+        const commentId = request.params.commentId;
+
+        await this.saveCommentBookmarkUseCase.execute({ commentId, userId });
+
+        return reply.status(201).send({
+            meta: { timestamp: new Date().toISOString() },
+        });
+    }
+
+    async removeComment(
+        request: FastifyRequest<{ Params: CommentActionParams }>,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const userId = request.user.id;
+        const commentId = request.params.commentId;
+
+        await this.removeCommentBookmarkUseCase.execute({ commentId, userId });
+
+        return reply.status(200).send({
+            meta: { timestamp: new Date().toISOString() },
+        });
+    }
+
     async getBookmarks(
         request: FastifyRequest<{ Querystring: GetBookmarksQuery }>,
         reply: FastifyReply,
@@ -84,15 +94,22 @@ export class BookmarkController {
             limit: limit ?? 10,
         });
 
-        const formattedData = PostPrismaMapper.toFeedResponse(
+        const posts = PostPrismaMapper.toFeedResponse(
             result.posts,
             cdnUrl,
+            userId,
+        );
+        const comments = CommentPrismaMapper.toListResponse(
+            result.comments,
+            cdnUrl,
+            userId,
         );
 
         return reply.status(200).send({
-            data: formattedData,
+            data: { posts, comments },
             meta: {
-                total: result.total,
+                postTotal: result.postTotal,
+                commentTotal: result.commentTotal,
                 page: page ?? 1,
                 timestamp: new Date().toISOString(),
             },

@@ -7,6 +7,7 @@ declare module "fastify" {
         config: EnvConfig;
         prisma: PrismaClient;
         authenticate: (request: FastifyRequest) => Promise<void>;
+        optionalAuthenticate: (request: FastifyRequest) => Promise<void>;
     }
 }
 

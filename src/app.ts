@@ -13,6 +13,7 @@ import authRoutes from "@routes/auth/auth.routes";
 import dependencyInjectionPlugin from "@plugins/dependency-injection.plugin";
 import userRoutes from "@routes/auth/user.routes";
 import authenticationDecorator from "@decorators/authenticate.decorator";
+import optionalAuthenticationDecorator from "@decorators/optional-authenticate.decorator";
 import oauthRoutes from "@routes/oauth/oauth.route";
 import userPurgePlugin from "@plugins/custom/user-purge.plugin";
 import refreshTokenPurgePlugin from "@plugins/custom/refresh-token-purge.plugin";
@@ -107,6 +108,7 @@ export class App {
      */
     private registerDecorators(): void {
         this.server.register(authenticationDecorator);
+        this.server.register(optionalAuthenticationDecorator);
     }
 
     /**

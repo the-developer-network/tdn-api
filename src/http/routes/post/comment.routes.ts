@@ -50,6 +50,7 @@ export function commentRoutes(fastify: FastifyInstance): void {
     }>(
         "/posts/:postId/comments",
         {
+            onRequest: [fastify.optionalAuthenticate],
             schema: {
                 params: getPostCommentsParamsSchema,
                 querystring: getPostCommentsQuerySchema,
@@ -99,5 +100,35 @@ export function commentRoutes(fastify: FastifyInstance): void {
             config: { rateLimit: RateLimitPolicies.STANDARD },
         },
         commentController.unlikeComment.bind(commentController),
+    );
+
+    fastify.post<{ Params: CommentActionParams }>(
+        "/comments/:commentId/save",
+        {
+            onRequest: [fastify.authenticate],
+            schema: {
+                params: commentActionParamsSchema,
+                tags: ["Comment", "Bookmark"],
+            },
+            config: { rateLimit: RateLimitPolicies.SENSITIVE },
+        },
+        fastify.diContainer.cradle.bookmarkController.saveComment.bind(
+            fastify.diContainer.cradle.bookmarkController,
+        ),
+    );
+
+    fastify.delete<{ Params: CommentActionParams }>(
+        "/comments/:commentId/unsave",
+        {
+            onRequest: [fastify.authenticate],
+            schema: {
+                params: commentActionParamsSchema,
+                tags: ["Comment", "Bookmark"],
+            },
+            config: { rateLimit: RateLimitPolicies.SENSITIVE },
+        },
+        fastify.diContainer.cradle.bookmarkController.removeComment.bind(
+            fastify.diContainer.cradle.bookmarkController,
+        ),
     );
 }
