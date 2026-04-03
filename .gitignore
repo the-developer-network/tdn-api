@@ -7,3 +7,7 @@ dist
 !.env.example
 /src/generated/prisma
 /coverage
+
+# IDE / Editor
+.vscode/
+.idea/
