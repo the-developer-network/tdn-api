@@ -6,7 +6,7 @@ import type { DeleteCommentInput } from "./delete-comment-usecase.input";
 export class DeleteCommentUseCase {
     constructor(
         private readonly transactionService: TransactionPort,
-        private readonly redisService: CachePort,
+        private readonly cacheService: CachePort,
     ) {}
 
     async execute(input: DeleteCommentInput): Promise<void> {
@@ -29,6 +29,6 @@ export class DeleteCommentUseCase {
         });
 
         // 4. Cache temizliği
-        await this.redisService.deleteByPattern("posts:feed:*");
+        await this.cacheService.deleteByPattern("posts:feed:*");
     }
 }

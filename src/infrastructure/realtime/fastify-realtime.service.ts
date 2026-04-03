@@ -17,7 +17,7 @@ interface RedisMessage {
 export class FastifyRealtimeService implements RealtimePort {
     constructor(
         private readonly wsManager: WebSocketManager,
-        private readonly redisService: RedisService,
+        private readonly cacheService: RedisService,
         private readonly logger: FastifyBaseLogger,
     ) {
         this.subscribeToRedis().catch((err) => {
@@ -35,7 +35,7 @@ export class FastifyRealtimeService implements RealtimePort {
     ): void {
         const message: RedisMessage = { targetUserId: userId, event, payload };
 
-        this.redisService.publisher
+        this.cacheService.publisher
             .publish(REDIS_CHANNEL, JSON.stringify(message))
             .catch((err) => {
                 this.logger.error(
@@ -46,7 +46,7 @@ export class FastifyRealtimeService implements RealtimePort {
     }
 
     private async subscribeToRedis(): Promise<void> {
-        await this.redisService.subscriber.subscribe(
+        await this.cacheService.subscriber.subscribe(
             REDIS_CHANNEL,
             (err, count) => {
                 if (err) {
@@ -63,7 +63,7 @@ export class FastifyRealtimeService implements RealtimePort {
             },
         );
 
-        this.redisService.subscriber.on("message", (channel, messageString) => {
+        this.cacheService.subscriber.on("message", (channel, messageString) => {
             if (channel === REDIS_CHANNEL) {
                 try {
                     const message: RedisMessage = JSON.parse(messageString);

@@ -13,7 +13,7 @@ export class CreateBookmarkUseCase {
      */
     constructor(
         private readonly transactionService: TransactionPort,
-        private readonly redisService: CachePort,
+        private readonly cacheService: CachePort,
     ) {}
 
     /**
@@ -38,7 +38,7 @@ export class CreateBookmarkUseCase {
 
             await ctx.bookmarkRepository.save(input.postId, input.userId);
         });
-        await this.redisService.deleteByPattern(
+        await this.cacheService.deleteByPattern(
             `posts:feed:*user:${input.userId}*`,
         );
     }

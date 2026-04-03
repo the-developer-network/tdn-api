@@ -5,7 +5,7 @@ import { FastifyRealtimeService } from "@infrastructure/realtime/fastify-realtim
 
 export const realtimeModule = {
     // --- Services ---
-    redisService: asClass(RedisService).singleton(),
+    cacheService: asClass(RedisService).singleton(),
     wsManager: asClass(WebSocketManager).singleton(),
     realtimeService: asClass(FastifyRealtimeService).singleton(),
 };

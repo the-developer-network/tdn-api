@@ -13,7 +13,7 @@ export class RemoveBookmarkUseCase {
      */
     constructor(
         private readonly transactionService: TransactionPort,
-        private readonly redisService: CachePort,
+        private readonly cacheService: CachePort,
     ) {}
 
     /**
@@ -38,7 +38,7 @@ export class RemoveBookmarkUseCase {
                 await ctx.bookmarkRepository.remove(input.postId, input.userId);
             }
         });
-        await this.redisService.deleteByPattern(
+        await this.cacheService.deleteByPattern(
             `posts:feed:*user:${input.userId}*`,
         );
     }

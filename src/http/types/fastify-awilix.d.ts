@@ -13,6 +13,7 @@ import type PostController from "@services/post.controller";
 import type { CommentController } from "@controllers/comment.controller";
 import type { LikeController } from "@controllers/like.controller";
 import type { BookmarkController } from "@controllers/bookmark.controller";
+import type { CachePort } from "@core/ports/services/cache.port";
 
 /**
  * Fastify Awilix cradle interface for dependency injection
@@ -64,6 +65,9 @@ declare module "@fastify/awilix" {
 
         /** */
         bookmarkController: BookmarkController;
+
+        /** Redis-backed cache service */
+        cacheService: CachePort;
     }
 }
 

@@ -22,7 +22,7 @@ export class LikePostUseCase {
     constructor(
         private readonly transactionService: TransactionPort,
         private readonly realtimeService: RealtimePort,
-        private readonly redisService: CachePort,
+        private readonly cacheService: CachePort,
     ) {}
 
     /**
@@ -65,7 +65,7 @@ export class LikePostUseCase {
                 );
             }
         });
-        await this.redisService.deleteByPattern(
+        await this.cacheService.deleteByPattern(
             `posts:feed:*user:${input.userId}*`,
         );
     }

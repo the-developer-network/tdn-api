@@ -17,7 +17,7 @@ export class UnlikePostUseCase {
      */
     constructor(
         private readonly transactionService: TransactionPort,
-        private readonly redisService: CachePort,
+        private readonly cacheService: CachePort,
     ) {}
 
     /**
@@ -51,7 +51,7 @@ export class UnlikePostUseCase {
                 await ctx.postLikeRepository.decrementLikeCount(input.postId);
             }
         });
-        await this.redisService.deleteByPattern(
+        await this.cacheService.deleteByPattern(
             `posts:feed:*user:${input.userId}*`,
         );
     }
