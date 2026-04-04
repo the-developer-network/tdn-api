@@ -12,7 +12,6 @@ export type CommentWithRelations = Prisma.CommentGetPayload<{
         };
         likes: true;
         bookmarks: true;
-        _count: { select: { replies: true } };
     };
 }>;
 

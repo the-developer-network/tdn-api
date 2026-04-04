@@ -59,4 +59,6 @@ export interface ICommentRepository {
     removeLike(commentId: string, userId: string): Promise<void>;
     incrementLikeCount(commentId: string): Promise<void>;
     decrementLikeCount(commentId: string): Promise<void>;
+    incrementRepliesCount(commentId: string): Promise<void>;
+    decrementRepliesCount(commentId: string): Promise<void>;
 }

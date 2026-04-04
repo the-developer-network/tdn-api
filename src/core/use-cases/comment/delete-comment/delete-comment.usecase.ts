@@ -23,6 +23,12 @@ export class DeleteCommentUseCase {
                 throw new ForbiddenError("This comment is not yours.");
             }
 
+            if (comment.parentId) {
+                await ctx.commentRepository.decrementRepliesCount(
+                    comment.parentId,
+                );
+            }
+
             await ctx.commentRepository.delete(input.commentId);
 
             await ctx.postRepository.decrementCommentsCount(comment.postId);

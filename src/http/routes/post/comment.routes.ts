@@ -25,6 +25,16 @@ import {
     type CommentActionParams,
     commentActionParamsSchema,
 } from "@typings/schemas/comment/like-comment.schema";
+import {
+    type GetCommentParams,
+    getCommentParamsSchema,
+} from "@typings/schemas/comment/get-comment.schema";
+import {
+    type GetCommentRepliesParams,
+    type GetCommentRepliesQuery,
+    getCommentRepliesParamsSchema,
+    getCommentRepliesQuerySchema,
+} from "@typings/schemas/comment/get-comment-replies.schema";
 import { type FastifyInstance } from "fastify";
 
 export function commentRoutes(fastify: FastifyInstance): void {
@@ -130,5 +140,35 @@ export function commentRoutes(fastify: FastifyInstance): void {
         fastify.diContainer.cradle.bookmarkController.removeComment.bind(
             fastify.diContainer.cradle.bookmarkController,
         ),
+    );
+
+    fastify.get<{ Params: GetCommentParams }>(
+        "/comments/:commentId",
+        {
+            onRequest: [fastify.optionalAuthenticate],
+            schema: {
+                params: getCommentParamsSchema,
+                tags: ["Comment"],
+            },
+            config: { rateLimit: RateLimitPolicies.PUBLIC },
+        },
+        commentController.getComment.bind(commentController),
+    );
+
+    fastify.get<{
+        Params: GetCommentRepliesParams;
+        Querystring: GetCommentRepliesQuery;
+    }>(
+        "/comments/:commentId/replies",
+        {
+            onRequest: [fastify.optionalAuthenticate],
+            schema: {
+                params: getCommentRepliesParamsSchema,
+                querystring: getCommentRepliesQuerySchema,
+                tags: ["Comment"],
+            },
+            config: { rateLimit: RateLimitPolicies.PUBLIC },
+        },
+        commentController.getCommentReplies.bind(commentController),
     );
 }

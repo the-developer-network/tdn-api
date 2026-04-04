@@ -71,6 +71,12 @@ export class CreateCommentUseCase {
 
             await ctx.postRepository.incrementCommentsCount(input.postId);
 
+            if (input.parentId) {
+                await ctx.commentRepository.incrementRepliesCount(
+                    input.parentId,
+                );
+            }
+
             if (notifyUserId) {
                 const notification = Notification.create(
                     notifyUserId,

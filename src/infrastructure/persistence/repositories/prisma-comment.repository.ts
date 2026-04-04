@@ -43,7 +43,6 @@ export class PrismaCommentRepository implements ICommentRepository {
                     },
                 },
                 likes: false,
-                _count: { select: { replies: true } },
             },
         });
 
@@ -77,7 +76,6 @@ export class PrismaCommentRepository implements ICommentRepository {
                 bookmarks: currentUserId
                     ? { where: { userId: currentUserId } }
                     : false,
-                _count: { select: { replies: true } },
             },
         });
 
@@ -124,7 +122,6 @@ export class PrismaCommentRepository implements ICommentRepository {
                 bookmarks: currentUserId
                     ? { where: { userId: currentUserId } }
                     : false,
-                _count: { select: { replies: true } },
             },
         });
 
@@ -169,7 +166,6 @@ export class PrismaCommentRepository implements ICommentRepository {
                 bookmarks: currentUserId
                     ? { where: { userId: currentUserId } }
                     : false,
-                _count: { select: { replies: true } },
             },
         });
 
@@ -229,6 +225,20 @@ export class PrismaCommentRepository implements ICommentRepository {
         await this.prisma.comment.update({
             where: { id: commentId },
             data: { likeCount: { decrement: 1 } },
+        });
+    }
+
+    async incrementRepliesCount(commentId: string): Promise<void> {
+        await this.prisma.comment.update({
+            where: { id: commentId },
+            data: { replyCount: { increment: 1 } },
+        });
+    }
+
+    async decrementRepliesCount(commentId: string): Promise<void> {
+        await this.prisma.comment.update({
+            where: { id: commentId },
+            data: { replyCount: { decrement: 1 } },
         });
     }
 }

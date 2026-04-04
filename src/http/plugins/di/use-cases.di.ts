@@ -45,6 +45,8 @@ import { DeleteCommentUseCase } from "@core/use-cases/comment/delete-comment/del
 import { GetUserPostsUseCase } from "@core/use-cases/post/get-user-posts/get-user.posts.usecase";
 import { GetPostDetailUseCase } from "@core/use-cases/post/get-post-detail/get-post-detail.usecase";
 import { GetPostCommentsUseCase } from "@core/use-cases/comment/get-post-comments/get-post-comments.usecase";
+import { GetCommentUseCase } from "@core/use-cases/comment/get-comment/get-comment.usecase";
+import { GetCommentRepliesUseCase } from "@core/use-cases/comment/get-comment-replies/get-comment-replies.usecase";
 import { LikeCommentUseCase } from "@core/use-cases/comment/like-comment/like-comment.usecase";
 import { UnlikeCommentUseCase } from "@core/use-cases/comment/unlike-comment/unlike-comment.usecase";
 import { CheckUserUseCase } from "@core/use-cases/auth/check-user";
@@ -305,6 +307,14 @@ export const useCasesModule = {
      *
      */
     getPostCommentsUseCase: asClass(GetPostCommentsUseCase).singleton(),
+    /**
+     *
+     */
+    getCommentUseCase: asClass(GetCommentUseCase).singleton(),
+    /**
+     *
+     */
+    getCommentRepliesUseCase: asClass(GetCommentRepliesUseCase).singleton(),
     /**
      *
      */
