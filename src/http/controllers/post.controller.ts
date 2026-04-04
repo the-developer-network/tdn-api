@@ -130,7 +130,7 @@ export class PostController {
         request: FastifyRequest<{ Querystring: GetPostsQuery }>,
         reply: FastifyReply,
     ): Promise<void> {
-        const { page = 1, limit = 10, type } = request.query;
+        const { page = 1, limit = 10, type, tag } = request.query;
 
         const cdnUrl = request.server.config.R2_PUBLIC_URL;
 
@@ -138,6 +138,7 @@ export class PostController {
             page,
             limit,
             type,
+            tag,
             currentUserId: request.user?.id,
         });
 

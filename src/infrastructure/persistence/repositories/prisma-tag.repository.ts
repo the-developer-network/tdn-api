@@ -14,7 +14,9 @@ const POST_TYPE_CATEGORY_MAP: Record<string, string> = {
 };
 
 export function mapPostTypeToCategory(type: PostType | string): string {
-    return POST_TYPE_CATEGORY_MAP[type as string] ?? "Community";
+    if (!type) return "Community";
+    const key = String(type).toUpperCase();
+    return POST_TYPE_CATEGORY_MAP[key] ?? "Community";
 }
 
 export class PrismaTagRepository implements ITagRepository {

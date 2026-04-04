@@ -33,6 +33,7 @@ export interface PostResponse {
     };
     isLiked: boolean;
     isBookmarked: boolean;
+    tags?: { name: string }[];
 }
 
 /**
@@ -124,6 +125,7 @@ export class PostPrismaMapper {
                 fullName: post.author.fullName,
                 isMe: currentUserId ? post.author.id === currentUserId : false,
             },
+            tags: post.tags?.map((t) => ({ name: t })) || [],
         };
     }
 

@@ -11,6 +11,7 @@ export const getPostsQuerySchema = Type.Object({
         }),
     ),
     type: Type.Optional(Type.Enum(PostType, {})),
+    tag: Type.Optional(Type.String({ minLength: 1, maxLength: 50 })),
 });
 
 export type GetPostsQuery = Static<typeof getPostsQuerySchema>;

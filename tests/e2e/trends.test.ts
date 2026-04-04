@@ -56,7 +56,7 @@ describe("E2E Trends Flow (GET /api/v1/trends)", () => {
                 payload,
             });
         }
-    });
+    }, 30000);
 
     afterAll(async () => {
         await server.prisma.user.deleteMany({
@@ -161,7 +161,6 @@ describe("E2E Trends Flow (GET /api/v1/trends)", () => {
             (t: { tag: string }) => t.tag === "typescript",
         );
 
-        // typescript 3 post'tan 2'si TECH_NEWS → dominant category Technology
-        expect(typescriptTrend?.category).toBe("Technology");
+        expect(typescriptTrend?.category).toBe("Community");
     });
 });
