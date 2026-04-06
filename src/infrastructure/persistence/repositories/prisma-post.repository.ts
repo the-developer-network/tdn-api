@@ -53,7 +53,9 @@ export class PrismaPostRepository implements IPostRepository {
                     select: {
                         id: true,
                         username: true,
-                        profile: { select: { avatarUrl: true } },
+                        profile: {
+                            select: { avatarUrl: true, fullName: true },
+                        },
                     },
                 },
                 tags: true,
@@ -139,7 +141,9 @@ export class PrismaPostRepository implements IPostRepository {
                     select: {
                         id: true,
                         username: true,
-                        profile: { select: { avatarUrl: true } },
+                        profile: {
+                            select: { avatarUrl: true, fullName: true },
+                        },
                     },
                 },
                 tags: true,
@@ -206,7 +210,9 @@ export class PrismaPostRepository implements IPostRepository {
                         select: {
                             id: true,
                             username: true,
-                            profile: { select: { avatarUrl: true } },
+                            profile: {
+                                select: { avatarUrl: true, fullName: true },
+                            },
                         },
                     },
                     tags: true,
