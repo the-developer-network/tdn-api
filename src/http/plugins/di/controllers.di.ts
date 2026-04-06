@@ -29,6 +29,7 @@ export const controllersModule = {
             searchProfileUseCase,
             getFollowersUseCase,
             getFollowingUseCase,
+            getSuggestedUsersUseCase,
             config,
         ) => {
             return new ProfileController(
@@ -39,6 +40,7 @@ export const controllersModule = {
                 searchProfileUseCase,
                 getFollowersUseCase,
                 getFollowingUseCase,
+                getSuggestedUsersUseCase,
                 config.R2_PUBLIC_URL,
             );
         },

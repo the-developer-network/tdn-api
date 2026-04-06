@@ -125,4 +125,49 @@ export class PrismaProfileRepository implements IProfileRepository {
             ProfilePrismaMapper.toDomain(dbProfile),
         );
     }
+
+    async getSuggestedUsers(
+        currentUserId: string | null,
+        limit: number,
+    ): Promise<Profile[]> {
+        const dbProfiles = await this.prisma.profile.findMany({
+            where: {
+                user: {
+                    deletedAt: null,
+                    ...(currentUserId
+                        ? {
+                              id: { not: currentUserId },
+                              followers: {
+                                  none: { followerId: currentUserId },
+                              },
+                          }
+                        : {}),
+                },
+            },
+            include: {
+                user: {
+                    include: {
+                        _count: {
+                            select: {
+                                followers: true,
+                                following: true,
+                            },
+                        },
+                    },
+                },
+            },
+            orderBy: {
+                user: {
+                    followers: {
+                        _count: "desc",
+                    },
+                },
+            },
+            take: limit,
+        });
+
+        return dbProfiles.map((dbProfile) =>
+            ProfilePrismaMapper.toDomain(dbProfile),
+        );
+    }
 }

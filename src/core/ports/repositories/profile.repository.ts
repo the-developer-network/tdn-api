@@ -71,4 +71,16 @@ export interface IProfileRepository {
      * @returns A promise resolving to an array of Profile entities.
      */
     search(query: string, limit?: number): Promise<Profile[]>;
+
+    /**
+     * Retrieves a list of suggested users ordered by follower count.
+     * When currentUserId is provided, excludes the current user and already-followed users.
+     * @param currentUserId - The ID of the requesting user, or null for unauthenticated requests.
+     * @param limit - Maximum number of suggestions to return.
+     * @returns A promise resolving to an array of Profile entities.
+     */
+    getSuggestedUsers(
+        currentUserId: string | null,
+        limit: number,
+    ): Promise<Profile[]>;
 }
