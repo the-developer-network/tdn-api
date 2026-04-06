@@ -4,6 +4,8 @@ import type { StoragePort } from "@core/ports/services/storage.port";
 import type { LoggerPort } from "@core/ports/services/logger.port";
 import { InvalidFileTypeError } from "@core/errors";
 
+const DEFAULT_AVATAR_KEY = "avatars/default_profile.png";
+
 /**
  * Use case for updating a user's profile avatar.
  *
@@ -62,7 +64,7 @@ export class UpdateAvatarUseCase {
             uploadedFilePath,
         );
 
-        if (oldAvatarUrl) {
+        if (oldAvatarUrl && !oldAvatarUrl.includes(DEFAULT_AVATAR_KEY)) {
             try {
                 await this.storageService.delete(oldAvatarUrl);
             } catch (error) {

@@ -30,7 +30,14 @@ export class ProfileController {
 
     private getFullImageUrl(path: string): string {
         const baseUrl = this.publicUrl;
-        return `${baseUrl}/${path}`;
+        const url = `${baseUrl}/${path}`;
+        if (
+            path.includes("default_profile") ||
+            path.includes("default_banner")
+        ) {
+            return `${url}?v=1`;
+        }
+        return url;
     }
 
     async updateProfileMe(
