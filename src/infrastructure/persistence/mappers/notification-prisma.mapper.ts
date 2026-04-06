@@ -55,6 +55,8 @@ export class NotificationPrismaMapper {
         createdAt: Date;
         type: CoreNotificationType;
         recipientId: string;
+        issuerId: string;
+        referenceId?: string;
         username: string;
         isRead: boolean;
     } {
@@ -69,6 +71,8 @@ export class NotificationPrismaMapper {
             createdAt: notification.createdAt,
             type: notification.type as CoreNotificationType,
             recipientId: notification.recipientId,
+            issuerId: notification.issuerId,
+            referenceId: notification.referenceId,
             username: notification.username || "",
             isRead: notification.isRead,
         };
