@@ -2,6 +2,7 @@ import { BadRequestError } from "@core/errors";
 import type { GetFollowersUseCase } from "@core/use-cases/follow-user/get-followers";
 import type { GetFollowingUseCase } from "@core/use-cases/follow-user/get-following";
 import type { GetProfileUseCase } from "@core/use-cases/profile/get-profile";
+import type { GetSuggestedUsersUseCase } from "@core/use-cases/profile/get-suggested-users";
 import type { SearchProfilesUseCase } from "@core/use-cases/profile/search-profile";
 import type { UpdateAvatarUseCase } from "@core/use-cases/profile/update-avatar";
 import type { UpdateBannerUseCase } from "@core/use-cases/profile/update-banner";
@@ -12,6 +13,7 @@ import {
     type FollowersParams,
     type PaginationQuery,
 } from "@typings/schemas/profile/followers.schema";
+import type { SuggestedUsersQuery } from "@typings/schemas/profile/suggested-users.schema";
 import type { GetProfileParams } from "@typings/schemas/profile/get-profile.schema";
 import type { SearchProfilesQuery } from "@typings/schemas/profile/search-profile.schema";
 import type { FastifyRequest, FastifyReply } from "fastify";
@@ -25,6 +27,7 @@ export class ProfileController {
         private readonly searchProfileUseCase: SearchProfilesUseCase,
         private readonly getFollowersUseCase: GetFollowersUseCase,
         private readonly getFollowingUseCase: GetFollowingUseCase,
+        private readonly getSuggestedUsersUseCase: GetSuggestedUsersUseCase,
         private readonly publicUrl: string,
     ) {}
 
@@ -232,6 +235,32 @@ export class ProfileController {
         reply.status(200).send({
             data: response,
             meta: { limit, offset, count: response.length },
+        });
+    }
+
+    async getSuggestions(
+        request: FastifyRequest<{ Querystring: SuggestedUsersQuery }>,
+        reply: FastifyReply,
+    ): Promise<void> {
+        const { limit } = request.query;
+        const currentUserId = request.user?.id;
+
+        const results = await this.getSuggestedUsersUseCase.execute({
+            currentUserId,
+            limit,
+        });
+
+        const responseData = results.map((item) => ({
+            ...item,
+            avatarUrl: this.getFullImageUrl(item.avatarUrl),
+            bannerUrl: this.getFullImageUrl(item.bannerUrl),
+        }));
+
+        reply.status(200).send({
+            data: responseData,
+            meta: {
+                timestamp: new Date().toISOString(),
+            },
         });
     }
 }

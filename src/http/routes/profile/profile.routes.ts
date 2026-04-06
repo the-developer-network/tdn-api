@@ -28,6 +28,12 @@ import {
     type UpdateProfileBody,
     UpdateProfileBodySchema,
 } from "@typings/schemas/profile/update-profile.schema";
+import {
+    type SuggestedUsersQuery,
+    SuggestedUsersQuerySchema,
+    SuggestedUsersResponseSchema,
+    type SuggestedUsersResponse,
+} from "@typings/schemas/profile/suggested-users.schema";
 import { Type } from "@sinclair/typebox";
 import { ResponseSchema } from "@typings/schemas/create-response-schema";
 import type { FastifyInstance, FastifyRequest } from "fastify";
@@ -154,6 +160,29 @@ function profileRoutes(fastify: FastifyInstance): void {
             },
         },
         profileController.getFollowing.bind(profileController),
+    );
+
+    fastify.get<{
+        Querystring: SuggestedUsersQuery;
+        Reply: { 200: SuggestedUsersResponse };
+    }>(
+        "/suggestions",
+        {
+            config: {
+                rateLimit: RateLimitPolicies.PUBLIC,
+            },
+            schema: {
+                querystring: SuggestedUsersQuerySchema,
+                response: { 200: SuggestedUsersResponseSchema },
+                tags: ["Profile"],
+            },
+            onRequest: async (request) => {
+                if (request.headers.authorization) {
+                    await request.jwtVerify();
+                }
+            },
+        },
+        profileController.getSuggestions.bind(profileController),
     );
 }
 
