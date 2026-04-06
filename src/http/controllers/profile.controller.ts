@@ -151,6 +151,7 @@ export class ProfileController {
             return {
                 ...profileData,
                 isMe,
+                isFollowing: false,
                 avatarUrl: this.getFullImageUrl(profileData.avatarUrl),
                 bannerUrl: this.getFullImageUrl(profileData.bannerUrl),
             };

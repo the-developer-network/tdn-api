@@ -1,6 +1,5 @@
 import { Type } from "@sinclair/typebox";
 import { Type as FBType, type Static } from "@fastify/type-provider-typebox";
-import { ProfileItemSchema } from "./get-profile.schema";
 
 export const SearchProfilesQuerySchema = Type.Object({
     q: Type.String({
@@ -13,8 +12,25 @@ export const SearchProfilesQuerySchema = Type.Object({
 
 export type SearchProfilesQuery = Static<typeof SearchProfilesQuerySchema>;
 
+export const SearchProfileItemSchema = FBType.Object({
+    id: FBType.String({ format: "uuid" }),
+    username: FBType.String(),
+    fullName: FBType.String(),
+    bio: FBType.Union([FBType.String(), FBType.Null()]),
+    location: FBType.Union([FBType.String(), FBType.Null()]),
+    avatarUrl: FBType.String(),
+    bannerUrl: FBType.String(),
+    socials: FBType.Record(FBType.String(), FBType.String()),
+    createdAt: FBType.String(),
+    updatedAt: FBType.String(),
+    followersCount: FBType.Number(),
+    followingCount: FBType.Number(),
+    isMe: FBType.Boolean(),
+    isFollowing: FBType.Boolean(),
+});
+
 export const SearchProfilesResponseSchema = FBType.Object({
-    data: FBType.Array(ProfileItemSchema),
+    data: FBType.Array(SearchProfileItemSchema),
     meta: FBType.Object({
         timestamp: FBType.String({ format: "date-time" }),
         count: FBType.Number(),
