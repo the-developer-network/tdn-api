@@ -248,8 +248,12 @@ export const useCasesModule = {
      * Use case for retrieving posts
      */
     getPostsUseCase: asFunction(
-        (postRepository, cacheService) =>
-            new GetPostsUseCase(postRepository, cacheService),
+        (postRepository, cacheService, followUserRepository) =>
+            new GetPostsUseCase(
+                postRepository,
+                cacheService,
+                followUserRepository,
+            ),
     ).singleton(),
 
     /**

@@ -78,12 +78,17 @@ export class PrismaPostRepository implements IPostRepository {
             savedByUserId,
             currentUserId,
             tag,
+            followingIds,
         } = params;
         const skip = (page - 1) * limit;
 
         const whereCondition = {
             ...(type ? { type } : {}),
-            ...(authorId ? { authorId } : {}),
+            ...(followingIds
+                ? { authorId: { in: followingIds } }
+                : authorId
+                  ? { authorId }
+                  : {}),
             ...(savedByUserId
                 ? { bookmarks: { some: { userId: savedByUserId } } }
                 : {}),

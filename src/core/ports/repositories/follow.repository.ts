@@ -86,4 +86,11 @@ export interface IFollowRepository {
      * @returns The total number of followers.
      */
     getFollowersCount(userId: string): Promise<number>;
+
+    /**
+     * Retrieves all user IDs that the given user is following.
+     * @param followerId - The ID of the user whose following list is being retrieved.
+     * @returns An array of user IDs that the follower is following.
+     */
+    getFollowingIds(followerId: string): Promise<string[]>;
 }

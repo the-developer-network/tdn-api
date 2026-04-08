@@ -29,4 +29,5 @@ export interface GetPostsInput {
      */
     currentUserId?: string;
     tag?: string;
+    followedOnly?: boolean;
 }

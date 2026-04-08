@@ -12,6 +12,7 @@ export interface GetPostsParams {
     savedByUserId?: string;
     currentUserId?: string;
     tag?: string;
+    followingIds?: string[];
 }
 
 /**

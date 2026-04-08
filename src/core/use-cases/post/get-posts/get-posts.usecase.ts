@@ -1,8 +1,10 @@
 import type { IPostRepository } from "@core/ports/repositories/post.repository";
+import type { IFollowRepository } from "@core/ports/repositories/follow.repository";
 import type { CachePort } from "@core/ports/services/cache.port";
 import type { GetPostsInput } from "./get-posts-usecase.input";
 import type { GetPostsOutput } from "./get-posts-usecase.output";
 import { Post } from "@core/domain/entities/post.entity";
+import { UnauthorizedError } from "@core/errors";
 
 interface CachedPostData {
     id: string;
@@ -21,6 +23,7 @@ export class GetPostsUseCase {
     constructor(
         private readonly postRepository: IPostRepository,
         private readonly cacheService: CachePort,
+        private readonly followRepository: IFollowRepository,
     ) {}
 
     async execute(input: GetPostsInput): Promise<GetPostsOutput> {
@@ -28,8 +31,15 @@ export class GetPostsUseCase {
         const limit = input.limit || 10;
         const typeStr = input.type || "ALL";
         const tagStr = input.tag ?? "ALL";
+        const followedOnly = input.followedOnly ?? false;
 
-        const cacheKey = `posts:feed:page:${page}:limit:${limit}:type:${typeStr}:tag:${tagStr}:user:${input.currentUserId || "guest"}`;
+        if (followedOnly && !input.currentUserId) {
+            throw new UnauthorizedError(
+                "Authentication is required to use the followedOnly filter.",
+            );
+        }
+
+        const cacheKey = `posts:feed:page:${page}:limit:${limit}:type:${typeStr}:tag:${tagStr}:followedOnly:${followedOnly}:user:${input.currentUserId || "guest"}`;
 
         const cachedData = await this.cacheService.get(cacheKey);
 
@@ -60,6 +70,13 @@ export class GetPostsUseCase {
             type: input.type,
             currentUserId: input.currentUserId,
             tag: input.tag,
+            ...(followedOnly && input.currentUserId
+                ? {
+                      followingIds: await this.followRepository.getFollowingIds(
+                          input.currentUserId,
+                      ),
+                  }
+                : {}),
         });
 
         const response: GetPostsOutput = {
