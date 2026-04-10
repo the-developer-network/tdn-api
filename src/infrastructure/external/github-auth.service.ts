@@ -21,6 +21,16 @@ interface GithubEmail {
 export class GithubAuthService implements GithubAuthPort {
     constructor(private readonly config: GithubAuthConfig) {}
 
+    private sanitizeUsername(username: string): string {
+        const maxLen = 30;
+        const s = String(username ?? "")
+            .toLowerCase()
+            .replace(/[^a-z0-9_]/g, "_")
+            .replace(/_+/g, "_")
+            .replace(/^_+|_+$/g, "");
+        return s.slice(0, maxLen).replace(/_+$/g, "");
+    }
+
     getAuthorizationUrl(): string {
         const rootUrl = "https://github.com/login/oauth/authorize";
 
@@ -75,7 +85,7 @@ export class GithubAuthService implements GithubAuthPort {
 
         return {
             providerAccountId: githubUser.id.toString(),
-            username: githubUser.login,
+            username: this.sanitizeUsername(githubUser.login),
             email: primaryEmail.email,
             isEmailVerified: primaryEmail.verified,
         };
