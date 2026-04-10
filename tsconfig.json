@@ -10,18 +10,17 @@
         "forceConsistentCasingInFileNames": true,
 
         /* Path Aliases */
-        "baseUrl": ".",
         "paths": {
-            "@plugins/*": ["src/http/plugins/*"],
-            "@custom/*": ["src/http/plugins/custom/*"],
-            "@hooks/*": ["src/http/hooks/*"],
-            "@decorators/*": ["src/http/decorators/*"],
-            "@routes/*": ["src/http/routes/*"],
-            "@controllers/*": ["src/http/controllers/*"],
-            "@typings/*": ["src/http/types/*"],
-            "@generated/*": ["src/generated/*"],
-            "@infrastructure/*": ["src/infrastructure/*"],
-            "@core/*": ["src/core/*"]
+            "@plugins/*": ["./src/http/plugins/*"],
+            "@custom/*": ["./src/http/plugins/custom/*"],
+            "@hooks/*": ["./src/http/hooks/*"],
+            "@decorators/*": ["./src/http/decorators/*"],
+            "@routes/*": ["./src/http/routes/*"],
+            "@controllers/*": ["./src/http/controllers/*"],
+            "@typings/*": ["./src/http/types/*"],
+            "@generated/*": ["./src/generated/*"],
+            "@infrastructure/*": ["./src/infrastructure/*"],
+            "@core/*": ["./src/core/*"]
         }
     },
     "include": ["src/**/*", "tests/**/*"],
