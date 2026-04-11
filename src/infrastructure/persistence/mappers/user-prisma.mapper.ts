@@ -18,6 +18,7 @@ export class UserPrismaMapper {
             email: dbUser.email,
             username: dbUser.username,
             passwordHash: dbUser.password,
+            isBot: dbUser.isBot,
             isEmailVerified: dbUser.isEmailVerified,
             deletedAt: dbUser.deletedAt,
             createdAt: dbUser.createdAt,

@@ -60,8 +60,12 @@ import { TranslateUseCase } from "@core/use-cases/translate";
 /**
  * Dependency injection module for use cases
  *
- * Registers all use case implementations with the dependency injection container.
- * Use cases are configured as singletons to ensure consistent behavior and
+        (postRepository, cacheService, userRepository) =>
+            new CreatePostUseCase(
+                postRepository,
+                cacheService,
+                userRepository,
+            ),
  * shared dependencies across the application.
  */
 export const useCasesModule = {
@@ -235,8 +239,8 @@ export const useCasesModule = {
      * Use case for creating a new post
      */
     createPostUseCase: asFunction(
-        (postRepository, cacheService) =>
-            new CreatePostUseCase(postRepository, cacheService),
+        (postRepository, cacheService, userRepository) =>
+            new CreatePostUseCase(postRepository, cacheService, userRepository),
     ).singleton(),
 
     /**

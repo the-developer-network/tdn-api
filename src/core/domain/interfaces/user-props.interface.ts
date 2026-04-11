@@ -21,6 +21,9 @@ export interface UserProps {
     /** Boolean flag indicating whether the user's email has been verified */
     isEmailVerified: boolean;
 
+    /** Optional boolean flag indicating whether the user is a bot account */
+    isBot?: boolean;
+
     /** Optional timestamp when the user account was soft-deleted */
     deletedAt: Date | null;
 
