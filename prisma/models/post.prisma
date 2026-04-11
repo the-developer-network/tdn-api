@@ -84,8 +84,8 @@ model CommentLike {
 }
 
 model Comment {
-  id      String @id @default(uuid())
-  content String @db.Text
+  id        String   @id @default(uuid())
+  content   String   @db.Text
   mediaUrls String[] @default([]) @map("media_urls")
 
   postId   String @map("post_id")
@@ -98,10 +98,10 @@ model Comment {
   parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies  Comment[] @relation("CommentReplies")
 
-  likes     CommentLike[]
-  bookmarks CommentBookmark[]
-  likeCount  Int @default(0) @map("like_count")
-  replyCount Int @default(0) @map("reply_count")
+  likes      CommentLike[]
+  bookmarks  CommentBookmark[]
+  likeCount  Int               @default(0) @map("like_count")
+  replyCount Int               @default(0) @map("reply_count")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

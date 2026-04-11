@@ -1,4 +1,5 @@
 import type { UserProps } from "@core/domain/interfaces/user-props.interface";
+import { PostType } from "@core/domain/enums";
 
 /**
  * Rich domain model for User entity
@@ -47,6 +48,13 @@ export class User {
      */
     get passwordHash(): string | null {
         return this.props.passwordHash;
+    }
+    /**
+     * Get the flag indicating if the user is a bot account
+     * @returns True if the user is a bot, false otherwise
+     */
+    get isBot(): boolean {
+        return this.props.isBot ?? false;
     }
 
     /**
@@ -129,5 +137,15 @@ export class User {
      */
     verifyEmail(): void {
         this.props.isEmailVerified = true;
+    }
+    /**
+     * Determine if the user can create a post of a given type based on their account type (bot or regular)
+     * @param type - The type of post being created
+     * @returns True if the user can create the post type, false otherwise
+     */
+    public canCreatePostType(type: PostType): boolean {
+        const restricted = [PostType.SYSTEM_UPDATE, PostType.TECH_NEWS];
+        if (restricted.includes(type)) return this.isBot;
+        return true;
     }
 }

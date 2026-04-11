@@ -7,6 +7,7 @@ model User {
   password        String? //Hashed password
   isEmailVerified Boolean @default(false)
 
+  isBot              Boolean             @default(false)
   refreshTokens      RefreshToken[]
   verificationTokens VerificationToken[]
 
@@ -20,9 +21,9 @@ model User {
   receivedNotifications Notification[] @relation("ReceivedNotifications")
   issuedNotifications   Notification[] @relation("IssuedNotifications")
 
-  posts         Post[]
-  postLikes     PostLike[]
-  postBookmarks PostBookmark[]
+  posts            Post[]
+  postLikes        PostLike[]
+  postBookmarks    PostBookmark[]
   comments         Comment[]
   commentBookmarks CommentBookmark[]
 
