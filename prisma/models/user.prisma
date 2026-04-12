@@ -8,6 +8,7 @@ model User {
   isEmailVerified Boolean @default(false)
 
   isBot              Boolean             @default(false)
+  botToken String?
   refreshTokens      RefreshToken[]
   verificationTokens VerificationToken[]
 
@@ -33,4 +34,5 @@ model User {
   commentLikes CommentLike[]
 
   @@map("users")
+  @@index([botToken])
 }
