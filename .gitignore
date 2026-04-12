@@ -11,3 +11,5 @@ dist
 # IDE / Editor
 .vscode/
 .idea/
+
+bot-tokens-private.json
