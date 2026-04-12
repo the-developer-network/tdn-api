@@ -66,6 +66,7 @@ function rateLimitPlugin(fastify: FastifyInstance): void {
         max: 100,
         timeWindow: "1 minute",
         allowList: async (request: FastifyRequest): Promise<boolean> => {
+            if (request.server.config.NODE_ENV === "test") return true;
             const auth = request.headers.authorization;
 
             if (!(auth && auth.startsWith("Bot "))) {
