@@ -1,8 +1,0 @@
-feat(post): add categories support and CDN URL normalization
-
-Add support for post categories:
-- Accept GET /posts?categories (CSV or repeated params) and filter posts by categories.
-- Case-insensitive parsing and validation against PostCategory.
-- Pass categories to create and persist via Prisma mapper.
-- Normalize CDN base URL in responses.
-- Add Prisma migration to introduce Category enum and posts.category array (review migration before production).
