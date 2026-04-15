@@ -229,7 +229,10 @@ export class PostController {
             request.server.config.R2_PUBLIC_URL,
         );
 
-        const post = await this.getPostDetailUseCase.execute(id, userId);
+        const post = await this.getPostDetailUseCase.execute({
+            postId: id,
+            userId,
+        });
         const formattedData = PostPrismaMapper.toResponse(post, cdnUrl, userId);
 
         return reply.status(200).send({
