@@ -14,7 +14,7 @@ import { RecoverAccountUseCase } from "@core/use-cases/auth/recover-account";
 import { GoogleLoginUseCase } from "@core/use-cases/oauth/oauth-google";
 import { OAuthExchangeUseCase } from "@core/use-cases/oauth/oauth-exchange";
 import { PurgeExpiredUsersUseCase } from "@core/use-cases/user/purge-expired-users";
-import { PurgeExpiredTokensUseCase } from "@core/use-cases/auth/cleanup-refresh-tokens";
+import { PurgeExpiredTokensUseCase } from "@core/use-cases/auth/purge-expired-tokens";
 import { GetMeUserUseCase } from "@core/use-cases/user/get-me";
 import { ChangePasswordUseCase } from "@core/use-cases/user/change-password";
 import { ChangeUsernameUseCase } from "@core/use-cases/user/change-username";
