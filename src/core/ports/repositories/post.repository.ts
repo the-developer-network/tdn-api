@@ -61,11 +61,21 @@ export interface IPostRepository {
      * @param postId - The ID of the post to decrement comment count for
      */
     decrementCommentsCount(postId: string): Promise<void>;
+    /**
+     * Finds posts by the author's username with pagination and optional type filtering.
+     * @param username - The username of the author whose posts are being retrieved.
+     * @param page - The page number for pagination.
+     * @param limit - The number of posts to retrieve per page.
+     * @param type - Optional filter to retrieve posts of a specific type.
+     * @param currentUserId - Optional ID of the current user to determine if they have liked or bookmarked the posts.
+     * @returns An object containing the array of Post entities and the total count of posts matching the criteria.
+     */
     findByAuthorUsername(
         username: string,
         page: number,
         limit: number,
         type?: string,
+        currentUserId?: string,
     ): Promise<{ posts: Post[]; total: number }>;
 
     /**
