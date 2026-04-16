@@ -17,7 +17,7 @@
         "test:unit": "vitest run tests/unit",
         "test:unit:watch": "vitest tests/unit",
         "test:integration": "vitest run tests/integration",
-        "test:e2e": "cross-env NODE_ENV=test vitest run tests/e2e",
+        "test:e2e": "cross-env NODE_ENV=test vitest run --config vitest.e2e.config.ts",
         "test:coverage": "vitest run --coverage",
         "migrate-bots": "cross-env DOTENV_CONFIG_PATH=.env.production tsx scripts/migrate-bots.ts"
     },

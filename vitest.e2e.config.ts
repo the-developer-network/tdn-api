@@ -12,6 +12,7 @@ export default defineConfig({
         setupFiles: ["tests/e2e/setup.ts"],
         testTimeout: 30000,
         hookTimeout: 30000,
+        fileParallelism: false,
         coverage: {
             provider: "v8",
             reporter: ["text", "json", "html"],

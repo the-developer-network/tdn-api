@@ -15,7 +15,7 @@ export const LoginResponseSchema = ResponseSchema(
         user: Type.Object({
             id: Type.String({ format: "uuid" }),
             username: Type.String(),
-            isEmailVerfiied: Type.Boolean(),
+            isEmailVerified: Type.Boolean(),
         }),
     }),
 );
