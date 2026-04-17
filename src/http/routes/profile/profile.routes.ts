@@ -139,6 +139,7 @@ function profileRoutes(fastify: FastifyInstance): void {
     fastify.get<{ Reply: { 200: FollowsListResponse } }>(
         "/:username/followers",
         {
+            onRequest: [fastify.optionalAuthenticate],
             schema: {
                 params: FollowersParamsSchema,
                 querystring: PaginationQuerySchema,
@@ -152,6 +153,7 @@ function profileRoutes(fastify: FastifyInstance): void {
     fastify.get<{ Reply: { 200: FollowsListResponse } }>(
         "/:username/following",
         {
+            onRequest: [fastify.optionalAuthenticate],
             schema: {
                 params: FollowersParamsSchema,
                 querystring: PaginationQuerySchema,
