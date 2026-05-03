@@ -12,18 +12,33 @@ import { PostType } from "@core/domain/enums";
  * business logic and validation within the entity itself.
  */
 export class User {
-    /**
-     * Private constructor to enforce creation through factory methods
-     * @param props - The user properties
-     */
-    constructor(private readonly props: UserProps) {}
+    private constructor(private readonly props: UserProps) {}
+
+    public static create(
+        email: string,
+        username: string,
+        passwordHash: string | null,
+    ): User {
+        return new User({
+            email,
+            username,
+            passwordHash,
+            isEmailVerified: false,
+            isBot: false,
+            deletedAt: null,
+        });
+    }
+
+    public static with(props: UserProps): User {
+        return new User(props);
+    }
 
     /**
      * Get the unique identifier for the user
      * @returns The user ID
      */
     get id(): string {
-        return this.props.id;
+        return this.props.id!;
     }
 
     /**
@@ -70,7 +85,7 @@ export class User {
      * @returns The creation date
      */
     get createdAt(): Date {
-        return this.props.createdAt;
+        return this.props.createdAt!;
     }
 
     /**
@@ -78,7 +93,7 @@ export class User {
      * @returns The last update date
      */
     get updatedAt(): Date {
-        return this.props.updatedAt;
+        return this.props.updatedAt!;
     }
 
     /**

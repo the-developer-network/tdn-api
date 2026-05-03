@@ -7,7 +7,7 @@
  */
 export interface UserProps {
     /** Unique identifier for the user */
-    id: string;
+    id?: string;
 
     /** Email address of the user (must be unique) */
     email: string;
@@ -28,8 +28,8 @@ export interface UserProps {
     deletedAt: Date | null;
 
     /** Creation timestamp of the user account */
-    createdAt: Date;
+    createdAt?: Date;
 
     /** Last update timestamp of the user account */
-    updatedAt: Date;
+    updatedAt?: Date;
 }

@@ -71,7 +71,7 @@ export class PrismaNotificationRepository implements INotificationRepository {
 
         return raws.map((raw) => {
             const notificationData = NotificationPrismaMapper.toResponse(raw);
-            return new Notification({
+            return Notification.with({
                 recipientId: raw.recipientId,
                 issuerId: raw.issuerId,
                 type: notificationData.type,

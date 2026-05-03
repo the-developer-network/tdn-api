@@ -13,11 +13,7 @@ import type { PostCategory } from "../enums/post-category-enum";
  * business logic and validation within the entity itself.
  */
 export class Post {
-    /**
-     * Private constructor to enforce creation through factory methods
-     * @param props - The post properties
-     */
-    constructor(private readonly props: PostProps) {}
+    private constructor(private readonly props: PostProps) {}
 
     /**
      * Creates a new instance of the Post entity.
@@ -44,6 +40,10 @@ export class Post {
             tags: [],
             categories,
         });
+    }
+
+    public static with(props: PostProps): Post {
+        return new Post(props);
     }
 
     /**

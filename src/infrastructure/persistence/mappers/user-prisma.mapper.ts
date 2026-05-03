@@ -1,6 +1,5 @@
 import type { Prisma, User as PrismaUser } from "@generated/prisma/client";
 import { User } from "@core/domain/entities/user.entity";
-import type { UserProps } from "@core/domain/interfaces/user-props.interface";
 /**
  * Mapper class responsible for transforming User data across different layers.
  * Handles conversions between Prisma database records, Domain entities, and safe Response objects.
@@ -13,7 +12,7 @@ export class UserPrismaMapper {
      * @returns The instantiated User domain entity.
      */
     static toDomainUser(dbUser: PrismaUser): User {
-        return new User({
+        return User.with({
             id: dbUser.id,
             email: dbUser.email,
             username: dbUser.username,
@@ -51,14 +50,21 @@ export class UserPrismaMapper {
      * @param user - The User domain entity.
      * @returns A sanitized user object safe for external API responses.
      */
-    static toResponse(
-        user: User,
-    ): Omit<UserProps, "passwordHash" | "deletedAt"> {
+    static toResponse(user: User): {
+        id: string;
+        username: string;
+        email: string;
+        isEmailVerified: boolean;
+        isBot?: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+    } {
         return {
             id: user.id,
             username: user.username,
             email: user.email,
             isEmailVerified: user.isEmailVerified,
+            isBot: user.isBot,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
         };

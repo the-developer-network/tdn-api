@@ -3,7 +3,7 @@ import type { RefreshToken as PrismaRefreshToken } from "@generated/prisma/clien
 
 export class RefreshTokenPrismaMapper {
     static toDomain(raw: PrismaRefreshToken): RefreshToken {
-        return new RefreshToken({
+        return RefreshToken.with({
             id: raw.id,
             tokenHash: raw.token,
             userId: raw.userId,

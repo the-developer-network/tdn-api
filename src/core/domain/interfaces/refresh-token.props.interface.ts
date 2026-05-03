@@ -7,7 +7,7 @@
  */
 export interface RefreshTokenProps {
     /** Unique identifier for the refresh token */
-    id: string;
+    id?: string;
 
     /** Hashed value of the refresh token for security */
     tokenHash: string;
@@ -28,8 +28,8 @@ export interface RefreshTokenProps {
     isRevoked: boolean;
 
     /** Creation timestamp of the refresh token */
-    createdAt: Date;
+    createdAt?: Date;
 
     /** Last update timestamp of the refresh token */
-    updatedAt: Date;
+    updatedAt?: Date;
 }

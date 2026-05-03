@@ -11,11 +11,20 @@ import type { VerificationTokenProps } from "@core/domain/interfaces/verificatio
  * business logic and validation within the entity itself.
  */
 export class VerificationToken {
-    /**
-     * Private constructor to enforce creation through factory methods
-     * @param props - The verification token properties
-     */
-    constructor(private readonly props: VerificationTokenProps) {}
+    private constructor(private readonly props: VerificationTokenProps) {}
+
+    public static create(
+        userId: string,
+        tokenHash: string,
+        type: VerificationTokenProps["type"],
+        expiresAt: Date,
+    ): VerificationToken {
+        return new VerificationToken({ userId, tokenHash, type, expiresAt });
+    }
+
+    public static with(props: VerificationTokenProps): VerificationToken {
+        return new VerificationToken(props);
+    }
 
     /**
      * Get the unique identifier for the verification token

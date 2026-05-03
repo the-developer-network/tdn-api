@@ -11,18 +11,39 @@ import type { ProfileProps } from "@core/domain/interfaces/profile-props.interfa
  * business logic and validation within the entity itself.
  */
 export class Profile {
-    /**
-     * Private constructor to enforce creation through factory methods
-     * @param props - The profile properties
-     */
-    constructor(private readonly props: ProfileProps) {}
+    private constructor(private readonly props: ProfileProps) {}
+
+    public static create(
+        userId: string,
+        username: string,
+        fullName: string,
+        avatarUrl: string,
+        bannerUrl: string,
+    ): Profile {
+        return new Profile({
+            userId,
+            username,
+            fullName,
+            avatarUrl,
+            bannerUrl,
+            bio: null,
+            location: null,
+            socials: null,
+            followersCount: 0,
+            followingCount: 0,
+        });
+    }
+
+    public static with(props: ProfileProps): Profile {
+        return new Profile(props);
+    }
 
     /**
      * Get the unique identifier for the profile
      * @returns The profile ID
      */
     get id(): string {
-        return this.props.id;
+        return this.props.id!;
     }
 
     /**
@@ -86,7 +107,7 @@ export class Profile {
      * @returns The creation date
      */
     get createdAt(): Date {
-        return this.props.createdAt;
+        return this.props.createdAt!;
     }
 
     /**
@@ -94,7 +115,7 @@ export class Profile {
      * @returns The last update date
      */
     get updatedAt(): Date {
-        return this.props.updatedAt;
+        return this.props.updatedAt!;
     }
 
     /**

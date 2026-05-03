@@ -15,6 +15,7 @@ export default defineConfig([
             "vitest.config.ts",
             "tests/**/*",
             "vitest.e2e.config.ts",
+            "vitest.unit.config.ts",
         ],
     },
 

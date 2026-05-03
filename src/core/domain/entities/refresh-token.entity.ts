@@ -11,18 +11,35 @@ import type { RefreshTokenProps } from "@core/domain/interfaces/refresh-token.pr
  * business logic and validation within the entity itself.
  */
 export class RefreshToken {
-    /**
-     * Private constructor to enforce creation through factory methods
-     * @param props - The refresh token properties
-     */
-    constructor(private readonly props: RefreshTokenProps) {}
+    private constructor(private readonly props: RefreshTokenProps) {}
+
+    public static create(
+        userId: string,
+        tokenHash: string,
+        deviceIp: string,
+        userAgent: string,
+        expiresAt: Date,
+    ): RefreshToken {
+        return new RefreshToken({
+            userId,
+            tokenHash,
+            deviceIp,
+            userAgent,
+            expiresAt,
+            isRevoked: false,
+        });
+    }
+
+    public static with(props: RefreshTokenProps): RefreshToken {
+        return new RefreshToken(props);
+    }
 
     /**
      * Get the unique identifier for the refresh token
      * @returns The refresh token ID
      */
     get id(): string {
-        return this.props.id;
+        return this.props.id!;
     }
 
     /**
@@ -78,7 +95,7 @@ export class RefreshToken {
      * @returns The creation date
      */
     get createdAt(): Date {
-        return this.props.createdAt;
+        return this.props.createdAt!;
     }
 
     /**
@@ -86,7 +103,7 @@ export class RefreshToken {
      * @returns The last update date
      */
     get updatedAt(): Date {
-        return this.props.updatedAt;
+        return this.props.updatedAt!;
     }
 
     /**

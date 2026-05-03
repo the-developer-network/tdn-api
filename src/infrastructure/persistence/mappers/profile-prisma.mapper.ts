@@ -25,7 +25,7 @@ export class ProfilePrismaMapper {
      * @returns The instantiated Profile domain entity.
      */
     static toDomain(dbProfile: PrismaProfileWithUserAndCounts): Profile {
-        return new Profile({
+        return Profile.with({
             id: dbProfile.id,
             userId: dbProfile.userId,
 

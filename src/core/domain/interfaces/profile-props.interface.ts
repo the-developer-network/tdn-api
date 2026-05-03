@@ -7,7 +7,7 @@
  */
 export interface ProfileProps {
     /** Unique identifier for the profile */
-    id: string;
+    id?: string;
 
     /** The unique identifier of the associated user */
     userId: string;
@@ -31,10 +31,10 @@ export interface ProfileProps {
     socials: Record<string, string> | null;
 
     /** Creation timestamp of the profile */
-    createdAt: Date;
+    createdAt?: Date;
 
     /** Last update timestamp of the profile */
-    updatedAt: Date;
+    updatedAt?: Date;
 
     /**
      * User Props

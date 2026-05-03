@@ -50,7 +50,7 @@ export class PostPrismaMapper {
      * @returns The instantiated Post domain entity.
      */
     static toDomainPost(dbPost: PostWithRelations): Post {
-        return new Post({
+        return Post.with({
             id: dbPost.id,
             content: dbPost.content,
             type: dbPost.type as PostType,

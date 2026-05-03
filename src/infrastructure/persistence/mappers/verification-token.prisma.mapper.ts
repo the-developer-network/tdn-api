@@ -4,7 +4,7 @@ import type { VerificationToken as PrismaVerificationToken } from "@generated/pr
 
 export class VerificationTokenPrismaMapper {
     static toDomain(raw: PrismaVerificationToken): VerificationToken {
-        return new VerificationToken({
+        return VerificationToken.with({
             id: raw.id,
             tokenHash: raw.token,
             userId: raw.userId,
