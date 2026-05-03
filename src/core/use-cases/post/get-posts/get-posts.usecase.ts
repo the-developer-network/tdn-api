@@ -53,7 +53,7 @@ export class GetPostsUseCase {
             const hydratedPosts = parsed.posts.map((p) => {
                 const data = p.props || p;
 
-                return new Post({
+                return Post.with({
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     ...(data as any),
                     id: p.id || (data.id as string),

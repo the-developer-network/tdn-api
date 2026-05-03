@@ -12,11 +12,7 @@ import type { NotificationProps } from "../interfaces/notification-props.interfa
  * business logic and validation within the entity itself.
  */
 export class Notification {
-    /**
-     * Private constructor to enforce creation through factory methods
-     * @param props - The notification properties
-     */
-    constructor(private readonly props: NotificationProps) {}
+    private constructor(private readonly props: NotificationProps) {}
 
     /**
      * Creates a new Notification entity with minimal required data.
@@ -46,6 +42,10 @@ export class Notification {
             createdAt: undefined,
             isRead: false,
         });
+    }
+
+    public static with(props: NotificationProps): Notification {
+        return new Notification(props);
     }
 
     /**
