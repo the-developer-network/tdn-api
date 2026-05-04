@@ -51,7 +51,7 @@ export class OAuthExchangeUseCase {
             userId: payload.userId,
             deviceIp: input.deviceIp,
             userAgent: input.userAgent,
-            expiresAt: refreshTokenExpiresAt,
+            expiresAt: new Date(refreshTokenExpiresAt * 1000),
         });
 
         return {

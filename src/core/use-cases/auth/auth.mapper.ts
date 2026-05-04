@@ -35,12 +35,12 @@ export class AuthMapper {
         accessToken: string;
         expiresAt: number;
         refreshToken: string;
-        refreshTokenExpiresAt: Date;
+        refreshTokenExpiresAt: number;
     }): {
         accessToken: string;
         expiresAt: number;
         refreshToken: string;
-        refreshTokenExpiresAt: Date;
+        refreshTokenExpiresAt: number;
     } {
         return {
             accessToken: tokens.accessToken,
@@ -61,14 +61,14 @@ export class AuthMapper {
         accessToken: string;
         expiresAt: number;
         refreshToken: string;
-        refreshTokenExpiresAt: Date;
+        refreshTokenExpiresAt: number;
     }): {
         user: { id: string; username: string };
         tokens: {
             accessToken: string;
             expiresAt: number;
             refreshToken: string;
-            refreshTokenExpiresAt: Date;
+            refreshTokenExpiresAt: number;
         };
     } {
         return {

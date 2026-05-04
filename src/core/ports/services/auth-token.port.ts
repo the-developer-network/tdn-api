@@ -22,8 +22,8 @@ export interface TokenResult {
     /** The opaque random refresh token string. */
     refreshToken: string;
 
-    /** The date at which the refresh token expires. */
-    refreshTokenExpiresAt: Date;
+    /** The Unix timestamp (in seconds) at which the refresh token expires. */
+    refreshTokenExpiresAt: number;
 }
 
 /**
