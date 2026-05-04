@@ -1,8 +1,11 @@
 import type { User } from "@core/domain/entities/user.entity";
 import type { IUserRepository } from "@core/ports/repositories/user.repository";
 import { UserPrismaMapper } from "@infrastructure/persistence/mappers/user-prisma.mapper";
-import { UserAlreadyExistsError } from "@core/errors";
-import { ConflictError } from "@core/errors";
+import {
+    ConflictError,
+    UserAlreadyExistsError,
+    type CustomError,
+} from "@core/errors";
 import { Prisma } from "@generated/prisma/client";
 import type { PrismaTransactionalClient } from "@infrastructure/persistence/database/prisma-client.type";
 
@@ -57,11 +60,7 @@ export class PrismaUserRepository implements IUserRepository {
 
             return UserPrismaMapper.toDomainUser(user);
         } catch (error: unknown) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === "P2002") throw new UserAlreadyExistsError();
-            }
-
-            throw error;
+            this.handleP2002(error, new UserAlreadyExistsError());
         }
     }
     /**
@@ -100,11 +99,7 @@ export class PrismaUserRepository implements IUserRepository {
 
             return UserPrismaMapper.toDomainUser(user);
         } catch (error: unknown) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === "P2002") throw new UserAlreadyExistsError();
-            }
-
-            throw error;
+            this.handleP2002(error, new UserAlreadyExistsError());
         }
     }
     /**
@@ -281,14 +276,12 @@ export class PrismaUserRepository implements IUserRepository {
                 data: { username },
             });
         } catch (error: unknown) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === "P2002") {
-                    throw new ConflictError(
-                        "This username is already taken. Please choose another one.",
-                    );
-                }
-            }
-            throw error;
+            this.handleP2002(
+                error,
+                new ConflictError(
+                    "This username is already taken. Please choose another one.",
+                ),
+            );
         }
     }
 
@@ -311,14 +304,22 @@ export class PrismaUserRepository implements IUserRepository {
                 },
             });
         } catch (error: unknown) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === "P2002") {
-                    throw new ConflictError(
-                        "This email address is already in use by another account.",
-                    );
-                }
-            }
-            throw error;
+            this.handleP2002(
+                error,
+                new ConflictError(
+                    "This email address is already in use by another account.",
+                ),
+            );
         }
+    }
+
+    private handleP2002(error: unknown, conflictError: CustomError): never {
+        if (
+            error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2002"
+        ) {
+            throw conflictError;
+        }
+        throw error as Error;
     }
 }
