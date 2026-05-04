@@ -4,7 +4,7 @@ import type {
     AuthTokenPort,
     RecoveryPayload,
 } from "@core/ports/services/auth-token.port";
-import { UnauthorizedError, BadRequestError } from "@core/errors";
+import { UnauthorizedError } from "@core/errors";
 import { type LoginOutput } from "../login/login.output";
 import type { RecoverAccountInput } from "./recover-account.input";
 import { AuthMapper } from "../auth.mapper";
@@ -61,8 +61,8 @@ export class RecoverAccountUseCase {
 
         const user = await this.userRepository.findById(userId);
 
-        if (!user) {
-            throw new BadRequestError("User not found.");
+        if (!user || !user.isDeleted()) {
+            throw new UnauthorizedError("Invalid or expired recovery token.");
         }
 
         await this.userRepository.restoreById(user.id);
