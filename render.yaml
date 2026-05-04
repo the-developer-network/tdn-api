@@ -1,0 +1,81 @@
+# Exported from Render on 2026-05-04T18:29:38Z
+version: "1"
+projects:
+- name: My project
+  environments:
+  - name: Production
+    services:
+    - type: web
+      name: tdn-api
+      runtime: docker
+      repo: https://github.com/the-developer-network/tdn-api
+      plan: free
+      envVars:
+      - key: OTP_EXPIRY_SECONDS
+        sync: false
+      - key: USER_PURGE_GRACE_PERIOD_DAYS
+        sync: false
+      - key: USER_PURGE_CRON
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: REFRESH_TOKEN_PURGE_GRACE_PERIOD_DAYS
+        sync: false
+      - key: REFRESH_TOKEN_PURGE_CRON
+        sync: false
+      - key: REFRESH_TOKEN_EXPIRES_IN
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_PUBLIC_URL
+        sync: false
+      - key: R2_ENDPOINT
+        sync: false
+      - key: R2_BUCKET_NAME
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: PORT
+        sync: false
+      - key: NOTIFICATION_PURGE_GRACE_PERIOD_DAYS
+        sync: false
+      - key: NOTIFICATION_PURGE_CRON
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CALLBACK_URL
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CALLBACK_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: DEEPL_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: COOKIE_SECRET
+        sync: false
+      - key: API_URL
+        sync: false
+      - key: ACCESS_TOKEN_SECRET_KEY
+        sync: false
+      - key: ACCESS_TOKEN_EXPIRES_IN
+        sync: false
+      region: oregon
+      dockerContext: .
+      dockerfilePath: ./Dockerfile
+      domains:
+      - api.developernetwork.net
+      autoDeployTrigger: commit
