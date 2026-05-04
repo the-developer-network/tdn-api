@@ -25,7 +25,7 @@ describe("GetCommentRepliesUseCase", () => {
         vi.mocked(commentRepo.findById).mockResolvedValue(null);
 
         await expect(
-            useCase.execute({ commentId: "comment-1" }),
+            useCase.execute({ commentId: "comment-1", page: 1, limit: 10 }),
         ).rejects.toThrow(NotFoundError);
     });
 
@@ -39,7 +39,11 @@ describe("GetCommentRepliesUseCase", () => {
         vi.mocked(commentRepo.findById).mockResolvedValue(parent);
         vi.mocked(commentRepo.findRepliesByParentId).mockResolvedValue(replies);
 
-        const result = await useCase.execute({ commentId: "comment-1" });
+        const result = await useCase.execute({
+            commentId: "comment-1",
+            page: 1,
+            limit: 10,
+        });
 
         expect(result).toBe(replies);
         expect(commentRepo.findRepliesByParentId).toHaveBeenCalledWith(
@@ -72,6 +76,8 @@ describe("GetCommentRepliesUseCase", () => {
 
         await useCase.execute({
             commentId: "comment-1",
+            page: 1,
+            limit: 10,
             currentUserId: "user-99",
         });
 

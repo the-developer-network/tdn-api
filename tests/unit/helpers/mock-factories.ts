@@ -6,6 +6,8 @@ import { VerificationToken } from "@core/domain/entities/verification-token.enti
 import type { VerificationTokenProps } from "@core/domain/interfaces/verification-token.props.interface";
 import { Comment } from "@core/domain/entities/comment.entity";
 import type { CommentProps } from "@core/domain/interfaces/comment-props.interface";
+import { Profile } from "@core/domain/entities/profile.entity";
+import type { ProfileProps } from "@core/domain/interfaces/profile-props.interface";
 import { TokenType } from "@core/domain/enums/token-type.enum";
 
 export function buildUser(overrides: Partial<UserProps> = {}): User {
@@ -61,6 +63,25 @@ export function buildComment(overrides: Partial<CommentProps> = {}): Comment {
         postId: "post-1",
         authorId: "user-1",
         parentId: null,
+        createdAt: new Date("2024-01-01T00:00:00Z"),
+        updatedAt: new Date("2024-01-01T00:00:00Z"),
+        ...overrides,
+    });
+}
+
+export function buildProfile(overrides: Partial<ProfileProps> = {}): Profile {
+    return Profile.with({
+        id: "profile-1",
+        userId: "user-1",
+        username: "testuser",
+        fullName: "Test User",
+        bio: null,
+        location: null,
+        avatarUrl: "https://example.com/avatar.png",
+        bannerUrl: "https://example.com/banner.png",
+        socials: null,
+        followersCount: 0,
+        followingCount: 0,
         createdAt: new Date("2024-01-01T00:00:00Z"),
         updatedAt: new Date("2024-01-01T00:00:00Z"),
         ...overrides,
