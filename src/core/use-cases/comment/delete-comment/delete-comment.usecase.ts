@@ -47,7 +47,10 @@ export class DeleteCommentUseCase {
             await ctx.postRepository.decrementCommentsCount(comment.postId);
         });
 
-        // 4. Cache temizliği
-        await this.cacheService.deleteByPattern("posts:feed:*");
+        try {
+            await this.cacheService.deleteByPattern("posts:feed:*");
+        } catch {
+            // Cache invalidation failure is non-critical; comment is already deleted.
+        }
     }
 }

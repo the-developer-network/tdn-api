@@ -4,6 +4,8 @@ import { RefreshToken } from "@core/domain/entities/refresh-token.entity";
 import type { RefreshTokenProps } from "@core/domain/interfaces/refresh-token.props.interface";
 import { VerificationToken } from "@core/domain/entities/verification-token.entity";
 import type { VerificationTokenProps } from "@core/domain/interfaces/verification-token.props.interface";
+import { Comment } from "@core/domain/entities/comment.entity";
+import type { CommentProps } from "@core/domain/interfaces/comment-props.interface";
 import { TokenType } from "@core/domain/enums/token-type.enum";
 
 export function buildUser(overrides: Partial<UserProps> = {}): User {
@@ -46,6 +48,19 @@ export function buildRefreshToken(
         userAgent: "Mozilla/5.0",
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         isRevoked: false,
+        createdAt: new Date("2024-01-01T00:00:00Z"),
+        updatedAt: new Date("2024-01-01T00:00:00Z"),
+        ...overrides,
+    });
+}
+
+export function buildComment(overrides: Partial<CommentProps> = {}): Comment {
+    return Comment.with({
+        id: "comment-1",
+        content: "Test comment",
+        postId: "post-1",
+        authorId: "user-1",
+        parentId: null,
         createdAt: new Date("2024-01-01T00:00:00Z"),
         updatedAt: new Date("2024-01-01T00:00:00Z"),
         ...overrides,
