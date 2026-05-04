@@ -25,4 +25,13 @@ export interface CryptoPort {
      * @returns A hex-encoded string of the specified byte length.
      */
     generateRandomHex(bytes: number): string;
+
+    /**
+     * Compares two strings in constant time to prevent timing attacks.
+     *
+     * @param a - First string to compare.
+     * @param b - Second string to compare.
+     * @returns True if the strings are equal, false otherwise.
+     */
+    timingSafeEqual(a: string, b: string): boolean;
 }

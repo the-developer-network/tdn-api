@@ -139,7 +139,20 @@ export const useCasesModule = {
     /**
      * Use case for verifying email address
      */
-    verifyEmailUseCase: asClass(VerifyEmailUseCase).singleton(),
+    verifyEmailUseCase: asFunction(
+        ({
+            userRepository,
+            verificationTokenRepository,
+            cryptoService,
+            transactionService,
+        }) =>
+            new VerifyEmailUseCase(
+                userRepository,
+                verificationTokenRepository,
+                cryptoService,
+                transactionService,
+            ),
+    ).singleton(),
 
     /**
      * Use case for password reset request
@@ -164,7 +177,22 @@ export const useCasesModule = {
     /**
      * Use case for password reset confirmation
      */
-    resetPasswordUseCase: asClass(ResetPasswordUseCase).singleton(),
+    resetPasswordUseCase: asFunction(
+        ({
+            userRepository,
+            verificationTokenRepository,
+            passwordService,
+            cryptoService,
+            transactionService,
+        }) =>
+            new ResetPasswordUseCase(
+                userRepository,
+                verificationTokenRepository,
+                passwordService,
+                cryptoService,
+                transactionService,
+            ),
+    ).singleton(),
 
     /**
      * Use case for account recovery
