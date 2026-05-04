@@ -69,8 +69,6 @@ import { TranslateUseCase } from "@core/use-cases/translate";
  * shared dependencies across the application.
  */
 export const useCasesModule = {
-    // --- Use Cases ---
-
     /**
      * Use case for soft deleting a user account
      */
@@ -120,13 +118,13 @@ export const useCasesModule = {
      * Use case for sending email verification
      */
     sendVerificationEmailUseCase: asFunction(
-        ({
+        (
             userRepository,
             verificationTokenRepository,
             emailService,
             cryptoService,
             config,
-        }) =>
+        ) =>
             new SendVerificationEmailUseCase(
                 userRepository,
                 verificationTokenRepository,
@@ -140,12 +138,12 @@ export const useCasesModule = {
      * Use case for verifying email address
      */
     verifyEmailUseCase: asFunction(
-        ({
+        (
             userRepository,
             verificationTokenRepository,
             cryptoService,
             transactionService,
-        }) =>
+        ) =>
             new VerifyEmailUseCase(
                 userRepository,
                 verificationTokenRepository,
@@ -158,13 +156,13 @@ export const useCasesModule = {
      * Use case for password reset request
      */
     forgotPasswordUseCase: asFunction(
-        ({
+        (
             userRepository,
             verificationTokenRepository,
             emailService,
             cryptoService,
             config,
-        }) =>
+        ) =>
             new ForgotPasswordUseCase(
                 userRepository,
                 verificationTokenRepository,
@@ -178,13 +176,13 @@ export const useCasesModule = {
      * Use case for password reset confirmation
      */
     resetPasswordUseCase: asFunction(
-        ({
+        (
             userRepository,
             verificationTokenRepository,
             passwordService,
             cryptoService,
             transactionService,
-        }) =>
+        ) =>
             new ResetPasswordUseCase(
                 userRepository,
                 verificationTokenRepository,
