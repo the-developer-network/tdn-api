@@ -8,13 +8,14 @@ import { BOT_USER } from "./test-constants";
 
 export default async function setup(): Promise<void> {
     const { parsed } = config({ path: ".env.test" });
-    execSync("npx prisma migrate reset --force", {
+    execSync("pnpm prisma migrate reset --force", {
         stdio: "inherit",
         env: { ...process.env, ...parsed },
     });
 
     const connectionString = parsed?.DATABASE_URL ?? process.env.DATABASE_URL;
-    if (!connectionString) throw new Error("DATABASE_URL is not set in .env.test");
+    if (!connectionString)
+        throw new Error("DATABASE_URL is not set in .env.test");
 
     const adapter = new PrismaPg({ connectionString });
     const prisma = new PrismaClient({ adapter });

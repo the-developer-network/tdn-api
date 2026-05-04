@@ -2,6 +2,9 @@ import { User } from "@core/domain/entities/user.entity";
 import type { UserProps } from "@core/domain/interfaces/user-props.interface";
 import { RefreshToken } from "@core/domain/entities/refresh-token.entity";
 import type { RefreshTokenProps } from "@core/domain/interfaces/refresh-token.props.interface";
+import { VerificationToken } from "@core/domain/entities/verification-token.entity";
+import type { VerificationTokenProps } from "@core/domain/interfaces/verification-token.props.interface";
+import { TokenType } from "@core/domain/enums/token-type.enum";
 
 export function buildUser(overrides: Partial<UserProps> = {}): User {
     return User.with({
@@ -14,6 +17,20 @@ export function buildUser(overrides: Partial<UserProps> = {}): User {
         deletedAt: null,
         createdAt: new Date("2024-01-01T00:00:00Z"),
         updatedAt: new Date("2024-01-01T00:00:00Z"),
+        ...overrides,
+    });
+}
+
+export function buildVerificationToken(
+    overrides: Partial<VerificationTokenProps> = {},
+): VerificationToken {
+    return VerificationToken.with({
+        id: "vtoken-1",
+        tokenHash: "hashed_otp",
+        userId: "user-1",
+        type: TokenType.EMAIL_VERIFICATION,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        createdAt: new Date("2024-01-01T00:00:00Z"),
         ...overrides,
     });
 }
