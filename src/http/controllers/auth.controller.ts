@@ -192,6 +192,8 @@ export class AuthController extends BaseAuthController {
     ): Promise<void> {
         const response = await this.recoverAccountUseCase.execute({
             recoveryToken: request.body.recoveryToken,
+            deviceIp: request.ip,
+            userAgent: request.headers["user-agent"] ?? "Unknown Device",
         });
 
         this.setRefreshTokenCookie(

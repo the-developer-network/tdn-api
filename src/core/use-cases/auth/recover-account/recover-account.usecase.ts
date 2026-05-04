@@ -1,4 +1,5 @@
 import type { IUserRepository } from "@core/ports/repositories/user.repository";
+import type { IRefreshTokenRepository } from "@core/ports/repositories/refresh-token.repository";
 import type {
     AuthTokenPort,
     RecoveryPayload,
@@ -19,10 +20,12 @@ export class RecoverAccountUseCase {
      * Creates a new instance of RecoverAccountUseCase.
      *
      * @param userRepository - Repository for managing user data
+     * @param refreshTokenRepository - Repository for persisting refresh tokens
      * @param authTokenService - Service for token operations
      */
     constructor(
         private readonly userRepository: IUserRepository,
+        private readonly refreshTokenRepository: IRefreshTokenRepository,
         private readonly authTokenService: AuthTokenPort,
     ) {}
 
@@ -64,9 +67,21 @@ export class RecoverAccountUseCase {
 
         await this.userRepository.restoreById(user.id);
 
-        const tokens = this.authTokenService.generate({
-            id: user.id,
-            username: user.username,
+        const { accessToken, expiresAt, refreshToken, refreshTokenExpiresAt } =
+            this.authTokenService.generate({
+                id: user.id,
+                username: user.username,
+            });
+
+        const refreshTokenHash =
+            this.authTokenService.hashRefreshSecret(refreshToken);
+
+        await this.refreshTokenRepository.create({
+            tokenHash: refreshTokenHash,
+            userId: user.id,
+            deviceIp: input.deviceIp,
+            userAgent: input.userAgent,
+            expiresAt: new Date(refreshTokenExpiresAt * 1000),
         });
 
         return {
@@ -76,10 +91,10 @@ export class RecoverAccountUseCase {
                 isEmailVerified: user.isEmailVerified,
             },
             tokens: AuthMapper.toTokenOutput({
-                accessToken: tokens.accessToken,
-                expiresAt: tokens.expiresAt,
-                refreshToken: tokens.refreshToken,
-                refreshTokenExpiresAt: tokens.refreshTokenExpiresAt,
+                accessToken,
+                expiresAt,
+                refreshToken,
+                refreshTokenExpiresAt,
             }),
         };
     }
