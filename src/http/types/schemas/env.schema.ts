@@ -14,6 +14,7 @@ export const EnvSchema = Type.Object({
     // --- Authentication & Tokens ---
     ACCESS_TOKEN_EXPIRES_IN: Type.Number({ default: 900 }),
     REFRESH_TOKEN_EXPIRES_IN: Type.Number({ default: 90000 }),
+    OTP_EXPIRY_SECONDS: Type.Number({ default: 600 }),
 
     REFRESH_TOKEN_PURGE_CRON: Type.String({ default: "0 */6 * * *" }),
     REFRESH_TOKEN_PURGE_GRACE_PERIOD_DAYS: Type.Number({ default: 24 }),

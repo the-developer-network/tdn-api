@@ -119,8 +119,21 @@ export const useCasesModule = {
     /**
      * Use case for sending email verification
      */
-    sendVerificationEmailUseCase: asClass(
-        SendVerificationEmailUseCase,
+    sendVerificationEmailUseCase: asFunction(
+        ({
+            userRepository,
+            verificationTokenRepository,
+            emailService,
+            cryptoService,
+            config,
+        }) =>
+            new SendVerificationEmailUseCase(
+                userRepository,
+                verificationTokenRepository,
+                emailService,
+                cryptoService,
+                config.OTP_EXPIRY_SECONDS,
+            ),
     ).singleton(),
 
     /**
@@ -131,7 +144,22 @@ export const useCasesModule = {
     /**
      * Use case for password reset request
      */
-    forgotPasswordUseCase: asClass(ForgotPasswordUseCase).singleton(),
+    forgotPasswordUseCase: asFunction(
+        ({
+            userRepository,
+            verificationTokenRepository,
+            emailService,
+            cryptoService,
+            config,
+        }) =>
+            new ForgotPasswordUseCase(
+                userRepository,
+                verificationTokenRepository,
+                emailService,
+                cryptoService,
+                config.OTP_EXPIRY_SECONDS,
+            ),
+    ).singleton(),
 
     /**
      * Use case for password reset confirmation
