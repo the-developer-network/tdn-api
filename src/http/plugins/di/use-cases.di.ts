@@ -28,7 +28,7 @@ import { FollowUserUseCase } from "@core/use-cases/follow-user/follow-user";
 import { UnfollowUserUseCase } from "@core/use-cases/follow-user/unfollow-user";
 import { GetFollowersUseCase } from "@core/use-cases/follow-user/get-followers";
 import { GetFollowingUseCase } from "@core/use-cases/follow-user/get-following";
-import { GetUserNotificatonUseCase } from "@core/use-cases/notification/get-user";
+import { GetUserNotificationUseCase } from "@core/use-cases/notification/get-user";
 import { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/mark-all";
 import { PurgeExpiredNotificationsUseCase } from "@core/use-cases/notification/purge-expired";
 import { CreatePostUseCase } from "@core/use-cases/post/create-post";
@@ -275,7 +275,9 @@ export const useCasesModule = {
     /**
      * Use case for getting user notifications
      */
-    getUserNotificationsUseCase: asClass(GetUserNotificatonUseCase).singleton(),
+    getUserNotificationsUseCase: asClass(
+        GetUserNotificationUseCase,
+    ).singleton(),
 
     /**
      * Use case for marking all notifications as read

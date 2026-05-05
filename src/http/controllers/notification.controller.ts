@@ -1,12 +1,12 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import type { GetUserNotificatonUseCase } from "@core/use-cases/notification/get-user";
+import type { GetUserNotificationUseCase } from "@core/use-cases/notification/get-user";
 import type { GetNotificationsQuery } from "@typings/schemas/notification/get-notification.schema";
 import type { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/mark-all";
 import { NotificationPrismaMapper } from "@infrastructure/persistence/mappers/notification-prisma.mapper";
 
 export class NotificationController {
     constructor(
-        private readonly getUserNotificationsUseCase: GetUserNotificatonUseCase,
+        private readonly getUserNotificationsUseCase: GetUserNotificationUseCase,
         private readonly markAllReadUseCase: MarkAllNotificationsAsReadUseCase,
     ) {}
 
