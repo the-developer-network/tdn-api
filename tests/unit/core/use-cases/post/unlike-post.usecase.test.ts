@@ -1,0 +1,107 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { UnlikePostUseCase } from "@core/use-cases/post/unlike-post";
+import type {
+    TransactionPort,
+    TransactionContext,
+} from "@core/ports/services/transaction.port";
+import type { CachePort } from "@core/ports/services/cache.port";
+import { NotFoundError } from "@core/errors";
+import { buildPost } from "../../../helpers/mock-factories";
+
+describe("UnlikePostUseCase", () => {
+    let useCase: UnlikePostUseCase;
+    let transactionService: Pick<TransactionPort, "runInTransaction">;
+    let cacheService: Pick<CachePort, "deleteByPattern">;
+    let mockCtx: Pick<
+        TransactionContext,
+        "postRepository" | "postLikeRepository"
+    >;
+
+    beforeEach(() => {
+        mockCtx = {
+            postRepository: {
+                findById: vi.fn(),
+            } as unknown as TransactionContext["postRepository"],
+            postLikeRepository: {
+                isLiked: vi.fn().mockResolvedValue(true),
+                unlike: vi.fn().mockResolvedValue(undefined),
+                decrementLikeCount: vi.fn().mockResolvedValue(undefined),
+            } as unknown as TransactionContext["postLikeRepository"],
+        };
+        transactionService = {
+            runInTransaction: vi
+                .fn()
+                .mockImplementation(async (work) =>
+                    work(mockCtx as TransactionContext),
+                ),
+        };
+        cacheService = {
+            deleteByPattern: vi.fn().mockResolvedValue(undefined),
+        };
+        useCase = new UnlikePostUseCase(
+            transactionService as TransactionPort,
+            cacheService as CachePort,
+        );
+    });
+
+    it("should throw NotFoundError when post not found", async () => {
+        vi.mocked(mockCtx.postRepository.findById).mockResolvedValue(null);
+
+        await expect(
+            useCase.execute({ postId: "ghost-post", userId: "user-1" }),
+        ).rejects.toThrow(NotFoundError);
+    });
+
+    it("should unlike post and decrement like count when liked", async () => {
+        vi.mocked(mockCtx.postRepository.findById).mockResolvedValue(
+            buildPost(),
+        );
+        vi.mocked(mockCtx.postLikeRepository.isLiked).mockResolvedValue(true);
+
+        await useCase.execute({ postId: "post-1", userId: "user-1" });
+
+        expect(mockCtx.postLikeRepository.unlike).toHaveBeenCalledWith(
+            "post-1",
+            "user-1",
+        );
+        expect(
+            mockCtx.postLikeRepository.decrementLikeCount,
+        ).toHaveBeenCalledWith("post-1");
+    });
+
+    it("should do nothing when post is not liked (idempotent)", async () => {
+        vi.mocked(mockCtx.postRepository.findById).mockResolvedValue(
+            buildPost(),
+        );
+        vi.mocked(mockCtx.postLikeRepository.isLiked).mockResolvedValue(false);
+
+        await useCase.execute({ postId: "post-1", userId: "user-1" });
+
+        expect(mockCtx.postLikeRepository.unlike).not.toHaveBeenCalled();
+        expect(
+            mockCtx.postLikeRepository.decrementLikeCount,
+        ).not.toHaveBeenCalled();
+    });
+
+    it("should invalidate user feed cache after unliking", async () => {
+        vi.mocked(mockCtx.postRepository.findById).mockResolvedValue(
+            buildPost(),
+        );
+
+        await useCase.execute({ postId: "post-1", userId: "user-55" });
+
+        expect(cacheService.deleteByPattern).toHaveBeenCalledWith(
+            "posts:feed:*user:user-55*",
+        );
+    });
+
+    it("should propagate transaction errors", async () => {
+        vi.mocked(transactionService.runInTransaction).mockRejectedValue(
+            new Error("Transaction failed"),
+        );
+
+        await expect(
+            useCase.execute({ postId: "post-1", userId: "user-1" }),
+        ).rejects.toThrow("Transaction failed");
+    });
+});

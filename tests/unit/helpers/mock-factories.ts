@@ -10,8 +10,11 @@ import { Profile } from "@core/domain/entities/profile.entity";
 import type { ProfileProps } from "@core/domain/interfaces/profile-props.interface";
 import { Notification } from "@core/domain/entities/notification.entity";
 import type { NotificationProps } from "@core/domain/interfaces/notification-props.interface";
+import { Post } from "@core/domain/entities/post.entity";
+import type { PostProps } from "@core/domain/interfaces/post-props.interface";
 import { TokenType } from "@core/domain/enums/token-type.enum";
 import { NotificationType } from "@core/domain/enums/notification-type.enum";
+import { PostType } from "@core/domain/enums/post-type.enum";
 
 export function buildUser(overrides: Partial<UserProps> = {}): User {
     return User.with({
@@ -103,6 +106,28 @@ export function buildNotification(
         avatarUrl: undefined,
         createdAt: new Date("2024-01-01T00:00:00Z"),
         isRead: false,
+        ...overrides,
+    });
+}
+
+export function buildPost(overrides: Partial<PostProps> = {}): Post {
+    return Post.with({
+        id: "post-1",
+        content: "Test post content",
+        type: PostType.COMMUNITY,
+        mediaUrls: [],
+        author: {
+            id: "user-1",
+            username: "testuser",
+        },
+        tags: [],
+        categories: [],
+        likeCount: 0,
+        commentCount: 0,
+        isLiked: false,
+        isBookmarked: false,
+        createdAt: new Date("2024-01-01T00:00:00Z"),
+        updatedAt: new Date("2024-01-01T00:00:00Z"),
         ...overrides,
     });
 }
