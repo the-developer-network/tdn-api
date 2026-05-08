@@ -6,6 +6,11 @@
  */
 export interface GetMeUserUseCaseOutput {
     /**
+     * The user's unique identifier.
+     */
+    id: string;
+
+    /**
      * The user's unique username.
      */
     username: string;
@@ -29,6 +34,11 @@ export interface GetMeUserUseCaseOutput {
      * The timestamp when the user account was last updated.
      */
     updatedAt: Date;
+
+    /**
+     * Indicates whether the user is a bot account.
+     */
+    isBot?: boolean;
 
     /**
      * Array of OAuth provider names that the user has connected to their account.

@@ -93,7 +93,7 @@ export class RefreshUseCase {
                 userId: user.id,
                 deviceIp: input.deviceIp,
                 userAgent: input.userAgent,
-                expiresAt: refreshTokenExpiresAt,
+                expiresAt: new Date(refreshTokenExpiresAt * 1000),
             });
 
             return {

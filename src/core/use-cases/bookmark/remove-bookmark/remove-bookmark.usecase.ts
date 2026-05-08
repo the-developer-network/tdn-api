@@ -23,6 +23,8 @@ export class RemoveBookmarkUseCase {
      * @throws NotFoundError if the post does not exist
      */
     async execute(input: RemoveBookmarkInput): Promise<void> {
+        let bookmarkRemoved = false;
+
         await this.transactionService.runInTransaction(async (ctx) => {
             const post = await ctx.postRepository.findById(input.postId);
             if (!post) {
@@ -36,10 +38,18 @@ export class RemoveBookmarkUseCase {
 
             if (hasBookmark) {
                 await ctx.bookmarkRepository.remove(input.postId, input.userId);
+                bookmarkRemoved = true;
             }
         });
-        await this.cacheService.deleteByPattern(
-            `posts:feed:*user:${input.userId}*`,
-        );
+
+        if (!bookmarkRemoved) return;
+
+        try {
+            await this.cacheService.deleteByPattern(
+                `posts:feed:*user:${input.userId}*`,
+            );
+        } catch {
+            // Cache invalidation failure is non-critical; bookmark is already removed.
+        }
     }
 }

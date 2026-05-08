@@ -1,9 +1,10 @@
 import { BadRequestError } from "@core/errors";
 import type { IUserRepository } from "@core/ports/repositories/user.repository";
 import type { IVerificationTokenRepository } from "@core/ports/repositories/verification-token.repository";
-import type { PasswordService } from "@infrastructure/security/password.service";
+import type { PasswordPort } from "@core/ports/services/password.port";
 import { TokenType } from "@core/domain/enums/token-type.enum";
 import type { CryptoPort } from "@core/ports/services/crypto.port";
+import type { TransactionPort } from "@core/ports/services/transaction.port";
 import type { ResetPasswordInput } from "./reset-password.input";
 
 /**
@@ -26,8 +27,9 @@ export class ResetPasswordUseCase {
     constructor(
         private readonly userRepository: IUserRepository,
         private readonly verificationTokenRepository: IVerificationTokenRepository,
-        private readonly passwordService: PasswordService,
+        private readonly passwordService: PasswordPort,
         private readonly cryptoService: CryptoPort,
+        private readonly transactionService: TransactionPort,
     ) {}
 
     /**
@@ -67,7 +69,12 @@ export class ResetPasswordUseCase {
 
         const hashedInputOtp = this.cryptoService.hashOtp(input.otp);
 
-        if (hashedInputOtp !== verificationToken.tokenHash) {
+        if (
+            !this.cryptoService.timingSafeEqual(
+                hashedInputOtp,
+                verificationToken.tokenHash,
+            )
+        ) {
             throw new BadRequestError(this.GENERIC_ERROR);
         }
 
@@ -77,7 +84,9 @@ export class ResetPasswordUseCase {
 
         user.hashPassword = newPasswordHash;
 
-        await this.userRepository.update(user);
-        await this.verificationTokenRepository.delete(verificationToken.id);
+        await this.transactionService.runInTransaction(async (ctx) => {
+            await ctx.userRepository.update(user);
+            await ctx.verificationTokenRepository.delete(verificationToken.id);
+        });
     }
 }

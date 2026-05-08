@@ -28,7 +28,7 @@ import { FollowUserUseCase } from "@core/use-cases/follow-user/follow-user";
 import { UnfollowUserUseCase } from "@core/use-cases/follow-user/unfollow-user";
 import { GetFollowersUseCase } from "@core/use-cases/follow-user/get-followers";
 import { GetFollowingUseCase } from "@core/use-cases/follow-user/get-following";
-import { GetUserNotificatonUseCase } from "@core/use-cases/notification/get-user";
+import { GetUserNotificationUseCase } from "@core/use-cases/notification/get-user";
 import { MarkAllNotificationsAsReadUseCase } from "@core/use-cases/notification/mark-all";
 import { PurgeExpiredNotificationsUseCase } from "@core/use-cases/notification/purge-expired";
 import { CreatePostUseCase } from "@core/use-cases/post/create-post";
@@ -69,8 +69,6 @@ import { TranslateUseCase } from "@core/use-cases/translate";
  * shared dependencies across the application.
  */
 export const useCasesModule = {
-    // --- Use Cases ---
-
     /**
      * Use case for soft deleting a user account
      */
@@ -119,24 +117,80 @@ export const useCasesModule = {
     /**
      * Use case for sending email verification
      */
-    sendVerificationEmailUseCase: asClass(
-        SendVerificationEmailUseCase,
+    sendVerificationEmailUseCase: asFunction(
+        (
+            userRepository,
+            verificationTokenRepository,
+            emailService,
+            cryptoService,
+            config,
+        ) =>
+            new SendVerificationEmailUseCase(
+                userRepository,
+                verificationTokenRepository,
+                emailService,
+                cryptoService,
+                config.OTP_EXPIRY_SECONDS,
+            ),
     ).singleton(),
 
     /**
      * Use case for verifying email address
      */
-    verifyEmailUseCase: asClass(VerifyEmailUseCase).singleton(),
+    verifyEmailUseCase: asFunction(
+        (
+            userRepository,
+            verificationTokenRepository,
+            cryptoService,
+            transactionService,
+        ) =>
+            new VerifyEmailUseCase(
+                userRepository,
+                verificationTokenRepository,
+                cryptoService,
+                transactionService,
+            ),
+    ).singleton(),
 
     /**
      * Use case for password reset request
      */
-    forgotPasswordUseCase: asClass(ForgotPasswordUseCase).singleton(),
+    forgotPasswordUseCase: asFunction(
+        (
+            userRepository,
+            verificationTokenRepository,
+            emailService,
+            cryptoService,
+            config,
+        ) =>
+            new ForgotPasswordUseCase(
+                userRepository,
+                verificationTokenRepository,
+                emailService,
+                cryptoService,
+                config.OTP_EXPIRY_SECONDS,
+            ),
+    ).singleton(),
 
     /**
      * Use case for password reset confirmation
      */
-    resetPasswordUseCase: asClass(ResetPasswordUseCase).singleton(),
+    resetPasswordUseCase: asFunction(
+        (
+            userRepository,
+            verificationTokenRepository,
+            passwordService,
+            cryptoService,
+            transactionService,
+        ) =>
+            new ResetPasswordUseCase(
+                userRepository,
+                verificationTokenRepository,
+                passwordService,
+                cryptoService,
+                transactionService,
+            ),
+    ).singleton(),
 
     /**
      * Use case for account recovery
@@ -221,7 +275,9 @@ export const useCasesModule = {
     /**
      * Use case for getting user notifications
      */
-    getUserNotificationsUseCase: asClass(GetUserNotificatonUseCase).singleton(),
+    getUserNotificationsUseCase: asClass(
+        GetUserNotificationUseCase,
+    ).singleton(),
 
     /**
      * Use case for marking all notifications as read

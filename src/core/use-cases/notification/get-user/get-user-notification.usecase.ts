@@ -7,7 +7,7 @@ import type { GetNotificationsOutput } from "./get-notifications-usecase.output"
  *
  * This use case handles fetching notifications for a specific user.
  */
-export class GetUserNotificatonUseCase {
+export class GetUserNotificationUseCase {
     /**
      * Creates a new instance of GetUserNotificatonUseCase.
      *

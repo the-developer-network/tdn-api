@@ -21,9 +21,8 @@ export class AuthTokenService implements AuthTokenPort {
         const accessTokenExpiresAt = nowInSeconds + this.expiresInSeconds;
 
         const refreshToken = randomBytes(40).toString("hex");
-        const refreshTokenExpiresAt = new Date(
-            Date.now() + this.refreshTokenExpiresInSeconds * 1000,
-        );
+        const refreshTokenExpiresAt =
+            Math.floor(Date.now() / 1000) + this.refreshTokenExpiresInSeconds;
 
         return {
             accessToken,

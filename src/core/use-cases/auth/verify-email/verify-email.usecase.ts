@@ -3,6 +3,7 @@ import type { IUserRepository } from "@core/ports/repositories/user.repository";
 import type { IVerificationTokenRepository } from "@core/ports/repositories/verification-token.repository";
 import { TokenType } from "@core/domain/enums/token-type.enum";
 import { type CryptoPort } from "@core/ports/services/crypto.port";
+import type { TransactionPort } from "@core/ports/services/transaction.port";
 import type { VerifyEmailInput } from "./verify-email.input";
 /**
  * Use case for verifying a user's email address using a one-time password (OTP)
@@ -20,6 +21,7 @@ export class VerifyEmailUseCase {
         private readonly userRepository: IUserRepository,
         private readonly verificationTokenRepository: IVerificationTokenRepository,
         private readonly cryptoService: CryptoPort,
+        private readonly transactionService: TransactionPort,
     ) {}
     /**
      * Executes the email verification process for a user based on the provided input
@@ -56,14 +58,20 @@ export class VerifyEmailUseCase {
         }
 
         const hashedInputOtp = this.cryptoService.hashOtp(input.otp);
-        if (hashedInputOtp !== verificationToken.tokenHash) {
+        if (
+            !this.cryptoService.timingSafeEqual(
+                hashedInputOtp,
+                verificationToken.tokenHash,
+            )
+        ) {
             throw new BadRequestError("Invalid verification code.");
         }
 
         user.verifyEmail();
 
-        await this.userRepository.update(user);
-
-        await this.verificationTokenRepository.delete(verificationToken.id);
+        await this.transactionService.runInTransaction(async (ctx) => {
+            await ctx.userRepository.update(user);
+            await ctx.verificationTokenRepository.delete(verificationToken.id);
+        });
     }
 }

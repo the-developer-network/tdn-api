@@ -1,5 +1,5 @@
 import type { AuthTokenPort } from "@core/ports/services/auth-token.port";
-import type { TransactionPort } from "@core/ports/services/transaction.port";
+import type { IRefreshTokenRepository } from "@core/ports/repositories/refresh-token.repository";
 import type { LogoutInput } from "./logout.input";
 
 /**
@@ -12,11 +12,11 @@ export class LogoutUseCase {
     /**
      * Creates a new instance of LogoutUseCase.
      *
-     * @param transactionService - Service for managing database transactions
+     * @param refreshTokenRepository - Repository for refresh token operations
      * @param authTokenService - Service for token operations
      */
     constructor(
-        private readonly transactionService: TransactionPort,
+        private readonly refreshTokenRepository: IRefreshTokenRepository,
         private readonly authTokenService: AuthTokenPort,
     ) {}
 
@@ -28,26 +28,20 @@ export class LogoutUseCase {
      *
      * @remarks
      * If no token is provided, the method returns silently.
-     * The operation is performed within a database transaction to ensure consistency.
+     * If the token is not found or already revoked, the method returns silently.
      */
     async execute(input: LogoutInput): Promise<void> {
         if (!input.token) {
             return;
         }
 
-        await this.transactionService.runInTransaction(async (ctx) => {
-            const tokenHash = this.authTokenService.hashRefreshSecret(
-                input.token,
-            );
+        const tokenHash = this.authTokenService.hashRefreshSecret(input.token);
+        const currentToken =
+            await this.refreshTokenRepository.findByTokenHash(tokenHash);
 
-            const currentToken =
-                await ctx.refreshTokenRepository.findByTokenHash(tokenHash);
-
-            if (currentToken && !currentToken.isRevoked) {
-                currentToken.revoke();
-
-                await ctx.refreshTokenRepository.update(currentToken);
-            }
-        });
+        if (currentToken && !currentToken.isRevoked) {
+            currentToken.revoke();
+            await this.refreshTokenRepository.update(currentToken);
+        }
     }
 }

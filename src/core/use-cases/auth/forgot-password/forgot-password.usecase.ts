@@ -25,6 +25,7 @@ export class ForgotPasswordUseCase {
         private readonly verificationTokenRepository: IVerificationTokenRepository,
         private readonly emailService: EmailPort,
         private readonly cryptoService: CryptoPort,
+        private readonly otpExpirySeconds: number = 10 * 60,
     ) {}
 
     /**
@@ -54,10 +55,7 @@ export class ForgotPasswordUseCase {
 
         const otp = this.cryptoService.generateOtp(8);
         const tokenHash = this.cryptoService.hashOtp(otp);
-        /**
-         * It can then be done from the .env file.
-         */
-        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+        const expiresAt = new Date(Date.now() + this.otpExpirySeconds * 1000);
 
         await this.verificationTokenRepository.upsert({
             userId: user.id,

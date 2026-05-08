@@ -1,6 +1,7 @@
-import { BadRequestError } from "@core/errors";
+import { BadRequestError, NotFoundError } from "@core/errors";
 import type { IFollowRepository } from "@core/ports/repositories/follow.repository";
 import type { INotificationRepository } from "@core/ports/repositories/notification.repository";
+import type { IProfileRepository } from "@core/ports/repositories/profile.repository";
 import { Notification } from "@core/domain/entities/notification.entity";
 import { NotificationType } from "@core/domain/enums/notification-type.enum";
 import type { RealtimePort } from "@core/ports/services/realtime.port";
@@ -25,6 +26,7 @@ export class FollowUserUseCase {
         private readonly followUserRepository: IFollowRepository,
         private readonly notificationRepository: INotificationRepository,
         private readonly realtimeService: RealtimePort,
+        private readonly profileRepository: IProfileRepository,
     ) {}
 
     /**
@@ -41,6 +43,10 @@ export class FollowUserUseCase {
 
         if (currentUserId === targetId)
             throw new BadRequestError("You cannot follow yourself.");
+
+        const targetProfile =
+            await this.profileRepository.findByUserId(targetId);
+        if (!targetProfile) throw new NotFoundError("User not found.");
 
         const isFollowing = await this.followUserRepository.checkIsFollowing(
             currentUserId,

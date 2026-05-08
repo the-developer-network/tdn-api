@@ -24,7 +24,7 @@ export interface LoginOutput {
         expiresAt: number;
         /** Long-lived token used to obtain new access tokens */
         refreshToken: string;
-        /** Date indicating when the refresh token expires */
-        refreshTokenExpiresAt: Date;
+        /** Unix timestamp (in seconds) indicating when the refresh token expires */
+        refreshTokenExpiresAt: number;
     };
 }

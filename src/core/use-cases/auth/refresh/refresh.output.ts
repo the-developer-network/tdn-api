@@ -4,7 +4,7 @@ import type { UserPayload } from "@core/ports/services/auth-token.port";
  * @property {string} accessToken - The new access token for the user
  * @property {number} expiresAt - The timestamp when the access token expires
  * @property {string} refreshToken - The new refresh token for the user
- * @property {Date} refreshTokenExpiresAt - The expiration date of the new refresh token
+ * @property {number} refreshTokenExpiresAt - The Unix timestamp (in seconds) of the new refresh token expiration
  * @property {UserPayload} user - The payload containing user information included in the token
  */
 export interface RefreshOutput {
@@ -23,7 +23,7 @@ export interface RefreshOutput {
     /**
      * The expiration date of the new refresh token, used by clients to know when they need to prompt the user to log in again
      */
-    refreshTokenExpiresAt: Date;
+    refreshTokenExpiresAt: number;
     /**
      * The payload containing user information included in the token, which can be used by clients to display user info without needing to decode the token themselves
      */

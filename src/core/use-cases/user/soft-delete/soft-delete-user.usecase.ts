@@ -43,7 +43,7 @@ export class SoftDeleteUserUseCase {
     async execute(input: SoftDeleteUserUseCaseInput): Promise<void> {
         const user = await this.userRepository.findById(input.id);
 
-        if (!user || !user.passwordHash)
+        if (!user || user.deletedAt !== null || !user.passwordHash)
             throw new NotFoundError("The user cannot be deleted.");
 
         const isPasswordValid = await this.passwordService.verify(

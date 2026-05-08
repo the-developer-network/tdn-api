@@ -1,0 +1,218 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { CreateCommentUseCase } from "@core/use-cases/comment/create-comment/create-comment.usecase";
+import { NotFoundError, BadRequestError } from "@core/errors";
+import type {
+    TransactionPort,
+    TransactionContext,
+} from "@core/ports/services/transaction.port";
+import type { RealtimePort } from "@core/ports/services/realtime.port";
+import type { ICommentRepository } from "@core/ports/repositories/comment.repository";
+import type { IPostRepository } from "@core/ports/repositories/post.repository";
+import type { INotificationRepository } from "@core/ports/repositories/notification.repository";
+import type { Comment } from "@core/domain/entities/comment.entity";
+import type { Post } from "@core/domain/entities/post.entity";
+import { buildComment } from "../../../helpers/mock-factories";
+
+const buildPost = (authorId = "author-1"): Post =>
+    ({
+        id: "post-1",
+        author: { id: authorId },
+    }) as unknown as Post;
+
+describe("CreateCommentUseCase", () => {
+    let useCase: CreateCommentUseCase;
+    let transactionSvc: Pick<TransactionPort, "runInTransaction">;
+    let realtimeSvc: Pick<RealtimePort, "emitToUser">;
+    let txPostRepo: Pick<
+        IPostRepository,
+        "findById" | "incrementCommentsCount"
+    >;
+    let txCommentRepo: Pick<
+        ICommentRepository,
+        "findById" | "create" | "incrementRepliesCount"
+    >;
+    let txNotificationRepo: Pick<INotificationRepository, "create">;
+
+    const buildTransactionContext = (): TransactionContext =>
+        ({
+            postRepository: txPostRepo as IPostRepository,
+            commentRepository: txCommentRepo as ICommentRepository,
+            notificationRepository:
+                txNotificationRepo as INotificationRepository,
+        }) as TransactionContext;
+
+    beforeEach(() => {
+        txPostRepo = {
+            findById: vi.fn(),
+            incrementCommentsCount: vi.fn(),
+        };
+        txCommentRepo = {
+            findById: vi.fn(),
+            create: vi.fn(),
+            incrementRepliesCount: vi.fn(),
+        };
+        txNotificationRepo = { create: vi.fn() };
+        realtimeSvc = { emitToUser: vi.fn() };
+        transactionSvc = { runInTransaction: vi.fn() };
+
+        vi.mocked(transactionSvc.runInTransaction).mockImplementation(
+            async (work) => work(buildTransactionContext()),
+        );
+
+        useCase = new CreateCommentUseCase(
+            transactionSvc as TransactionPort,
+            realtimeSvc as RealtimePort,
+        );
+    });
+
+    it("should throw NotFoundError when post does not exist", async () => {
+        vi.mocked(txPostRepo.findById).mockResolvedValue(null);
+
+        await expect(
+            useCase.execute({
+                content: "Hello",
+                postId: "post-1",
+                authorId: "user-1",
+            }),
+        ).rejects.toThrow(NotFoundError);
+    });
+
+    it("should throw NotFoundError when parent comment does not exist", async () => {
+        vi.mocked(txPostRepo.findById).mockResolvedValue(buildPost());
+        vi.mocked(txCommentRepo.findById).mockResolvedValue(null);
+
+        await expect(
+            useCase.execute({
+                content: "Reply",
+                postId: "post-1",
+                authorId: "user-1",
+                parentId: "parent-1",
+            }),
+        ).rejects.toThrow(NotFoundError);
+    });
+
+    it("should throw BadRequestError when parent comment belongs to a different post", async () => {
+        vi.mocked(txPostRepo.findById).mockResolvedValue(buildPost());
+        vi.mocked(txCommentRepo.findById).mockResolvedValue(
+            buildComment({ id: "parent-1", postId: "other-post" }),
+        );
+
+        await expect(
+            useCase.execute({
+                content: "Reply",
+                postId: "post-1",
+                authorId: "user-1",
+                parentId: "parent-1",
+            }),
+        ).rejects.toThrow(BadRequestError);
+    });
+
+    it("should create top-level comment and notify post author when commenter is not the author", async () => {
+        const savedComment = buildComment({ id: "new-comment-1" });
+        vi.mocked(txPostRepo.findById).mockResolvedValue(buildPost("author-1"));
+        vi.mocked(txCommentRepo.create).mockResolvedValue(savedComment);
+        vi.mocked(txPostRepo.incrementCommentsCount).mockResolvedValue(
+            undefined,
+        );
+
+        const result = await useCase.execute({
+            content: "Hello",
+            postId: "post-1",
+            authorId: "commenter-user",
+        });
+
+        expect(result).toBe(savedComment);
+        expect(txPostRepo.incrementCommentsCount).toHaveBeenCalledWith(
+            "post-1",
+        );
+        expect(txNotificationRepo.create).toHaveBeenCalledOnce();
+        expect(realtimeSvc.emitToUser).toHaveBeenCalledWith(
+            "author-1",
+            "new-notification",
+            expect.objectContaining({ type: "COMMENT" }),
+        );
+    });
+
+    it("should not send notification when commenter is the post author", async () => {
+        const savedComment = buildComment({ id: "new-comment-1" });
+        vi.mocked(txPostRepo.findById).mockResolvedValue(buildPost("user-1"));
+        vi.mocked(txCommentRepo.create).mockResolvedValue(savedComment);
+        vi.mocked(txPostRepo.incrementCommentsCount).mockResolvedValue(
+            undefined,
+        );
+
+        await useCase.execute({
+            content: "My own post comment",
+            postId: "post-1",
+            authorId: "user-1",
+        });
+
+        expect(txNotificationRepo.create).not.toHaveBeenCalled();
+        expect(realtimeSvc.emitToUser).not.toHaveBeenCalled();
+    });
+
+    it("should create reply, increment repliesCount and notify parent comment author", async () => {
+        const parentComment = buildComment({
+            id: "parent-1",
+            postId: "post-1",
+            authorId: "parent-author",
+        });
+        const savedComment = buildComment({ id: "reply-1" });
+
+        vi.mocked(txPostRepo.findById).mockResolvedValue(buildPost("author-1"));
+        vi.mocked(txCommentRepo.findById).mockResolvedValue(parentComment);
+        vi.mocked(txCommentRepo.create).mockResolvedValue(savedComment);
+        vi.mocked(txPostRepo.incrementCommentsCount).mockResolvedValue(
+            undefined,
+        );
+        vi.mocked(txCommentRepo.incrementRepliesCount).mockResolvedValue(
+            undefined,
+        );
+
+        await useCase.execute({
+            content: "Reply",
+            postId: "post-1",
+            authorId: "user-1",
+            parentId: "parent-1",
+        });
+
+        expect(txCommentRepo.incrementRepliesCount).toHaveBeenCalledWith(
+            "parent-1",
+        );
+        expect(txNotificationRepo.create).toHaveBeenCalledOnce();
+        expect(realtimeSvc.emitToUser).toHaveBeenCalledWith(
+            "parent-author",
+            "new-notification",
+            expect.objectContaining({ type: "COMMENT" }),
+        );
+    });
+
+    it("should not send notification when replying to own comment", async () => {
+        const parentComment = buildComment({
+            id: "parent-1",
+            postId: "post-1",
+            authorId: "user-1",
+        });
+        const savedComment = buildComment({ id: "reply-1" });
+
+        vi.mocked(txPostRepo.findById).mockResolvedValue(buildPost("author-1"));
+        vi.mocked(txCommentRepo.findById).mockResolvedValue(parentComment);
+        vi.mocked(txCommentRepo.create).mockResolvedValue(savedComment);
+        vi.mocked(txPostRepo.incrementCommentsCount).mockResolvedValue(
+            undefined,
+        );
+        vi.mocked(txCommentRepo.incrementRepliesCount).mockResolvedValue(
+            undefined,
+        );
+
+        await useCase.execute({
+            content: "Self reply",
+            postId: "post-1",
+            authorId: "user-1",
+            parentId: "parent-1",
+        });
+
+        expect(txNotificationRepo.create).not.toHaveBeenCalled();
+        expect(realtimeSvc.emitToUser).not.toHaveBeenCalled();
+    });
+});

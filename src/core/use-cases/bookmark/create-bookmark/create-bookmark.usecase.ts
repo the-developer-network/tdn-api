@@ -23,6 +23,8 @@ export class CreateBookmarkUseCase {
      * @throws NotFoundError if the post does not exist
      */
     async execute(input: CreateBookmarkInput): Promise<void> {
+        let bookmarkCreated = false;
+
         await this.transactionService.runInTransaction(async (ctx) => {
             const post = await ctx.postRepository.findById(input.postId);
             if (!post) {
@@ -37,9 +39,17 @@ export class CreateBookmarkUseCase {
             if (alreadyBookmarked) return;
 
             await ctx.bookmarkRepository.save(input.postId, input.userId);
+            bookmarkCreated = true;
         });
-        await this.cacheService.deleteByPattern(
-            `posts:feed:*user:${input.userId}*`,
-        );
+
+        if (!bookmarkCreated) return;
+
+        try {
+            await this.cacheService.deleteByPattern(
+                `posts:feed:*user:${input.userId}*`,
+            );
+        } catch {
+            // Cache invalidation failure is non-critical; bookmark is already persisted.
+        }
     }
 }
