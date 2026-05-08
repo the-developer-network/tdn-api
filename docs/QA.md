@@ -2,19 +2,19 @@
 
 ## Comprehensive Testing Strategy & Prioritized Roadmap
 
-**TL;DR:** E2E tests are **complete** — all 46 files, 219 tests passing across every domain. Unit and integration tests are the next priority. This plan defines a 4-phase test implementation roadmap aligned with Clean Architecture layers (domain → use-case → infrastructure → HTTP) targeting the highest ROI first.
+**TL;DR:** E2E tests are **complete** — all 46 files, 219 tests passing across every domain. Unit test work is **in progress** — user and profile use-case tests are complete (86 tests, 13 files). Auth, post, comment, follow, and bookmark use-case tests are next. This plan defines a 4-phase test implementation roadmap aligned with Clean Architecture layers (domain → use-case → infrastructure → HTTP) targeting the highest ROI first.
 
 ---
 
 ## Current State Analysis
 
-| Category          | Status          | Details                                                                 |
-| ----------------- | --------------- | ----------------------------------------------------------------------- |
-| Unit Tests        | ❌ None         | `tests/unit/` is empty — **Sprint 1 next**                              |
-| Integration Tests | ❌ None         | `tests/integration/` is empty                                           |
-| E2E Tests         | ✅ **Complete** | 219 tests, 46 files — all domains covered (auth, user, post, follow, …) |
-| Test Infra        | ✅ Ready        | Vitest config, setup, scripts, bot seed in global-setup available       |
-| Coverage          | ⚠️ ~5-10%       | E2E layer covers HTTP surface; domain/use-case layers untested          |
+| Category          | Status              | Details                                                                                                       |
+| ----------------- | ------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Unit Tests        | 🔄 **In Progress**  | 86 tests, 13 files — user (37) + profile (49) use-cases complete; auth/post/comment next                      |
+| Integration Tests | ❌ None             | `tests/integration/` is empty — Sprint 3                                                                      |
+| E2E Tests         | ✅ **Complete**     | 219 tests, 46 files — all domains covered (auth, user, post, follow, …)                                       |
+| Test Infra        | ✅ Ready            | Vitest config, setup, scripts, bot seed in global-setup available; `mock-factories.ts` in use                 |
+| Coverage          | ⚠️ ~15-20%          | User + profile use-case layers covered; auth/post/comment/follow/bookmark layers untested                     |
 
 ---
 
@@ -115,17 +115,19 @@
 | `CheckUserUseCase`             | Existing user → exists: true; Unknown → exists: false                                                                                                                                         | P2       |
 | `PurgeExpiredTokensUseCase`    | deleteExpiredTokens is called                                                                                                                                                                 | P2       |
 
-### 2.2 User Domain (7 use-cases)
+### 2.2 User Domain (7 use-cases) ✅ Complete — 37 tests
 
-| Use-Case                   | Test Scenarios                                                                  | Priority |
-| -------------------------- | ------------------------------------------------------------------------------- | -------- |
-| `SoftDeleteUserUseCase`    | Correct password → soft delete; Wrong password → error; Already deleted → error | P0       |
-| `GetMeUseCase`             | User found → returned; Not found → NotFound                                     | P1       |
-| `ChangePasswordUseCase`    | Old password correct, new password hashed; Old password wrong → error           | P1       |
-| `ChangeUsernameUseCase`    | Available username → updated; Duplicate → Conflict                              | P1       |
-| `ChangeEmailUseCase`       | New email → updated, emailVerifiedAt set to null                                | P1       |
-| `CreateUserUseCase`        | User + profile created                                                          | P1       |
-| `PurgeExpiredUsersUseCase` | Purge job executes                                                              | P2       |
+| Use-Case                   | Test Scenarios                                                                  | Priority | Status |
+| -------------------------- | ------------------------------------------------------------------------------- | -------- | ------ |
+| `SoftDeleteUserUseCase`    | Correct password → soft delete; Wrong password → error; Already deleted → error | P0       | ✅ 7 tests |
+| `GetMeUseCase`             | User found → returned; Not found → NotFound                                     | P1       | ✅ 7 tests |
+| `ChangePasswordUseCase`    | Old password correct, new password hashed; Old password wrong → error           | P1       | ✅ 6 tests |
+| `ChangeUsernameUseCase`    | Available username → updated; same-value guard; not found guard                 | P1       | ✅ 5 tests |
+| `ChangeEmailUseCase`       | New email → updated; same-value guard; not found guard                          | P1       | ✅ 5 tests |
+| `CreateUserUseCase`        | User + profile created                                                          | P1       | ✅ 3 tests |
+| `PurgeExpiredUsersUseCase` | Purge job executes                                                              | P2       | ✅ 4 tests |
+
+> **Source fixes applied:** `ChangeEmailUseCase` and `ChangeUsernameUseCase` — added `findById` guard (`NotFoundError`) and same-value `BadRequestError`. `SoftDeleteUserUseCase` — added `deletedAt !== null` guard to prevent double soft-delete. `GetMeUserUseCase` — removed `UserPrismaMapper` import (Clean Architecture violation), now maps inline from entity getters. `GetMeUserUseCaseOutput` — added missing `id` and `isBot` fields.
 
 ### 2.3 Post Domain (9 use-cases)
 
@@ -174,13 +176,15 @@
 
 ### 2.7 Other Domains
 
-| Use-Case                   | Test Scenarios                                                                                                                          | Priority |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| OAuth (3 use-cases)        | Provider exchange; Replay attack prevention; Expired code; New user creation vs existing user login; Soft-deleted OAuth user → recovery | P1       |
-| Profile (6 use-cases)      | Get profile; Update profile; Avatar/banner upload; Search; Suggested users                                                              | P2       |
-| Notification (3 use-cases) | Get notifications + pagination; Mark all read; Purge expired                                                                            | P2       |
-| Tag (1 use-case)           | Search tags                                                                                                                             | P2       |
-| Translation (1 use-case)   | Successful translation; API error → TranslationFailedError                                                                              | P2       |
+| Use-Case                   | Test Scenarios                                                                                                                          | Priority | Status |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ |
+| OAuth (3 use-cases)        | Provider exchange; Replay attack prevention; Expired code; New user creation vs existing user login; Soft-deleted OAuth user → recovery | P1       | ❌ Pending |
+| Profile (6 use-cases)      | Get profile; Update profile; Avatar/banner upload; Search; Suggested users                                                              | P2       | ✅ **Complete — 49 tests** |
+| Notification (3 use-cases) | Get notifications + pagination; Mark all read; Purge expired                                                                            | P2       | ❌ Pending |
+| Tag (1 use-case)           | Search tags                                                                                                                             | P2       | ❌ Pending |
+| Translation (1 use-case)   | Successful translation; API error → TranslationFailedError                                                                              | P2       | ❌ Pending |
+
+> **Profile source fixes applied:** `UpdateBannerUseCase` — `DEFAULT_BANNER_KEY` typo fixed (`.jpe` → `.jpeg`); `this.logger.error` → `this.logger?.error` (aligned with `UpdateAvatarUseCase`).
 
 **Estimated Case Count:** ~80-100
 **File Location:** `tests/unit/core/use-cases/<domain>/`
@@ -295,7 +299,7 @@
 1. Entity unit tests (Phase 1 complete) — ~35-45 cases
 2. Auth use-case P0 tests (Login, Register, Refresh, Logout) — ~20 cases
 3. Security service tests (Password, Crypto) — ~12 cases
-4. User use-case P0 tests (SoftDelete) — ~5 cases
+4. ✅ User use-case P0 tests (SoftDelete) — 7 tests (**done**)
 5. Post use-case P0 tests (CreatePost bot restriction) — ~8 cases
 
 **Total: ~80-90 cases → Expected coverage increase: 15-25%**
@@ -312,6 +316,8 @@
 11. OAuth domain P1s — ~10 cases
 12. Mapper unit tests (Phase 3.1 P1s) — ~15 cases
 13. WebSocketManager + FastifyRealtimeService unit tests (Phase 3.2) — ~8 cases
+14. ✅ Remaining User use-case P1s (GetMe, ChangePassword, ChangeUsername, ChangeEmail, CreateUser, Purge) — 30 tests (**done**)
+15. ✅ Profile use-case P2s (GetProfile, UpdateProfile, Search, Suggestions, UpdateAvatar, UpdateBanner) — 49 tests (**done**)
 
 **Total: ~102 cases → Expected coverage increase: 40-55%**
 
@@ -321,7 +327,7 @@
 
 13. Repository integration test infrastructure (test DB setup)
 14. P1 repository integration tests — ~25 cases
-15. Phase 2 P2 use-case tests — ~20 cases
+15. Phase 2 P2 use-case tests (Notification, Tag, Translation) — ~12 cases
 16. Remaining mapper tests — ~10 cases
 
 **Total: ~55 cases → Expected coverage increase: 60-70%**
@@ -340,11 +346,11 @@
 
 ## Test Infrastructure Requirements
 
-### Mock Factory Pattern (to be created in Sprint 1)
+### Mock Factory Pattern
 
-- `tests/helpers/mock-factories.ts` — Type-safe mock factory for each port interface
-- `tests/helpers/entity-builders.ts` — Builder pattern for creating test entities
-- `tests/helpers/test-fixtures.ts` — Fixed test data (valid user data, post data, etc.)
+- ✅ `tests/unit/helpers/mock-factories.ts` — in use; exports `buildUser()`, `buildProfile()`, `buildVerificationToken()`, `buildRefreshToken()`, `buildComment()`, `buildNotification()`, `buildPost()`
+- `tests/helpers/entity-builders.ts` — Builder pattern for creating test entities (pending)
+- `tests/helpers/test-fixtures.ts` — Fixed test data (pending)
 
 ### Integration Test Infrastructure (to be created in Sprint 3)
 
@@ -453,14 +459,14 @@ tests/
 | ----------------------------- | ------------- | ---------------- | ------ | ------------ |
 | Auth (Login/Register/Refresh) | 🔴 Critical   | ~0%              | 90%+   | 1            |
 | Token Compromise Detection    | 🔴 Critical   | ~0%              | 95%+   | 1            |
-| Soft Delete & Recovery        | 🔴 Critical   | 0%               | 90%+   | 1            |
+| Soft Delete & Recovery        | 🔴 Critical   | ~80%             | 90%+   | ✅ Done      |
 | Post CRUD + Bot Restriction   | 🟠 High       | ~0%              | 85%+   | 1-2          |
 | Comment CRUD + Transactions   | 🟠 High       | ~0%              | 85%+   | 2            |
 | OAuth Flow                    | 🟠 High       | ~0%              | 80%+   | 2            |
 | Follow + Notification         | 🟡 Medium     | ~0%              | 75%+   | 2            |
 | Bookmark                      | 🟡 Medium     | ~0%              | 75%+   | 2            |
 | Mappers (Data Integrity)      | 🟡 Medium     | 0%               | 85%+   | 2-3          |
-| Profile CRUD                  | 🟢 Low        | 0%               | 70%+   | 3            |
+| Profile CRUD                  | 🟢 Low        | ~70%             | 70%+   | ✅ Done      |
 | Tags/Translation              | 🟢 Low        | 0%               | 70%+   | 4            |
 | Realtime/WebSocket            | 🟡 Medium     | 0%               | 50%+   | 4 (optional) |
 
@@ -492,6 +498,18 @@ tests/
 - WebSocket stress tests
 - Visual regression / UI tests (backend-only project)
 - Chaos engineering / failure injection
+
+---
+
+## Completed Security Fixes
+
+| Fix | File | Branch |
+| --- | ---- | ------ |
+| WebSocket auth migrated from `?token=` query param to first-message `{ event: "auth", token }` with 10s timeout | `src/http/routes/realtime.routes.ts` | `refactor/ws-auth-first-message` (merged) |
+| `GetMeUserUseCase` removed `UserPrismaMapper` import (Clean Architecture violation) | `src/core/use-cases/user/get-me/` | `chore/unit-tests-use-cases` |
+| `ChangeEmailUseCase` / `ChangeUsernameUseCase` — added not-found guard + same-value guard | `src/core/use-cases/user/change-*/` | `chore/unit-tests-use-cases` |
+| `SoftDeleteUserUseCase` — added `deletedAt !== null` guard (idempotency bug) | `src/core/use-cases/user/soft-delete/` | `chore/unit-tests-use-cases` |
+| `UpdateBannerUseCase` — `DEFAULT_BANNER_KEY` typo (`.jpe` → `.jpeg`) + `logger?.error` optional chain | `src/core/use-cases/profile/update-banner/` | `chore/unit-tests-use-cases` |
 
 ---
 
