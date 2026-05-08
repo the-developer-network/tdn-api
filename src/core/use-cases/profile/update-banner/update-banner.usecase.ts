@@ -4,7 +4,7 @@ import { InvalidFileTypeError } from "@core/errors";
 import type { StoragePort } from "@core/ports/services/storage.port";
 import type { LoggerPort } from "@core/ports/services/logger.port";
 
-const DEFAULT_BANNER_KEY = "banners/default_banner.jpe";
+const DEFAULT_BANNER_KEY = "banners/default_banner.jpeg";
 
 /**
  * Use case for updating a user's profile banner.
@@ -69,7 +69,7 @@ export class UpdateBannerUseCase {
             try {
                 await this.storageService.delete(oldBannerUrl);
             } catch (error) {
-                this.logger.error(
+                this.logger?.error(
                     {
                         err: error,
                         userId: input.userId,

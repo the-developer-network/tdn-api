@@ -1,3 +1,4 @@
+import { BadRequestError, NotFoundError } from "@core/errors";
 import type { IUserRepository } from "@core/ports/repositories/user.repository";
 import type { ChangeEmailUseCaseInput } from "./change-email-usecase.input";
 
@@ -25,6 +26,16 @@ export class ChangeEmailUseCase {
      * The operation is performed directly on the user repository.
      */
     async execute(input: ChangeEmailUseCaseInput): Promise<void> {
+        const user = await this.userRepository.findById(input.id);
+
+        if (!user) throw new NotFoundError("User not found.");
+
+        if (user.email === input.newEmail) {
+            throw new BadRequestError(
+                "New email must be different from the current one.",
+            );
+        }
+
         await this.userRepository.updateEmail(input.id, input.newEmail);
     }
 }

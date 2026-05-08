@@ -1,3 +1,4 @@
+import { BadRequestError, NotFoundError } from "@core/errors";
 import type { IUserRepository } from "@core/ports/repositories/user.repository";
 import type { ChangeUsernameUseCaseInput } from "./change-username-usecase.input";
 
@@ -25,6 +26,16 @@ export class ChangeUsernameUseCase {
      * The operation is performed directly on the user repository.
      */
     async execute(input: ChangeUsernameUseCaseInput): Promise<void> {
+        const user = await this.userRepository.findById(input.id);
+
+        if (!user) throw new NotFoundError("User not found.");
+
+        if (user.username === input.newUsername) {
+            throw new BadRequestError(
+                "New username must be different from the current one.",
+            );
+        }
+
         await this.userRepository.updateUsername(input.id, input.newUsername);
     }
 }
