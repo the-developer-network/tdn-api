@@ -1,9 +1,6 @@
 import type { IProfileRepository } from "@core/ports/repositories/profile.repository";
 import type { UpdateProfileInput } from "@core/use-cases/profile/update-profil/update-profile-usecase.input";
-import type {
-    Profile as PrismaProfile,
-    Prisma,
-} from "@generated/prisma/client";
+import type { Profile as PrismaProfile } from "@generated/prisma/client";
 import type { Profile } from "@core/domain/entities/profile.entity";
 import type { PrismaTransactionalClient } from "@infrastructure/persistence/database/prisma-client.type";
 import { ProfilePrismaMapper } from "@infrastructure/persistence/mappers/profile-prisma.mapper";
@@ -24,12 +21,7 @@ export class PrismaProfileRepository implements IProfileRepository {
     async update(userId: string, data: UpdateProfileInput): Promise<void> {
         await this.prisma.profile.updateMany({
             where: { userId },
-            data: {
-                fullName: data.fullName,
-                bio: data.bio,
-                location: data.location,
-                socials: data.socials as Prisma.InputJsonValue,
-            },
+            data: ProfilePrismaMapper.toPrismaUpdate(data),
         });
     }
 

@@ -3,7 +3,7 @@ import type {
     FindNotificationsInput,
 } from "@core/ports/repositories/notification.repository";
 import type { PrismaTransactionalClient } from "@infrastructure/persistence/database/prisma-client.type";
-import { Notification } from "@core/domain/entities/notification.entity";
+import type { Notification } from "@core/domain/entities/notification.entity";
 import { NotificationPrismaMapper } from "@infrastructure/persistence/mappers/notification-prisma.mapper";
 
 export class PrismaNotificationRepository implements INotificationRepository {
@@ -69,19 +69,7 @@ export class PrismaNotificationRepository implements INotificationRepository {
             },
         });
 
-        return raws.map((raw) => {
-            const notificationData = NotificationPrismaMapper.toResponse(raw);
-            return Notification.with({
-                recipientId: raw.recipientId,
-                issuerId: raw.issuerId,
-                type: notificationData.type,
-                referenceId: raw.referenceId || undefined,
-                username: notificationData.username,
-                avatarUrl: notificationData.avatarUrl,
-                createdAt: raw.createdAt,
-                isRead: raw.isRead,
-            });
-        });
+        return raws.map((raw) => NotificationPrismaMapper.toDomain(raw));
     }
 
     async countByUserId(userId: string): Promise<number> {

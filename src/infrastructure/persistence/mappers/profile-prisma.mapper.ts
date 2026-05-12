@@ -1,4 +1,5 @@
 import { Profile } from "@core/domain/entities/profile.entity";
+import type { UpdateProfileInput } from "@core/use-cases/profile/update-profil/update-profile-usecase.input";
 import type {
     Prisma,
     Profile as PrismaProfile,
@@ -21,7 +22,8 @@ type PrismaProfileWithUserAndCounts = PrismaProfile & {
 export class ProfilePrismaMapper {
     /**
      * Maps a Prisma database record to a core Domain entity.
-     * * @param dbProfile - The profile record retrieved from the Prisma database.
+     *
+     * @param dbProfile - The profile record retrieved from the Prisma database.
      * @returns The instantiated Profile domain entity.
      */
     static toDomain(dbProfile: PrismaProfileWithUserAndCounts): Profile {
@@ -44,25 +46,26 @@ export class ProfilePrismaMapper {
     }
 
     /**
-     * Maps Domain entity state to a Prisma-compatible update object.
-     * * @param profile - The Profile domain entity.
+     * Maps an UpdateProfileInput DTO to a Prisma-compatible update object.
+     * Avatar and banner are excluded — those have dedicated repository methods.
+     *
+     * @param data - The partial profile update input.
      * @returns The Prisma-formatted data object for updates.
      */
-    static toPrismaUpdate(profile: Profile): Prisma.ProfileUpdateInput {
+    static toPrismaUpdate(data: UpdateProfileInput): Prisma.ProfileUpdateInput {
         return {
-            fullName: profile.fullName,
-            bio: profile.bio,
-            location: profile.location,
-            avatarUrl: profile.avatarUrl,
-            bannerUrl: profile.bannerUrl,
-            socials: profile.socials as Prisma.InputJsonValue,
+            fullName: data.fullName,
+            bio: data.bio,
+            location: data.location,
+            socials: data.socials as Prisma.InputJsonValue,
             updatedAt: new Date(),
         };
     }
 
     /**
      * Maps a Domain entity to a safe public response object.
-     * * @param profile - The Profile domain entity.
+     *
+     * @param profile - The Profile domain entity.
      * @returns A sanitized profile object safe for external API responses.
      */
     static toResponse(profile: Profile): {

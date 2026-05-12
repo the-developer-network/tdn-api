@@ -31,7 +31,7 @@ export class NotificationController {
 
         return reply.status(200).send({
             data: response.notifications.map((n) =>
-                NotificationPrismaMapper.toGetNotificationOutput(n, cdnUrl),
+                NotificationPrismaMapper.toResponse(n, cdnUrl),
             ),
             meta: {
                 total: response.total,

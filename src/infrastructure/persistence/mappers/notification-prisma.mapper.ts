@@ -1,6 +1,6 @@
 import type { NotificationType } from "@generated/prisma/client";
 import type { NotificationType as CoreNotificationType } from "@core/domain/enums/notification-type.enum";
-import type { Notification } from "@core/domain/entities/notification.entity";
+import { Notification } from "@core/domain/entities/notification.entity";
 
 export interface PrismaNotificationItem {
     id: string;
@@ -20,34 +20,33 @@ export interface PrismaNotificationItem {
 
 export class NotificationPrismaMapper {
     /**
-     * Maps a Prisma notification item to a response object
-     * @param item - The Prisma notification item
-     * @returns A response object with notification data
+     * Maps a Prisma notification item to a domain entity.
+     *
+     * @param item - The Prisma notification item with issuer relations
+     * @returns The instantiated Notification domain entity
      */
-    public static toResponse(item: PrismaNotificationItem): {
-        avatarUrl: string;
-        createdAt: Date;
-        type: CoreNotificationType;
-        recipientId: string;
-        username: string;
-        isRead: boolean;
-    } {
-        return {
-            avatarUrl: item.issuer.profile!.avatarUrl,
-            createdAt: item.createdAt,
-            type: item.type as unknown as CoreNotificationType,
+    public static toDomain(item: PrismaNotificationItem): Notification {
+        return Notification.with({
             recipientId: item.recipientId,
+            issuerId: item.issuerId,
+            type: item.type as unknown as CoreNotificationType,
+            referenceId: item.referenceId || undefined,
             username: item.issuer.username,
+            avatarUrl: item.issuer.profile?.avatarUrl ?? "",
+            createdAt: item.createdAt,
             isRead: item.isRead,
-        };
+        });
     }
 
     /**
-     * Maps a Notification entity to a response object
-     * @param notification - The Notification entity
-     * @returns A response object with notification data
+     * Maps a Notification domain entity to a safe API response object.
+     * Applies CDN URL normalization to the avatar URL.
+     *
+     * @param notification - The Notification domain entity
+     * @param cdnUrl - Base URL for the CDN to resolve avatar links
+     * @returns A sanitized notification object safe for external API responses
      */
-    public static toGetNotificationOutput(
+    public static toResponse(
         notification: Notification,
         cdnUrl: string,
     ): {
