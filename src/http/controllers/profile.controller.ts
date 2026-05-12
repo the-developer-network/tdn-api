@@ -32,6 +32,7 @@ export class ProfileController {
     ) {}
 
     private getFullImageUrl(path: string): string {
+        if (path.startsWith("http")) return path;
         const baseUrl = this.publicUrl;
         const url = `${baseUrl}/${path}`;
         if (
