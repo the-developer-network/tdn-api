@@ -24,7 +24,18 @@ export class CryptoService implements CryptoPort {
     timingSafeEqual(a: string, b: string): boolean {
         const bufA = Buffer.from(a);
         const bufB = Buffer.from(b);
-        if (bufA.length !== bufB.length) return false;
-        return cryptoTimingSafeEqual(bufA, bufB);
+        const maxLen = Math.max(bufA.length, bufB.length);
+        const paddedA = Buffer.concat([
+            bufA,
+            Buffer.alloc(maxLen - bufA.length),
+        ]);
+        const paddedB = Buffer.concat([
+            bufB,
+            Buffer.alloc(maxLen - bufB.length),
+        ]);
+        return (
+            cryptoTimingSafeEqual(paddedA, paddedB) &&
+            bufA.length === bufB.length
+        );
     }
 }

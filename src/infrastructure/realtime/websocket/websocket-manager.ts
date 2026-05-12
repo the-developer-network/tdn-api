@@ -7,7 +7,9 @@ export class WebSocketManager {
         this.clients.set(userId, socket);
 
         socket.on("close", () => {
-            this.removeClient(userId);
+            if (this.clients.get(userId) === socket) {
+                this.removeClient(userId);
+            }
         });
     }
 

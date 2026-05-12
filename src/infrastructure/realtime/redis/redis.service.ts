@@ -89,9 +89,22 @@ export class RedisService implements CachePort {
 
     async deleteByPattern(pattern: string): Promise<void> {
         try {
-            const keys = await this.publisher.keys(pattern);
+            const keys: string[] = [];
+            const stream = this.publisher.scanStream({
+                match: pattern,
+                count: 100,
+            });
+
+            await new Promise<void>((resolve, reject) => {
+                stream.on("data", (batch: string[]) => {
+                    keys.push(...batch);
+                });
+                stream.on("end", resolve);
+                stream.on("error", reject);
+            });
+
             if (keys.length > 0) {
-                await this.publisher.del(...keys);
+                await this.publisher.unlink(...keys);
             }
         } catch (error) {
             this.logger.error(

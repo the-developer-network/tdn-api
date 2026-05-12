@@ -4,7 +4,7 @@ import type { PasswordPort } from "@core/ports/services/password.port";
 export class PasswordService implements PasswordPort {
     async hash(plain: string): Promise<string> {
         return argon2.hash(plain, {
-            type: argon2.argon2i,
+            type: argon2.argon2id,
         });
     }
 
