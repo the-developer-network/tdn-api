@@ -91,3 +91,6 @@ jobs:
 
             - name: Run Unit Tests
               run: pnpm run test:unit
+
+            - name: Run Integration Tests
+              run: pnpm run test:integration
