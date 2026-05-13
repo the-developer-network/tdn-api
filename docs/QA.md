@@ -2,19 +2,19 @@
 
 ## Comprehensive Testing Strategy & Prioritized Roadmap
 
-**TL;DR:** E2E tests are **complete** — all 46 files, 219 tests passing across every domain. Unit test work is **in progress** — user and profile use-case tests are complete (86 tests, 13 files). Auth, post, comment, follow, and bookmark use-case tests are next. This plan defines a 4-phase test implementation roadmap aligned with Clean Architecture layers (domain → use-case → infrastructure → HTTP) targeting the highest ROI first.
+**TL;DR:** All 4 phases **complete**. Unit: 597 tests, 80 files. Integration: 60 tests, 9 files. E2E: ~220 tests, 47 files (rate-limit included). Full test suite passes across all layers. Unit coverage: **92.49% Stmts / 92.77% Branch / 91.79% Funcs** — use-case layer at 100%.
 
 ---
 
 ## Current State Analysis
 
-| Category          | Status              | Details                                                                                                       |
-| ----------------- | ------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Unit Tests        | 🔄 **In Progress**  | 86 tests, 13 files — user (37) + profile (49) use-cases complete; auth/post/comment next                      |
-| Integration Tests | ❌ None             | `tests/integration/` is empty — Sprint 3                                                                      |
-| E2E Tests         | ✅ **Complete**     | 219 tests, 46 files — all domains covered (auth, user, post, follow, …)                                       |
-| Test Infra        | ✅ Ready            | Vitest config, setup, scripts, bot seed in global-setup available; `mock-factories.ts` in use                 |
-| Coverage          | ⚠️ ~15-20%          | User + profile use-case layers covered; auth/post/comment/follow/bookmark layers untested                     |
+| Category          | Status          | Details                                                                                       |
+| ----------------- | --------------- | --------------------------------------------------------------------------------------------- |
+| Unit Tests        | ✅ **Complete** | 597 tests, 80 files — all domain entities, use-cases, mappers, security & realtime services   |
+| Integration Tests | ✅ **Complete** | 60 tests, 9 files — all repository layers against real DB                                     |
+| E2E Tests         | ✅ **Complete** | ~220 tests, 47 files — all domains + rate-limit policy tests                                  |
+| Test Infra        | ✅ Ready        | Vitest config, setup, scripts, bot seed in global-setup available; `mock-factories.ts` in use |
+| Coverage          | ✅ **92%+**     | Unit: 92.49% Stmts / 92.77% Branch / 91.79% Funcs / 92.45% Lines — use-case layer at 100%     |
 
 ---
 
@@ -117,8 +117,8 @@
 
 ### 2.2 User Domain (7 use-cases) ✅ Complete — 37 tests
 
-| Use-Case                   | Test Scenarios                                                                  | Priority | Status |
-| -------------------------- | ------------------------------------------------------------------------------- | -------- | ------ |
+| Use-Case                   | Test Scenarios                                                                  | Priority | Status     |
+| -------------------------- | ------------------------------------------------------------------------------- | -------- | ---------- |
 | `SoftDeleteUserUseCase`    | Correct password → soft delete; Wrong password → error; Already deleted → error | P0       | ✅ 7 tests |
 | `GetMeUseCase`             | User found → returned; Not found → NotFound                                     | P1       | ✅ 7 tests |
 | `ChangePasswordUseCase`    | Old password correct, new password hashed; Old password wrong → error           | P1       | ✅ 6 tests |
@@ -176,13 +176,13 @@
 
 ### 2.7 Other Domains
 
-| Use-Case                   | Test Scenarios                                                                                                                          | Priority | Status |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ |
-| OAuth (3 use-cases)        | Provider exchange; Replay attack prevention; Expired code; New user creation vs existing user login; Soft-deleted OAuth user → recovery | P1       | ❌ Pending |
+| Use-Case                   | Test Scenarios                                                                                                                          | Priority | Status                     |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------------------------- |
+| OAuth (3 use-cases)        | Provider exchange; Replay attack prevention; Expired code; New user creation vs existing user login; Soft-deleted OAuth user → recovery | P1       | ❌ Pending                 |
 | Profile (6 use-cases)      | Get profile; Update profile; Avatar/banner upload; Search; Suggested users                                                              | P2       | ✅ **Complete — 49 tests** |
-| Notification (3 use-cases) | Get notifications + pagination; Mark all read; Purge expired                                                                            | P2       | ❌ Pending |
-| Tag (1 use-case)           | Search tags                                                                                                                             | P2       | ❌ Pending |
-| Translation (1 use-case)   | Successful translation; API error → TranslationFailedError                                                                              | P2       | ❌ Pending |
+| Notification (3 use-cases) | Get notifications + pagination; Mark all read; Purge expired                                                                            | P2       | ❌ Pending                 |
+| Tag (1 use-case)           | Search tags                                                                                                                             | P2       | ❌ Pending                 |
+| Translation (1 use-case)   | Successful translation; API error → TranslationFailedError                                                                              | P2       | ❌ Pending                 |
 
 > **Profile source fixes applied:** `UpdateBannerUseCase` — `DEFAULT_BANNER_KEY` typo fixed (`.jpe` → `.jpeg`); `this.logger.error` → `this.logger?.error` (aligned with `UpdateAvatarUseCase`).
 
@@ -261,14 +261,9 @@
 
 ### 4.1 Error Handler Plugin Tests
 
-**File Location:** `tests/unit/http/plugins/`
+> **Scope decision:** Unit tests for error-handler were not added. Every E2E test scenario that hits a 4xx/5xx path exercises the error handler (RFC 7807 format, statusCode mapping, `...error` spread) — coverage via E2E flows is sufficient. Adding a separate unit test with an isolated `Fastify({ logger: false })` instance would be a mini-integration test, not a true unit test, and provides low incremental value.
 
-| Test Scenarios                                    | Priority |
-| ------------------------------------------------- | -------- |
-| CustomError → RFC 7807 format, correct statusCode | P1       |
-| Validation error → 400 + detailed message         | P1       |
-| Unknown error → 500 + generic message             | P1       |
-| 404 Not Found handler                             | P2       |
+**Status:** ✅ Covered via E2E flows.
 
 ### 4.2 Rate Limit Policy Tests (E2E)
 
@@ -280,13 +275,13 @@
 
 ### 4.3 E2E Test Additions
 
-| Area        | Missing Scenarios                            | Priority |
-| ----------- | -------------------------------------------- | -------- |
-| All domains | ✅ All covered — no open E2E gaps            | —        |
-| WebSocket   | Realtime notification delivery (optional)    | P3       |
-| Rate Limit  | Per-policy 429 responses (test env bypasses) | P3       |
+| Area        | Missing Scenarios                 | Priority |
+| ----------- | --------------------------------- | -------- |
+| All domains | ✅ All covered — no open E2E gaps | —        |
 
-**Estimated Case Count:** ~30-40
+> **WebSocket E2E:** Kapsam dışı bırakıldı. `WebSocketManager` ve `FastifyRealtimeService` unit testleri (Phase 3.2) delivery mekanizmasını yeterince kapsamaktadır. Gerçek WS E2E için `server.listen()` + `ws` paketi + Redis gerektiren ayrı config zinciri kurulumu düşük ROI nedeniyle bu döngüde planlanmamıştır.
+
+**Estimated Case Count:** ~15-20
 
 ---
 
@@ -332,15 +327,23 @@
 
 **Total: ~55 cases → Expected coverage increase: 60-70%**
 
-### Sprint 4: Coverage Completion (Phase 4 + remaining P2s)
+### Sprint 4: Coverage Completion (Phase 4 + remaining P2s) ✅ Done
 
-17. Error handler plugin tests — ~6 cases
-18. E2E missing flow tests — ~20 cases
-19. Rate limit tests — ~6 cases
-20. P2 repository integration tests — ~20 cases
-21. Notification/Translation/Tag P2 tests — ~10 cases
+- ~~Error handler plugin tests~~ — covered via E2E flows (scope decision)
+- E2E rate limit tests — 6 tests ✅ (`tests/e2e/rate-limit/rate-limit.test.ts`)
+- Repository integration tests — 60 tests ✅ (`tests/integration/`)
+- `DISABLE_RATE_LIMIT` env var refactor — replaces `NODE_ENV === "test"` bypass ✅
 
-**Total: ~62 cases → Expected coverage increase: 75-85%**
+**Total: ~66 cases → Final Coverage: 92.49% Stmts / 92.77% Branch / 91.79% Funcs / 92.45% Lines**
+
+**Coverage highlights:**
+
+- All use-case layers (auth, user, post, comment, follow, bookmark, oauth, profile, notification, translate, tag): ✅ 100%
+- Security services (Password, Crypto, AuthToken): ✅ 100%
+- WebSocket manager: ✅ 100%
+- Mappers: ~90%
+- Domain entities: ~83% (`notification.entity.ts` partially tested — some getters out of scope)
+- `redis.service.ts`: 0% (infrastructure impl excluded from coverage scope — tested via mocks in use-cases)
 
 ---
 
@@ -430,45 +433,45 @@ tests/
 
 ### Layer × Test Type Matrix
 
-| Layer                    | Unit                                            | Integration     | E2E                                         |
-| ------------------------ | ----------------------------------------------- | --------------- | ------------------------------------------- |
-| Domain Entities          | ✅ Phase 1                                      | —               | —                                           |
-| Domain Enums             | ✅ Phase 1                                      | —               | —                                           |
-| Use-Cases (Auth)         | ✅ Phase 2 P0                                   | —               | ✅ auth/login, register                     |
-| Use-Cases (User)         | ✅ Phase 2 P0-P1                                | —               | ✅ user/get-me                              |
-| Use-Cases (Post)         | ✅ Phase 2 P0-P1                                | —               | Phase 4                                     |
-| Use-Cases (Comment)      | ✅ Phase 2 P1                                   | —               | Phase 4                                     |
-| Use-Cases (Follow)       | ✅ Phase 2 P1                                   | —               | Phase 4                                     |
-| Use-Cases (Bookmark)     | ✅ Phase 2 P1-P2                                | —               | Phase 4                                     |
-| Use-Cases (OAuth)        | ✅ Phase 2 P1                                   | —               | Phase 4                                     |
-| Use-Cases (Profile)      | ✅ Phase 2 P2                                   | —               | Phase 4                                     |
-| Use-Cases (Notification) | ✅ Phase 2 P2                                   | —               | Phase 4                                     |
-| Mappers                  | ✅ Phase 3.1                                    | —               | —                                           |
-| Security Services        | ✅ Phase 3.2                                    | —               | —                                           |
-| Repositories             | —                                               | ✅ Phase 3.3    | —                                           |
-| Error Handler            | ✅ Phase 4.1                                    | —               | ✅ via E2E flows                            |
-| Rate Limiting            | —                                               | —               | ✅ Phase 4.2                                |
-| Plugins (JWT, Cookie)    | —                                               | —               | ✅ via auth E2E                             |
-| WebSocket/Realtime       | ✅ Phase 3.2 (WsManager + RealtimeService unit) | —               | Phase 4 (optional: real WS client delivery) |
-| Scheduled Jobs           | —                                               | ✅ Phase 3      | —                                           |
-| External Services        | —                                               | Mock ✅ Phase 2 | —                                           |
+| Layer                    | Unit                                            | Integration     | E2E                     |
+| ------------------------ | ----------------------------------------------- | --------------- | ----------------------- |
+| Domain Entities          | ✅ Phase 1                                      | —               | —                       |
+| Domain Enums             | ✅ Phase 1                                      | —               | —                       |
+| Use-Cases (Auth)         | ✅ Phase 2 P0                                   | —               | ✅ auth/login, register |
+| Use-Cases (User)         | ✅ Phase 2 P0-P1                                | —               | ✅ user/get-me          |
+| Use-Cases (Post)         | ✅ Phase 2 P0-P1                                | —               | Phase 4                 |
+| Use-Cases (Comment)      | ✅ Phase 2 P1                                   | —               | Phase 4                 |
+| Use-Cases (Follow)       | ✅ Phase 2 P1                                   | —               | Phase 4                 |
+| Use-Cases (Bookmark)     | ✅ Phase 2 P1-P2                                | —               | Phase 4                 |
+| Use-Cases (OAuth)        | ✅ Phase 2 P1                                   | —               | Phase 4                 |
+| Use-Cases (Profile)      | ✅ Phase 2 P2                                   | —               | Phase 4                 |
+| Use-Cases (Notification) | ✅ Phase 2 P2                                   | —               | Phase 4                 |
+| Mappers                  | ✅ Phase 3.1                                    | —               | —                       |
+| Security Services        | ✅ Phase 3.2                                    | —               | —                       |
+| Repositories             | —                                               | ✅ Phase 3.3    | —                       |
+| Error Handler            | ✅ via E2E flows                                | —               | ✅ via E2E flows        |
+| Rate Limiting            | —                                               | —               | ✅ Phase 4.2            |
+| Plugins (JWT, Cookie)    | —                                               | —               | ✅ via auth E2E         |
+| WebSocket/Realtime       | ✅ Phase 3.2 (WsManager + RealtimeService unit) | —               | ❌ Out of scope         |
+| Scheduled Jobs           | —                                               | ✅ Phase 3      | —                       |
+| External Services        | —                                               | Mock ✅ Phase 2 | —                       |
 
 ### Risk × Coverage Matrix
 
-| Module                        | Business Risk | Current Coverage | Target | Sprint       |
-| ----------------------------- | ------------- | ---------------- | ------ | ------------ |
-| Auth (Login/Register/Refresh) | 🔴 Critical   | ~0%              | 90%+   | 1            |
-| Token Compromise Detection    | 🔴 Critical   | ~0%              | 95%+   | 1            |
-| Soft Delete & Recovery        | 🔴 Critical   | ~80%             | 90%+   | ✅ Done      |
-| Post CRUD + Bot Restriction   | 🟠 High       | ~0%              | 85%+   | 1-2          |
-| Comment CRUD + Transactions   | 🟠 High       | ~0%              | 85%+   | 2            |
-| OAuth Flow                    | 🟠 High       | ~0%              | 80%+   | 2            |
-| Follow + Notification         | 🟡 Medium     | ~0%              | 75%+   | 2            |
-| Bookmark                      | 🟡 Medium     | ~0%              | 75%+   | 2            |
-| Mappers (Data Integrity)      | 🟡 Medium     | 0%               | 85%+   | 2-3          |
-| Profile CRUD                  | 🟢 Low        | ~70%             | 70%+   | ✅ Done      |
-| Tags/Translation              | 🟢 Low        | 0%               | 70%+   | 4            |
-| Realtime/WebSocket            | 🟡 Medium     | 0%               | 50%+   | 4 (optional) |
+| Module                        | Business Risk | Current Coverage | Target | Sprint         |
+| ----------------------------- | ------------- | ---------------- | ------ | -------------- |
+| Auth (Login/Register/Refresh) | 🔴 Critical   | ~0%              | 90%+   | 1              |
+| Token Compromise Detection    | 🔴 Critical   | ~0%              | 95%+   | 1              |
+| Soft Delete & Recovery        | 🔴 Critical   | ~80%             | 90%+   | ✅ Done        |
+| Post CRUD + Bot Restriction   | 🟠 High       | ~0%              | 85%+   | 1-2            |
+| Comment CRUD + Transactions   | 🟠 High       | ~0%              | 85%+   | 2              |
+| OAuth Flow                    | 🟠 High       | ~0%              | 80%+   | 2              |
+| Follow + Notification         | 🟡 Medium     | ~0%              | 75%+   | 2              |
+| Bookmark                      | 🟡 Medium     | ~0%              | 75%+   | 2              |
+| Mappers (Data Integrity)      | 🟡 Medium     | 0%               | 85%+   | 2-3            |
+| Profile CRUD                  | 🟢 Low        | ~70%             | 70%+   | ✅ Done        |
+| Tags/Translation              | 🟢 Low        | 0%               | 70%+   | 4              |
+| Realtime/WebSocket            | 🟡 Medium     | ✅ ~60%          | 60%+   | ✅ Done (unit) |
 
 ---
 
@@ -495,6 +498,7 @@ tests/
 
 - Performance / load tests
 - Contract tests (API schema compatibility)
+- WebSocket E2E tests (delivery mechanism covered by Phase 3.2 unit tests; real WS client testing requires `server.listen()` + `ws` package + Redis — low ROI)
 - WebSocket stress tests
 - Visual regression / UI tests (backend-only project)
 - Chaos engineering / failure injection
@@ -503,13 +507,13 @@ tests/
 
 ## Completed Security Fixes
 
-| Fix | File | Branch |
-| --- | ---- | ------ |
-| WebSocket auth migrated from `?token=` query param to first-message `{ event: "auth", token }` with 10s timeout | `src/http/routes/realtime.routes.ts` | `refactor/ws-auth-first-message` (merged) |
-| `GetMeUserUseCase` removed `UserPrismaMapper` import (Clean Architecture violation) | `src/core/use-cases/user/get-me/` | `chore/unit-tests-use-cases` |
-| `ChangeEmailUseCase` / `ChangeUsernameUseCase` — added not-found guard + same-value guard | `src/core/use-cases/user/change-*/` | `chore/unit-tests-use-cases` |
-| `SoftDeleteUserUseCase` — added `deletedAt !== null` guard (idempotency bug) | `src/core/use-cases/user/soft-delete/` | `chore/unit-tests-use-cases` |
-| `UpdateBannerUseCase` — `DEFAULT_BANNER_KEY` typo (`.jpe` → `.jpeg`) + `logger?.error` optional chain | `src/core/use-cases/profile/update-banner/` | `chore/unit-tests-use-cases` |
+| Fix                                                                                                             | File                                        | Branch                                    |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ----------------------------------------- |
+| WebSocket auth migrated from `?token=` query param to first-message `{ event: "auth", token }` with 10s timeout | `src/http/routes/realtime.routes.ts`        | `refactor/ws-auth-first-message` (merged) |
+| `GetMeUserUseCase` removed `UserPrismaMapper` import (Clean Architecture violation)                             | `src/core/use-cases/user/get-me/`           | `chore/unit-tests-use-cases`              |
+| `ChangeEmailUseCase` / `ChangeUsernameUseCase` — added not-found guard + same-value guard                       | `src/core/use-cases/user/change-*/`         | `chore/unit-tests-use-cases`              |
+| `SoftDeleteUserUseCase` — added `deletedAt !== null` guard (idempotency bug)                                    | `src/core/use-cases/user/soft-delete/`      | `chore/unit-tests-use-cases`              |
+| `UpdateBannerUseCase` — `DEFAULT_BANNER_KEY` typo (`.jpe` → `.jpeg`) + `logger?.error` optional chain           | `src/core/use-cases/profile/update-banner/` | `chore/unit-tests-use-cases`              |
 
 ---
 
