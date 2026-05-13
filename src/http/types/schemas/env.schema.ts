@@ -67,6 +67,9 @@ export const EnvSchema = Type.Object({
     // Frontend URL for OAuth redirects
     FRONTEND_URL: Type.String({ default: "http://localhost:5173" }),
     API_URL: Type.String({ default: "http://localhost:8080" }),
+
+    // Set to true to bypass rate limiting (e.g. in test environments)
+    DISABLE_RATE_LIMIT: Type.Boolean({ default: false }),
 });
 
 export type EnvConfig = Static<typeof EnvSchema>;

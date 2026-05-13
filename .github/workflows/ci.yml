@@ -52,7 +52,7 @@ jobs:
             GITHUB_CLIENT_SECRET: dummy_github_secret
             GOOGLE_CLIENT_ID: dummy_google_id
             GOOGLE_CLIENT_SECRET: dummy_google_secret
-            # Prevent husky from installing git hooks in CI
+            DISABLE_RATE_LIMIT: true
             HUSKY: "0"
 
         steps:
