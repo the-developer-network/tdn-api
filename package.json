@@ -101,7 +101,8 @@
             "picomatch": "^4.0.4",
             "yaml": "^2.8.3",
             "brace-expansion": "^5.0.5",
-            "fast-jwt": "6.2.1",
+            "fast-jwt": "6.2.4",
+            "fast-uri": ">=3.1.2",
             "vite": "8.0.8"
         }
     }

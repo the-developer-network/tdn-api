@@ -5,6 +5,7 @@ import type { GetPostsInput } from "./get-posts-usecase.input";
 import type { GetPostsOutput } from "./get-posts-usecase.output";
 import { Post } from "@core/domain/entities/post.entity";
 import { UnauthorizedError } from "@core/errors";
+import { PostType } from "@core/domain/enums";
 
 interface CachedPostData {
     id: string;
@@ -100,6 +101,10 @@ export class GetPostsUseCase {
 
         await this.cacheService.set(cacheKey, JSON.stringify(response), 60);
 
-        return { posts: shufflePosts(posts), total };
+        return {
+            posts:
+                input.type === PostType.COMMUNITY ? shufflePosts(posts) : posts,
+            total,
+        };
     }
 }
