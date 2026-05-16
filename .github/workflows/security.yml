@@ -1,0 +1,37 @@
+name: Security
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+    schedule:
+        # Every Monday at 06:00 UTC
+        - cron: "0 6 * * 1"
+
+permissions:
+    contents: read
+    security-events: write
+    actions: read
+
+# NOTE: CodeQL is handled by GitHub's Default Setup (repo Settings → Security → Code scanning).
+# Running an advanced config here alongside Default Setup causes a conflict.
+# To switch to this workflow's CodeQL config instead:
+#   Settings → Security → Code scanning → Default setup → Disable
+# Then uncomment the codeql job below.
+
+jobs:
+    dependency-review:
+        name: Dependency Review
+        runs-on: ubuntu-latest
+        # Only run on pull requests — reviews new deps introduced in the PR
+        if: github.event_name == 'pull_request'
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v6
+
+            - name: Dependency Review
+              uses: actions/dependency-review-action@v4
+              with:
+                  fail-on-severity: high
+                  deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0
