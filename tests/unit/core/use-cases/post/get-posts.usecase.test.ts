@@ -39,7 +39,7 @@ describe("GetPostsUseCase", () => {
 
         const result = await useCase.execute({ page: 1, limit: 10 });
 
-        expect(result.posts).toBe(posts);
+        expect(result.posts).toEqual(posts);
         expect(result.total).toBe(1);
     });
 

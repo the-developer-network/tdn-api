@@ -19,6 +19,15 @@ interface CachedFeedData {
     total: number;
 }
 
+function shufflePosts(posts: Post[]): Post[] {
+    const shuffled = [...posts];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
 export class GetPostsUseCase {
     constructor(
         private readonly postRepository: IPostRepository,
@@ -63,7 +72,7 @@ export class GetPostsUseCase {
             });
 
             return {
-                posts: hydratedPosts,
+                posts: shufflePosts(hydratedPosts),
                 total: parsed.total,
             };
         }
@@ -91,6 +100,6 @@ export class GetPostsUseCase {
 
         await this.cacheService.set(cacheKey, JSON.stringify(response), 60);
 
-        return response;
+        return { posts: shufflePosts(posts), total };
     }
 }
