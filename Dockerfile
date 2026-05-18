@@ -1,7 +1,9 @@
-FROM node:24-alpine AS base
+FROM node:26-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+
+RUN npm install -g pnpm@latest
+
 # Runtime-only native deps (OpenSSL for Prisma engine, CA certs for TLS)
 RUN apk add --no-cache openssl ca-certificates
 
