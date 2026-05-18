@@ -57,7 +57,7 @@
         "@fastify/swagger-ui": "^5.2.6",
         "@fastify/type-provider-typebox": "^6.1.0",
         "@fastify/websocket": "^11.2.0",
-        "@prisma/adapter-pg": "^7.7.0",
+        "@prisma/adapter-pg": "^7.8.0",
         "@prisma/client": "^7.8.0",
         "@sinclair/typebox": "^0.34.49",
         "argon2": "^0.44.0",
