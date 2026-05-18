@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/the-developer-network/tdn-api/compare/v1.0.0...v1.0.1) (2026-05-18)
+
+
+### Bug Fixes
+
+* **ci:** resolve corepack exit code 127 on node:26-alpine ([#144](https://github.com/the-developer-network/tdn-api/issues/144)) ([01ac86e](https://github.com/the-developer-network/tdn-api/commit/01ac86e0f8a858a39a59ea2b34d23b3294dbb69f))
+
 # 1.0.0 (2026-05-16)
 
 
