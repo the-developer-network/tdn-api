@@ -1,3 +1,8 @@
+allowBuilds:
+  '@prisma/engines': true
+  argon2: true
+  esbuild: true
+  prisma: true
 ignoredBuiltDependencies:
   - '@prisma/engines'
   - argon2
