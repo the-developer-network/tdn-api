@@ -33,7 +33,7 @@ jobs:
 
             - name: Run Semantic Release
               id: release
-              uses: cycjimmy/semantic-release-action@v4
+              uses: cycjimmy/semantic-release-action@v6
               with:
                   # Extra plugins not bundled with cycjimmy action
                   extra_plugins: |
