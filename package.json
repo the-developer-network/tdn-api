@@ -46,7 +46,7 @@
     },
     "packageManager": "pnpm@11.5.0",
     "dependencies": {
-        "@aws-sdk/client-s3": "^3.1120.0",
+        "@aws-sdk/client-s3": "^3.1126.0",
         "@fastify/awilix": "^8.2.1",
         "@fastify/cookie": "^11.1.2",
         "@fastify/cors": "^11.3.0",
@@ -71,7 +71,7 @@
         "ioredis": "^6.0.0",
         "node-cron": "^4.6.0",
         "prisma": "^7.10.0",
-        "resend": "^6.24.0"
+        "resend": "^6.26.0"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
