@@ -1,3 +1,10 @@
+## [1.27.3](https://github.com/the-developer-network/tdn-api/compare/v1.27.2...v1.27.3) (2026-09-10)
+
+
+### Bug Fixes
+
+* **auth:** deliver native sessions from the OAuth exchange and account recovery ([#291](https://github.com/the-developer-network/tdn-api/issues/291)) ([313aedf](https://github.com/the-developer-network/tdn-api/commit/313aedf8565f1b9d1e273f548667f130a3c79d5a))
+
 ## [1.27.2](https://github.com/the-developer-network/tdn-api/compare/v1.27.1...v1.27.2) (2026-09-06)
 
 
