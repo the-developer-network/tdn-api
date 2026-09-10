@@ -122,11 +122,13 @@ export abstract class BaseAuthController {
     /**
      * The channel a caller declaring itself should be answered on.
      *
-     * Used by the two endpoints that mint a session from something other than
-     * a refresh token - login and the OAuth exchange - where there is no
-     * incoming channel to mirror. Both require credentials the browser attack
+     * Used by the two endpoints that mint a session from a credential rather
+     * than a refresh token - login and account recovery - where there is no
+     * incoming channel to mirror. Both require something the browser attack
      * this protects against does not have: page JavaScript cannot log in
-     * without the password, nor exchange an OAuth code it never saw.
+     * without the password, nor recover an account without the recovery token
+     * that only a correct password earns. The OAuth exchange is deliberately
+     * not one of them: its channel is fixed on the code when the flow starts.
      *
      * @param client - The declared client kind, if any
      * @returns Which channel to answer on
