@@ -174,6 +174,113 @@ describe("POST /auth/recover-account - Account Recovery Flow", () => {
     });
 
     /**
+     * Recovery mints a session from a credential, as login does, so it
+     * follows login's channel rule: `client: "native"` is answered in the
+     * body, anything else - including no `client` at all - on the cookie.
+     */
+    describe("session channel", () => {
+        interface SessionData {
+            accessToken: string;
+            refreshToken?: string;
+            refreshTokenExpiresAt?: number;
+        }
+
+        /**
+         * Registers an account, deletes it, and returns the recovery token
+         * the next login attempt is handed.
+         */
+        const pendingDeletion = async (tag: string): Promise<string> => {
+            const t = Date.now();
+            const u = {
+                email: `rc${tag}_${t}@example.com`,
+                password: "password123",
+                username: `rc${tag}_${t}`.slice(0, 30),
+            };
+
+            await request({
+                method: "POST",
+                url: "/auth/register",
+                payload: u,
+            });
+
+            const loginRes = await request({
+                method: "POST",
+                url: "/auth/login",
+                payload: { identifier: u.email, password: u.password },
+            });
+            const { accessToken } = parseBody<{ data: SessionData }>(
+                loginRes,
+            ).data;
+
+            await request({
+                method: "DELETE",
+                url: "/users/me",
+                headers: { authorization: `Bearer ${accessToken}` },
+                payload: { password: u.password },
+            });
+
+            const failedLogin = await request({
+                method: "POST",
+                url: "/auth/login",
+                payload: { identifier: u.email, password: u.password },
+            });
+
+            return parseBody<{ recoveryToken: string }>(failedLogin)
+                .recoveryToken;
+        };
+
+        const recover = async (
+            recoveryToken: string,
+            client?: "web" | "native",
+        ): ReturnType<typeof request> =>
+            request({
+                method: "POST",
+                url: "/auth/recover-account",
+                payload: { recoveryToken, ...(client ? { client } : {}) },
+            });
+
+        it("should give a native client its refresh token in the body and set no cookie", async () => {
+            const response = await recover(
+                await pendingDeletion("n"),
+                "native",
+            );
+            const data = parseBody<{ data: SessionData }>(response).data;
+
+            expect(response.statusCode).toBe(200);
+            expect(typeof data.refreshToken).toBe("string");
+            expect(typeof data.refreshTokenExpiresAt).toBe("number");
+            expect(extractRefreshTokenCookie(response)).toBe("");
+
+            const refreshed = await request({
+                method: "POST",
+                url: "/auth/refresh",
+                payload: { refreshToken: data.refreshToken },
+            });
+            expect(refreshed.statusCode).toBe(200);
+        });
+
+        it("should answer a web client with a cookie and nothing in the body", async () => {
+            const response = await recover(await pendingDeletion("w"), "web");
+            const data = parseBody<{ data: SessionData }>(response).data;
+
+            expect(response.statusCode).toBe(200);
+            expect(data.refreshToken).toBeUndefined();
+            expect(data.refreshTokenExpiresAt).toBeUndefined();
+            expect(extractRefreshTokenCookie(response)).toBeTruthy();
+        });
+
+        it("should keep today's cookie behaviour when no client is given", async () => {
+            const response = await recover(await pendingDeletion("d"));
+            const data = parseBody<{ data: SessionData }>(response).data;
+
+            expect(response.statusCode).toBe(200);
+            expect(data.refreshToken).toBeUndefined();
+            expect(data.refreshTokenExpiresAt).toBeUndefined();
+            expect(extractRefreshTokenCookie(response)).toBeTruthy();
+        });
+    });
+
+    /**
      * After a successful recovery, the user must be able to log in normally
      * with their original credentials, confirming that the account is fully
      * restored.
